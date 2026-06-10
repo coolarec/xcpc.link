@@ -249,11 +249,15 @@ onBeforeUnmount(() => {
   background: var(--hero-bg);
   transform-origin: center bottom;
   isolation: isolate;
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23ffffff'/%3E%3C/svg%3E") 50 50, auto;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Ccircle cx='30' cy='30' r='30' fill='%23ffffff'/%3E%3C/svg%3E") 30 30, auto;
 }
 
 .tilt-section :deep(*) {
   cursor: inherit;
+}
+
+.is-day .tilt-section {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Ccircle cx='30' cy='30' r='30' fill='%231d1d1f'/%3E%3C/svg%3E") 30 30, auto;
 }
 
 .mode-toggle {

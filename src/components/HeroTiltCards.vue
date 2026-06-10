@@ -287,7 +287,7 @@ onBeforeUnmount(() => {
   line-height: 0.92;
   letter-spacing: -0.03em;
   pointer-events: none;
-  filter: blur(8px);
+  filter: blur(14px);
   opacity: var(--title-cast-opacity);
   mix-blend-mode: multiply;
   transform: translate3d(var(--cast-x), var(--cast-y), 132px) scale(1.08);
