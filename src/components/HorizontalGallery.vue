@@ -54,13 +54,10 @@ onMounted(async () => {
 
       const refresh = () => {
         pinWrapWidth = strip.value.scrollWidth
-        horizontalScrollLength = Math.max(0, pinWrapWidth - window.innerWidth)
+        horizontalScrollLength = Math.max(0, pinWrapWidth - wrapper.value.clientWidth)
       }
 
-      const getScrollDistance = () => {
-        const ratio = gsap.utils.clamp(0.25, 1.6, props.scrollDistanceRatio)
-        return Math.max(window.innerWidth * 0.35, horizontalScrollLength * ratio)
-      }
+      const getScrollDistance = () => horizontalScrollLength * 1.05
 
       refresh()
 
@@ -202,6 +199,11 @@ onBeforeUnmount(() => {
   display: flex;
   flex-wrap: nowrap;
   will-change: transform;
+}
+
+.horiz-gallery-wrapper {
+  width: 100%;
+  min-width: 0;
 }
 
 .horiz-gallery-strip {
