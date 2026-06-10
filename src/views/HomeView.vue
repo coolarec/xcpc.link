@@ -704,6 +704,19 @@ onBeforeUnmount(() => {
 }
 
 @media (max-width: 860px) {
+  .algorithm-band {
+    padding: 30px 14px 18px;
+  }
+
+  .algorithm-row {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    column-gap: 12px;
+  }
+
+  .algorithm-word:nth-child(n + 8) {
+    display: none;
+  }
+
   .demo-label {
     top: 22px;
     left: 22px;
@@ -744,6 +757,99 @@ onBeforeUnmount(() => {
   .waypoint-target-3 {
     top: 78%;
     left: 12%;
+  }
+}
+
+@media (max-width: 560px) {
+  .algorithm-band {
+    padding: 28px 12px 16px;
+  }
+
+  .algorithm-row {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    column-gap: 10px;
+  }
+
+  .algorithm-word {
+    font-size: min(var(--word-size), 13px);
+  }
+
+  .algorithm-word:nth-child(n + 6) {
+    display: none;
+  }
+
+  .demo-label {
+    max-width: calc(100vw - 44px);
+    font-size: 12px;
+  }
+
+  .tilt-layer {
+    width: 94vw;
+    aspect-ratio: 0.72;
+  }
+
+  .tilt-core {
+    inset: 28% 10%;
+  }
+
+  .tilt-core span {
+    font-size: 11px;
+  }
+
+  .tilt-core strong {
+    font-size: 46px;
+  }
+
+  .tilt-panel {
+    width: 86px;
+    height: 62px;
+    font-size: 20px;
+  }
+
+  .tilt-panel-1 {
+    top: 6%;
+    left: 6%;
+  }
+
+  .tilt-panel-2 {
+    top: 8%;
+    right: 4%;
+  }
+
+  .tilt-panel-3 {
+    top: 38%;
+    left: -2%;
+  }
+
+  .tilt-panel-4 {
+    top: 39%;
+    right: -2%;
+  }
+
+  .tilt-panel-5 {
+    bottom: 11%;
+    left: 8%;
+  }
+
+  .tilt-panel-6 {
+    right: 8%;
+    bottom: 6%;
+  }
+
+  .waypoint-node {
+    width: min(86vw, 330px);
+    min-height: 178px;
+    padding: 18px;
+  }
+
+  .waypoint-box {
+    width: 62px;
+    height: 62px;
+  }
+
+  .waypoint-start h2,
+  .waypoint-target h3 {
+    font-size: 30px;
   }
 }
 
