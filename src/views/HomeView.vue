@@ -60,12 +60,17 @@ const algorithmWords = [
   'CONVEX HULL',
   'MIN-COST FLOW',
 ]
-const backgroundWords = Array.from({ length: 118 }, (_, index) => ({
-  word: algorithmWords[index % algorithmWords.length],
-  x: `${((index * 37) % 108) - 5}%`,
-  y: `${(index * 53) % 94}%`,
-  size: `${12 + ((index * 7) % 17)}px`,
-  opacity: `${0.16 + (index % 6) * 0.035}`,
+const backgroundRows = Array.from({ length: 12 }, (_, rowIndex) => ({
+  words: Array.from({ length: 10 }, (_, columnIndex) => {
+    const index = rowIndex * 10 + columnIndex
+
+    return {
+      word: algorithmWords[index % algorithmWords.length],
+      size: `${12 + ((index * 7) % 9)}px`,
+      opacity: `${0.17 + (index % 5) * 0.035}`,
+      tone: index % 4,
+    }
+  }),
 }))
 const waypoints = [
   { label: '01', title: 'Waypoint One', tone: 'blue' },
@@ -291,21 +296,25 @@ onBeforeUnmount(() => {
   <main ref="pageRoot" class="motion-page">
     <section ref="tiltSection" class="tilt-section" aria-label="Cursor-driven perspective tilt">
       <div class="algorithm-band" aria-hidden="true">
-        <span
-          v-for="(item, index) in backgroundWords"
-          :key="`${item.word}-${index}`"
-          class="algorithm-word"
-          :class="`algorithm-word-${index % 4}`"
-          :data-word="item.word"
-          :style="{
-            '--word-x': item.x,
-            '--word-y': item.y,
-            '--word-size': item.size,
-            '--word-opacity': item.opacity,
-          }"
+        <div
+          v-for="(row, rowIndex) in backgroundRows"
+          :key="`row-${rowIndex}`"
+          class="algorithm-row"
         >
-          {{ item.word }}
-        </span>
+          <span
+            v-for="(item, columnIndex) in row.words"
+            :key="`${item.word}-${rowIndex}-${columnIndex}`"
+            class="algorithm-word"
+            :class="`algorithm-word-${item.tone}`"
+            :data-word="item.word"
+            :style="{
+              '--word-size': item.size,
+              '--word-opacity': item.opacity,
+            }"
+          >
+            {{ item.word }}
+          </span>
+        </div>
       </div>
 
       <p class="demo-label">Cursor-driven perspective tilt</p>
@@ -385,16 +394,26 @@ onBeforeUnmount(() => {
   inset: 0 0 auto;
   z-index: 0;
   height: 50%;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
   overflow: hidden;
-  padding: 0;
+  padding: 34px 22px 18px;
   pointer-events: none;
   mask-image: linear-gradient(180deg, #000 0%, #000 72%, transparent 100%);
 }
 
+.algorithm-row {
+  width: 100%;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 18px;
+  white-space: nowrap;
+}
+
 .algorithm-word {
-  position: absolute;
-  top: var(--word-y);
-  left: var(--word-x);
+  flex: 0 1 auto;
   opacity: var(--word-opacity);
   color: rgba(0, 122, 255, 0.24);
   font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
