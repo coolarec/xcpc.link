@@ -130,8 +130,9 @@ onBeforeUnmount(() => {
   padding: 76px max(22px, calc((100vw - 1180px) / 2));
   color: #f5f5f7;
   background:
-    radial-gradient(circle at 18% 20%, color-mix(in srgb, var(--accent), transparent 70%), transparent 26%),
-    linear-gradient(180deg, rgba(18, 19, 24, 0.98), rgba(6, 7, 10, 0.98));
+    radial-gradient(circle at 16% 18%, color-mix(in srgb, var(--accent), transparent 78%), transparent 28%),
+    radial-gradient(circle at 88% 68%, rgba(255, 255, 255, 0.06), transparent 26%),
+    linear-gradient(180deg, rgba(28, 28, 30, 0.98), rgba(10, 10, 12, 0.98));
 }
 
 .gallery-heading {
@@ -177,12 +178,15 @@ onBeforeUnmount(() => {
   flex-direction: column;
   justify-content: flex-end;
   padding: 26px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.05)),
-    rgba(255, 255, 255, 0.06);
-  box-shadow: 0 32px 92px rgba(0, 0, 0, 0.28);
+    linear-gradient(145deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.045)),
+    rgba(255, 255, 255, 0.055);
+  box-shadow:
+    0 34px 96px rgba(0, 0, 0, 0.26),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(22px) saturate(1.18);
 }
 
 .gallery-card::before {
@@ -190,9 +194,9 @@ onBeforeUnmount(() => {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(130deg, color-mix(in srgb, var(--accent), transparent 58%), transparent 42%),
-    radial-gradient(circle at 75% 18%, rgba(255, 255, 255, 0.18), transparent 24%);
-  opacity: 0.9;
+    linear-gradient(130deg, color-mix(in srgb, var(--accent), transparent 68%), transparent 44%),
+    radial-gradient(circle at 75% 18%, rgba(255, 255, 255, 0.16), transparent 24%);
+  opacity: 0.82;
 }
 
 .gallery-index {
@@ -200,7 +204,7 @@ onBeforeUnmount(() => {
   top: 22px;
   left: 24px;
   z-index: 1;
-  color: rgba(245, 245, 247, 0.54);
+  color: rgba(245, 245, 247, 0.52);
   font-size: 14px;
   font-weight: 850;
 }
@@ -210,7 +214,7 @@ onBeforeUnmount(() => {
   inset: 18% 14% auto auto;
   width: 210px;
   aspect-ratio: 1;
-  border: 1px dashed rgba(255, 255, 255, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 999px;
 }
 
@@ -231,7 +235,7 @@ onBeforeUnmount(() => {
 .gallery-card p {
   max-width: 390px;
   margin: 16px 0 0;
-  color: rgba(245, 245, 247, 0.68);
+  color: rgba(245, 245, 247, 0.72);
   font-size: 16px;
   line-height: 1.6;
 }
@@ -248,10 +252,10 @@ onBeforeUnmount(() => {
   display: inline-flex;
   align-items: center;
   padding: 0 10px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(245, 245, 247, 0.78);
+  background: rgba(255, 255, 255, 0.075);
+  color: rgba(245, 245, 247, 0.8);
   font-size: 12px;
   font-weight: 750;
 }

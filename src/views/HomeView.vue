@@ -551,7 +551,7 @@ onBeforeUnmount(() => {
 .motion-page {
   min-height: 100svh;
   overflow-x: hidden;
-  background: #f5f5f7;
+  background: #fbfbfd;
   color: #1d1d1f;
 }
 
@@ -565,8 +565,10 @@ onBeforeUnmount(() => {
   display: grid;
   place-items: center;
   background:
-    radial-gradient(circle at var(--cursor-x) var(--cursor-y), rgba(255, 255, 255, 0.82), transparent 24%),
-    linear-gradient(135deg, #eef7ff 0%, #ffffff 46%, #f3fbef 100%);
+    radial-gradient(circle at var(--cursor-x) var(--cursor-y), rgba(255, 255, 255, 0.92), transparent 24%),
+    radial-gradient(circle at 12% 18%, rgba(0, 122, 255, 0.12), transparent 28%),
+    radial-gradient(circle at 88% 26%, rgba(48, 209, 88, 0.1), transparent 26%),
+    linear-gradient(135deg, #f8fbff 0%, #ffffff 46%, #f5f5f7 100%);
   transform-origin: center bottom;
   isolation: isolate;
 }
@@ -598,7 +600,7 @@ onBeforeUnmount(() => {
 .algorithm-word {
   min-width: 0;
   opacity: var(--word-opacity);
-  color: rgba(0, 122, 255, 0.24);
+  color: rgba(0, 122, 255, 0.2);
   font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
   font-size: var(--word-size);
   font-weight: 800;
@@ -612,15 +614,15 @@ onBeforeUnmount(() => {
 }
 
 .algorithm-word-1 {
-  color: rgba(52, 199, 89, 0.24);
+  color: rgba(48, 209, 88, 0.19);
 }
 
 .algorithm-word-2 {
-  color: rgba(255, 45, 85, 0.18);
+  color: rgba(255, 45, 85, 0.15);
 }
 
 .algorithm-word-3 {
-  color: rgba(255, 149, 0, 0.22);
+  color: rgba(255, 159, 10, 0.17);
 }
 
 .demo-label {
@@ -629,7 +631,7 @@ onBeforeUnmount(() => {
   left: 32px;
   z-index: 5;
   margin: 0;
-  color: rgba(29, 29, 31, 0.58);
+  color: rgba(29, 29, 31, 0.56);
   font-size: 14px;
   font-weight: 800;
   letter-spacing: 0;
@@ -656,13 +658,15 @@ onBeforeUnmount(() => {
 .tilt-core,
 .tilt-panel {
   position: absolute;
-  border: 1px solid rgba(29, 29, 31, 0.08);
+  border: 1px solid rgba(29, 29, 31, 0.07);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.68);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(255, 255, 255, 0.58)),
+    rgba(255, 255, 255, 0.68);
   box-shadow:
-    0 34px 90px rgba(29, 29, 31, 0.14),
-    inset 0 1px 0 rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(24px) saturate(1.2);
+    0 34px 96px rgba(29, 29, 31, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(28px) saturate(1.28);
 }
 
 .tilt-core {
@@ -743,13 +747,15 @@ onBeforeUnmount(() => {
   gap: 13px;
   height: 104px;
   padding: 14px 16px 16px;
-  border: 1px solid rgba(29, 29, 31, 0.1);
+  border: 1px solid rgba(29, 29, 31, 0.08);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.62);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.74), rgba(245, 245, 247, 0.56)),
+    rgba(255, 255, 255, 0.62);
   box-shadow:
-    0 24px 70px rgba(29, 29, 31, 0.16),
-    inset 0 1px 0 rgba(255, 255, 255, 0.78);
-  backdrop-filter: blur(24px) saturate(1.35);
+    0 22px 72px rgba(29, 29, 31, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(30px) saturate(1.42);
   transform: translateX(-50%);
 }
 
@@ -758,14 +764,14 @@ onBeforeUnmount(() => {
   aspect-ratio: 1;
   display: grid;
   place-items: center;
-  border: 1px solid rgba(29, 29, 31, 0.1);
+  border: 1px solid rgba(29, 29, 31, 0.08);
   border-radius: 8px;
   background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(245, 245, 247, 0.52)),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(242, 242, 247, 0.58)),
     rgba(255, 255, 255, 0.64);
   color: #1d1d1f;
   box-shadow:
-    0 12px 28px rgba(29, 29, 31, 0.12),
+    0 14px 32px rgba(29, 29, 31, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.9);
   cursor: pointer;
   transform-origin: 50% 115%;
@@ -793,7 +799,7 @@ onBeforeUnmount(() => {
 .gallery-section {
   position: relative;
   z-index: 2;
-  background: #08090b;
+  background: #101012;
 }
 
 .motion-footer {
@@ -803,7 +809,7 @@ onBeforeUnmount(() => {
   overflow: hidden;
   display: grid;
   align-items: end;
-  background: #08090b;
+  background: #101012;
   color: #f5f5f7;
 }
 
@@ -816,7 +822,7 @@ onBeforeUnmount(() => {
 }
 
 .footer-wave-path {
-  fill: #f5f5f7;
+  fill: #fbfbfd;
 }
 
 .motion-footer::after {
@@ -824,7 +830,7 @@ onBeforeUnmount(() => {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.32)),
+    linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.36)),
     repeating-radial-gradient(circle at 20% 20%, rgba(29, 29, 31, 0.08) 0 1px, transparent 1px 5px);
   opacity: 0.42;
   pointer-events: none;

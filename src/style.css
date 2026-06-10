@@ -3,21 +3,28 @@
     -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI",
     sans-serif;
   color: #1d1d1f;
-  background: #f5f5f7;
+  background: #fbfbfd;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color-scheme: light;
 
-  --surface: #f5f5f7;
-  --surface-elevated: rgba(255, 255, 255, 0.78);
-  --text: #424245;
+  --surface: #fbfbfd;
+  --surface-soft: #f5f5f7;
+  --surface-elevated: rgba(255, 255, 255, 0.82);
+  --surface-glass: rgba(255, 255, 255, 0.68);
+  --text: #3a3a3c;
   --text-strong: #1d1d1f;
   --muted: #6e6e73;
-  --line: rgba(29, 29, 31, 0.1);
+  --line: rgba(29, 29, 31, 0.08);
+  --line-strong: rgba(29, 29, 31, 0.14);
   --blue: #007aff;
-  --shadow-soft: 0 22px 64px rgba(29, 29, 31, 0.1);
+  --green: #30d158;
+  --orange: #ff9f0a;
+  --pink: #ff2d55;
+  --shadow-soft: 0 28px 80px rgba(29, 29, 31, 0.08);
+  --shadow-card: 0 18px 56px rgba(29, 29, 31, 0.1);
 }
 
 * {
@@ -74,21 +81,26 @@ a {
   justify-content: center;
   gap: 30px;
   padding: 64px max(24px, calc((100vw - 1120px) / 2));
-  background: var(--surface);
+  background:
+    radial-gradient(circle at 18% 16%, rgba(0, 122, 255, 0.1), transparent 28%),
+    radial-gradient(circle at 88% 72%, rgba(48, 209, 88, 0.08), transparent 24%),
+    linear-gradient(180deg, #ffffff 0%, var(--surface) 46%, #f2f2f7 100%);
 }
 
 .route-kicker {
   width: fit-content;
-  min-height: 42px;
+  min-height: 44px;
   display: inline-flex;
   align-items: center;
   gap: 9px;
-  padding: 0 13px;
+  padding: 0 14px;
   border: 1px solid var(--line);
   border-radius: 8px;
   color: var(--text-strong);
-  background: rgba(255, 255, 255, 0.74);
-  font-weight: 700;
+  background: var(--surface-glass);
+  box-shadow: 0 12px 34px rgba(29, 29, 31, 0.06);
+  backdrop-filter: blur(22px) saturate(1.25);
+  font-weight: 750;
 }
 
 .route-hero {
@@ -98,8 +110,8 @@ a {
 .route-hero h1 {
   margin: 0;
   color: var(--text-strong);
-  font-size: 56px;
-  line-height: 1.08;
+  font-size: clamp(42px, 7vw, 72px);
+  line-height: 1;
   letter-spacing: 0;
 }
 
@@ -108,7 +120,7 @@ a {
   margin: 22px 0 0;
   color: var(--muted);
   font-size: 19px;
-  line-height: 1.7;
+  line-height: 1.58;
 }
 
 .route-grid {
@@ -123,8 +135,11 @@ a {
   padding: 20px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.72);
-  box-shadow: var(--shadow-soft);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(255, 255, 255, 0.64)),
+    rgba(255, 255, 255, 0.7);
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(22px) saturate(1.18);
 }
 
 .route-panel svg {
