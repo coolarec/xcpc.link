@@ -12,6 +12,13 @@ import { FolderOpen, Layers, Sparkles } from '@lucide/vue'
       <h1>把链接整理成可以回看的专题。</h1>
       <p>专题页会用于收藏夹、研究包和项目资料集。现在先保留内容分区和卡片密度。</p>
     </div>
+    <div class="route-showcase route-showcase-green" aria-hidden="true">
+      <div class="route-screen">
+        <span>Collections</span>
+        <strong>12</strong>
+        <p>Curated algorithm packs with quiet structure and review-ready grouping.</p>
+      </div>
+    </div>
     <div class="route-grid" aria-label="专题结构">
       <article class="route-panel">
         <Layers :size="22" aria-hidden="true" />

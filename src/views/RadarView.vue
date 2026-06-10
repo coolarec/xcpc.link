@@ -12,6 +12,13 @@ import { Compass, Gauge, Radar } from '@lucide/vue'
       <h1>让新内容自己浮上来。</h1>
       <p>雷达页预留给订阅源、最近访问、趋势主题和提醒机制，方便之后扩展自动发现能力。</p>
     </div>
+    <div class="route-showcase route-showcase-orange" aria-hidden="true">
+      <div class="route-screen">
+        <span>Radar</span>
+        <strong>Live</strong>
+        <p>Signals, recency, and topic heat arranged as a calm monitoring surface.</p>
+      </div>
+    </div>
     <div class="route-grid" aria-label="雷达模块">
       <article class="route-panel">
         <Radar :size="22" aria-hidden="true" />

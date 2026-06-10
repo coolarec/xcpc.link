@@ -12,6 +12,13 @@ import { Database, Settings, ShieldCheck } from '@lucide/vue'
       <h1>同步、导入和偏好设置放在这里。</h1>
       <p>后续可以接账号同步、导入导出、外观偏好和快捷操作。当前先完成信息架构。</p>
     </div>
+    <div class="route-showcase route-showcase-pink" aria-hidden="true">
+      <div class="route-screen">
+        <span>Settings</span>
+        <strong>Sync</strong>
+        <p>Import, privacy, and appearance controls prepared for a system-style panel.</p>
+      </div>
+    </div>
     <div class="route-grid" aria-label="设置模块">
       <article class="route-panel">
         <Database :size="22" aria-hidden="true" />

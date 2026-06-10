@@ -12,6 +12,13 @@ import { Bookmark, Search, Tag } from '@lucide/vue'
       <h1>所有收藏，按状态安静排好。</h1>
       <p>这里会承载列表、搜索、标签过滤与批量整理。当前先保留页面结构，后续功能可以直接接入。</p>
     </div>
+    <div class="route-showcase route-showcase-blue" aria-hidden="true">
+      <div class="route-screen">
+        <span>Library</span>
+        <strong>128</strong>
+        <p>Saved references grouped by source, tag, and review status.</p>
+      </div>
+    </div>
     <div class="route-grid" aria-label="收藏库状态">
       <article class="route-panel">
         <Search :size="22" aria-hidden="true" />

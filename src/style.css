@@ -77,7 +77,7 @@ a {
 .route-page {
   min-height: 100svh;
   display: grid;
-  grid-template-columns: minmax(0, 1.06fr) minmax(320px, 0.78fr);
+  grid-template-columns: minmax(0, 1.02fr) minmax(360px, 0.86fr);
   align-content: center;
   align-items: center;
   gap: 24px 72px;
@@ -127,18 +127,16 @@ a {
 }
 
 .route-grid {
-  grid-column: 2;
-  grid-row: 1 / span 2;
+  grid-column: 1;
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
   width: 100%;
-  max-width: 440px;
-  justify-self: end;
+  max-width: 760px;
 }
 
 .route-panel {
-  min-height: 220px;
+  min-height: 188px;
   padding: 24px;
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -167,6 +165,83 @@ a {
   line-height: 1.65;
 }
 
+.route-showcase {
+  grid-column: 2;
+  grid-row: 1 / span 3;
+  width: min(100%, 480px);
+  min-height: 560px;
+  justify-self: end;
+  display: grid;
+  place-items: center;
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(242, 242, 247, 0.72)),
+    rgba(255, 255, 255, 0.74);
+  box-shadow:
+    0 42px 120px rgba(29, 29, 31, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(24px) saturate(1.2);
+}
+
+.route-screen {
+  width: 100%;
+  min-height: 500px;
+  display: grid;
+  align-content: end;
+  gap: 14px;
+  padding: 28px;
+  border: 1px solid rgba(29, 29, 31, 0.08);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.74), rgba(251, 251, 253, 0.48)),
+    linear-gradient(145deg, color-mix(in srgb, var(--route-accent, var(--blue)), transparent 74%), transparent 58%),
+    #ffffff;
+  box-shadow:
+    0 24px 70px rgba(29, 29, 31, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.route-screen span {
+  color: color-mix(in srgb, var(--route-accent, var(--blue)), #1d1d1f 18%);
+  font-size: 13px;
+  font-weight: 850;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.route-screen strong {
+  color: var(--text-strong);
+  font-size: clamp(68px, 10vw, 112px);
+  line-height: 0.9;
+  letter-spacing: 0;
+}
+
+.route-screen p {
+  max-width: 280px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.route-showcase-blue {
+  --route-accent: var(--blue);
+}
+
+.route-showcase-green {
+  --route-accent: var(--green);
+}
+
+.route-showcase-orange {
+  --route-accent: var(--orange);
+}
+
+.route-showcase-pink {
+  --route-accent: var(--pink);
+}
+
 @media (max-width: 900px) {
   .route-page {
     display: flex;
@@ -177,8 +252,18 @@ a {
   }
 
   .route-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     max-width: none;
+  }
+
+  .route-showcase {
+    width: 100%;
+    min-height: 360px;
+    justify-self: auto;
+  }
+
+  .route-screen {
+    min-height: 320px;
   }
 
   .route-hero h1 {
@@ -187,6 +272,22 @@ a {
 
   .route-hero p {
     font-size: 16px;
+  }
+}
+
+@media (max-width: 620px) {
+  .route-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .route-showcase {
+    min-height: 300px;
+    padding: 14px;
+  }
+
+  .route-screen {
+    min-height: 268px;
+    padding: 22px;
   }
 }
 
