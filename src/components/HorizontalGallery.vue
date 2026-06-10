@@ -126,8 +126,8 @@ onBeforeUnmount(() => {
   overflow: hidden;
   display: grid;
   align-content: center;
-  gap: 44px;
-  padding: 76px max(22px, calc((100vw - 1180px) / 2));
+  gap: 58px;
+  padding: 86px max(24px, calc((100vw - 1240px) / 2));
   color: #f5f5f7;
   background:
     radial-gradient(circle at 16% 18%, color-mix(in srgb, var(--accent), transparent 78%), transparent 28%),
@@ -136,7 +136,7 @@ onBeforeUnmount(() => {
 }
 
 .gallery-heading {
-  width: min(720px, 100%);
+  width: min(860px, 100%);
 }
 
 .gallery-heading p {
@@ -150,7 +150,7 @@ onBeforeUnmount(() => {
 
 .gallery-heading h2 {
   margin: 0;
-  font-size: clamp(42px, 8vw, 94px);
+  font-size: clamp(52px, 8.8vw, 112px);
   line-height: 0.95;
   letter-spacing: 0;
 }
@@ -166,13 +166,13 @@ onBeforeUnmount(() => {
 .horiz-gallery-strip {
   width: 132vw;
   min-width: max-content;
-  gap: 18px;
+  gap: 22px;
 }
 
 .gallery-card {
   position: relative;
-  width: clamp(320px, 30vw, 520px);
-  min-height: 420px;
+  width: clamp(360px, 32vw, 600px);
+  min-height: 480px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -227,14 +227,14 @@ onBeforeUnmount(() => {
 
 .gallery-card h3 {
   margin: 0;
-  font-size: clamp(30px, 4.2vw, 58px);
-  line-height: 1;
+  font-size: clamp(34px, 4.8vw, 66px);
+  line-height: 0.96;
   letter-spacing: 0;
 }
 
 .gallery-card p {
   max-width: 390px;
-  margin: 16px 0 0;
+  margin: 18px 0 0;
   color: rgba(245, 245, 247, 0.72);
   font-size: 16px;
   line-height: 1.6;
@@ -262,13 +262,13 @@ onBeforeUnmount(() => {
 
 @media (max-width: 720px) {
   .horizontal-gallery {
-    padding: 58px 18px;
-    gap: 30px;
+    padding: 64px 18px;
+    gap: 34px;
   }
 
   .gallery-card {
-    width: min(84vw, 360px);
-    min-height: 370px;
+    width: min(84vw, 380px);
+    min-height: 390px;
     padding: 22px;
   }
 

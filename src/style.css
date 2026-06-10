@@ -76,18 +76,21 @@ a {
 
 .route-page {
   min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 30px;
-  padding: 64px max(24px, calc((100vw - 1120px) / 2));
+  display: grid;
+  grid-template-columns: minmax(0, 1.06fr) minmax(320px, 0.78fr);
+  align-content: center;
+  align-items: center;
+  gap: 24px 72px;
+  padding: 72px max(28px, calc((100vw - 1180px) / 2));
   background:
-    radial-gradient(circle at 18% 16%, rgba(0, 122, 255, 0.1), transparent 28%),
-    radial-gradient(circle at 88% 72%, rgba(48, 209, 88, 0.08), transparent 24%),
-    linear-gradient(180deg, #ffffff 0%, var(--surface) 46%, #f2f2f7 100%);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(251, 251, 253, 0.92)),
+    radial-gradient(circle at 18% 16%, rgba(0, 122, 255, 0.08), transparent 30%),
+    radial-gradient(circle at 88% 72%, rgba(48, 209, 88, 0.06), transparent 28%),
+    #fbfbfd;
 }
 
 .route-kicker {
+  align-self: end;
   width: fit-content;
   min-height: 44px;
   display: inline-flex;
@@ -104,14 +107,14 @@ a {
 }
 
 .route-hero {
-  max-width: 760px;
+  max-width: 800px;
 }
 
 .route-hero h1 {
   margin: 0;
   color: var(--text-strong);
-  font-size: clamp(42px, 7vw, 72px);
-  line-height: 1;
+  font-size: clamp(56px, 8vw, 94px);
+  line-height: 0.96;
   letter-spacing: 0;
 }
 
@@ -124,15 +127,19 @@ a {
 }
 
 .route-grid {
+  grid-column: 2;
+  grid-row: 1 / span 2;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
-  max-width: 760px;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  width: 100%;
+  max-width: 440px;
+  justify-self: end;
 }
 
 .route-panel {
-  min-height: 172px;
-  padding: 20px;
+  min-height: 220px;
+  padding: 24px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background:
@@ -160,17 +167,22 @@ a {
   line-height: 1.65;
 }
 
-@media (max-width: 620px) {
-  .route-grid {
-    grid-template-columns: 1fr;
+@media (max-width: 900px) {
+  .route-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 30px;
+    padding: 64px 18px;
   }
 
-  .route-page {
-    padding-inline: 18px;
+  .route-grid {
+    grid-template-columns: 1fr;
+    max-width: none;
   }
 
   .route-hero h1 {
-    font-size: 36px;
+    font-size: 40px;
   }
 
   .route-hero p {

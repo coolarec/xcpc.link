@@ -486,13 +486,13 @@ onBeforeUnmount(() => {
         </div>
       </div>
 
-      <p class="demo-label">Cursor-driven perspective tilt</p>
+      <p class="demo-label">XCPC.LINK</p>
 
       <div ref="tiltLayer" class="tilt-layer">
         <div class="tilt-orbit" aria-hidden="true"></div>
         <div ref="tiltCore" class="tilt-core">
-          <span>FULL SCREEN</span>
-          <strong>TILT</strong>
+          <span>ALGORITHM COLLECTION</span>
+          <strong>XCPC</strong>
         </div>
         <div
           v-for="(panel, index) in tiltPanels"
@@ -566,9 +566,7 @@ onBeforeUnmount(() => {
   place-items: center;
   background:
     radial-gradient(circle at var(--cursor-x) var(--cursor-y), rgba(255, 255, 255, 0.92), transparent 24%),
-    radial-gradient(circle at 12% 18%, rgba(0, 122, 255, 0.12), transparent 28%),
-    radial-gradient(circle at 88% 26%, rgba(48, 209, 88, 0.1), transparent 26%),
-    linear-gradient(135deg, #f8fbff 0%, #ffffff 46%, #f5f5f7 100%);
+    linear-gradient(180deg, #ffffff 0%, #fbfbfd 48%, #f2f2f7 100%);
   transform-origin: center bottom;
   isolation: isolate;
 }
@@ -632,8 +630,8 @@ onBeforeUnmount(() => {
   z-index: 5;
   margin: 0;
   color: rgba(29, 29, 31, 0.56);
-  font-size: 14px;
-  font-weight: 800;
+  font-size: 15px;
+  font-weight: 850;
   letter-spacing: 0;
   text-transform: uppercase;
 }
@@ -641,8 +639,8 @@ onBeforeUnmount(() => {
 .tilt-layer {
   position: relative;
   z-index: 1;
-  width: min(76vw, 980px);
-  aspect-ratio: 1.55;
+  width: min(80vw, 1080px);
+  aspect-ratio: 1.62;
   transform-style: preserve-3d;
   will-change: transform;
 }
@@ -670,7 +668,7 @@ onBeforeUnmount(() => {
 }
 
 .tilt-core {
-  inset: 18% 23%;
+  inset: 16% 21%;
   display: grid;
   place-items: center;
   text-align: center;
@@ -680,14 +678,15 @@ onBeforeUnmount(() => {
 
 .tilt-core span {
   color: rgba(29, 29, 31, 0.55);
-  font-size: 14px;
-  font-weight: 800;
+  font-size: 13px;
+  font-weight: 850;
+  letter-spacing: 0;
 }
 
 .tilt-core strong {
   color: #1d1d1f;
-  font-size: 92px;
-  line-height: 1;
+  font-size: clamp(72px, 9vw, 132px);
+  line-height: 0.92;
   letter-spacing: 0;
 }
 
@@ -799,7 +798,8 @@ onBeforeUnmount(() => {
 .gallery-section {
   position: relative;
   z-index: 2;
-  background: #101012;
+  background:
+    linear-gradient(180deg, #1c1c1e 0%, #101012 32%, #000000 100%);
 }
 
 .motion-footer {
@@ -809,7 +809,7 @@ onBeforeUnmount(() => {
   overflow: hidden;
   display: grid;
   align-items: end;
-  background: #101012;
+  background: #000000;
   color: #f5f5f7;
 }
 
