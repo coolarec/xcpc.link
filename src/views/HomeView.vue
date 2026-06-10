@@ -7,14 +7,15 @@ import AlgorithmBackground from '../components/AlgorithmBackground.vue'
 import HeroDock from '../components/HeroDock.vue'
 import HeroTiltCards from '../components/HeroTiltCards.vue'
 import HorizontalGallery from '../components/HorizontalGallery.vue'
+import MotionFooter from '../components/MotionFooter.vue'
 
 gsap.registerPlugin(ScrollToPlugin, ScrollTrigger)
 
 const pageRoot = ref(null)
 const tiltSection = ref(null)
 const gallerySection = ref(null)
-const footerBar = ref(null)
-const footerPath = ref(null)
+const modeToggle = ref(null)
+const isDayMode = ref(false)
 
 const galleryGroups = [
   {
@@ -106,10 +107,24 @@ const dockItems = [
   { label: 'Struct', glyph: 'D' },
 ]
 
-const footerDownPath = 'M0-0.3C0-0.3,464,156,1139,156S2278-0.3,2278-0.3V683H0V-0.3z'
-const footerCenterPath = 'M0-0.3C0-0.3,464,0,1139,0S2278-0.3,2278-0.3V683H0V-0.3z'
-
 let context
+
+const toggleTheme = () => {
+  isDayMode.value = !isDayMode.value
+
+  if (!modeToggle.value) return
+
+  gsap.fromTo(
+    modeToggle.value,
+    { scale: 0.94 },
+    {
+      scale: 1,
+      duration: 0.34,
+      ease: 'back.out(2)',
+      overwrite: true,
+    },
+  )
+}
 
 const scrollToGallery = (index) => {
   const target = gallerySection.value?.querySelectorAll('.horizontal-gallery')[index]
@@ -132,8 +147,6 @@ onMounted(async () => {
   const root = pageRoot.value
   const tilt = tiltSection.value
   const second = gallerySection.value
-  const footer = footerBar.value
-  const footerShape = footerPath.value
 
   if (!root) return
 
@@ -168,32 +181,6 @@ onMounted(async () => {
         })
     }
 
-    if (footer && footerShape) {
-      const bounceFooter = (velocity) => {
-        const variation = gsap.utils.clamp(-0.35, 0.35, velocity / 10000)
-
-        gsap.fromTo(
-          footerShape,
-          { attr: { d: footerDownPath } },
-          {
-            attr: { d: footerCenterPath },
-            duration: 2,
-            ease: `elastic.out(${1 + Math.abs(variation)}, ${0.55 - Math.abs(variation) * 0.3})`,
-            overwrite: true,
-          },
-        )
-      }
-
-      gsap.set(footerShape, { attr: { d: footerCenterPath } })
-
-      ScrollTrigger.create({
-        trigger: footer,
-        start: 'top bottom',
-        onEnter: (self) => bounceFooter(self.getVelocity()),
-        onEnterBack: (self) => bounceFooter(self.getVelocity()),
-      })
-    }
-
     ScrollTrigger.refresh()
   }, root)
 })
@@ -204,9 +191,20 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <main ref="pageRoot" class="motion-page">
+  <main ref="pageRoot" class="motion-page theme-scope" :class="{ 'is-day': isDayMode }">
     <section ref="tiltSection" class="tilt-section" aria-label="Cursor-driven perspective tilt">
       <AlgorithmBackground />
+      <button
+        ref="modeToggle"
+        class="mode-toggle"
+        type="button"
+        :aria-label="isDayMode ? 'Switch to night mode' : 'Switch to day mode'"
+        :aria-pressed="isDayMode"
+        @click="toggleTheme"
+      >
+        <span class="mode-icon mode-icon-sun" aria-hidden="true"></span>
+        <span class="mode-icon mode-icon-moon" aria-hidden="true"></span>
+      </button>
       <p class="demo-label">XCPC.LINK</p>
       <HeroTiltCards />
       <HeroDock :items="dockItems" @select="scrollToGallery" />
@@ -224,20 +222,7 @@ onBeforeUnmount(() => {
       />
     </section>
 
-    <footer ref="footerBar" class="motion-footer" aria-label="Page footer">
-      <svg
-        class="footer-wave"
-        viewBox="0 0 2278 683"
-        preserveAspectRatio="none"
-        aria-hidden="true"
-      >
-        <path ref="footerPath" class="footer-wave-path" :d="footerCenterPath" />
-      </svg>
-      <div class="footer-inner">
-        <span>XCPC.LINK</span>
-        <strong>Algorithm collection system</strong>
-      </div>
-    </footer>
+    <MotionFooter />
   </main>
 </template>
 
@@ -245,20 +230,108 @@ onBeforeUnmount(() => {
 .motion-page {
   min-height: 100svh;
   overflow-x: hidden;
-  background: #f5f5f7;
-  color: #1d1d1f;
+  background: var(--page-bg);
+  color: var(--page-fg);
+  transition:
+    background-color 0.45s ease,
+    color 0.45s ease;
 }
 
 .tilt-section {
+  --light-x: 50%;
+  --light-y: 44%;
   position: relative;
   z-index: 1;
   min-height: 100svh;
   overflow: hidden;
   display: grid;
   place-items: center;
-  background: #f5f5f7;
+  background: var(--hero-bg);
   transform-origin: center bottom;
   isolation: isolate;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23ffffff'/%3E%3C/svg%3E") 50 50, auto;
+}
+
+.tilt-section :deep(*) {
+  cursor: inherit;
+}
+
+.mode-toggle {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  z-index: 10;
+  width: 78px;
+  height: 42px;
+  overflow: hidden;
+  display: block;
+  border: 0;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--panel-bg), transparent 18%);
+  box-shadow:
+    inset 0 0 0 1px var(--soft-line),
+    0 16px 50px rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(24px) saturate(1.25);
+}
+
+.mode-toggle::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  z-index: 1;
+  width: 34px;
+  aspect-ratio: 1;
+  border-radius: 999px;
+  background: var(--page-fg);
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.22),
+    inset 0 0 0 1px color-mix(in srgb, var(--soft-line), transparent 20%);
+  transition:
+    transform 0.46s cubic-bezier(0.2, 0.8, 0.2, 1),
+    background-color 0.3s ease;
+}
+
+.is-day .mode-toggle::before {
+  transform: translateX(36px);
+}
+
+.mode-icon {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  width: 16px;
+  aspect-ratio: 1;
+  border-radius: 999px;
+  transform: translateY(-50%);
+  transition:
+    background-color 0.32s ease,
+    box-shadow 0.32s ease,
+    opacity 0.32s ease;
+}
+
+.mode-icon-sun {
+  right: 13px;
+  background: #ffcc33;
+  box-shadow:
+    0 0 0 3px rgba(255, 204, 51, 0.22),
+    0 0 12px rgba(255, 184, 42, 0.32);
+  opacity: 0.5;
+}
+
+.mode-icon-moon {
+  left: 13px;
+  background: #f5f7fb;
+  box-shadow: inset -5px -2px 0 #8f9ab2;
+  opacity: 1;
+}
+
+.is-day .mode-icon-sun {
+  opacity: 1;
+}
+
+.is-day .mode-icon-moon {
+  opacity: 0.5;
 }
 
 .demo-label {
@@ -267,7 +340,7 @@ onBeforeUnmount(() => {
   left: 32px;
   z-index: 5;
   margin: 0;
-  color: #86868b;
+  color: var(--muted-fg);
   font-size: 15px;
   font-weight: 700;
   letter-spacing: 0;
@@ -277,93 +350,13 @@ onBeforeUnmount(() => {
 .gallery-section {
   position: relative;
   z-index: 2;
-  background: #f5f5f7;
-}
-
-.motion-footer {
-  position: relative;
-  z-index: 3;
-  min-height: 34svh;
-  overflow: hidden;
-  display: grid;
-  align-items: end;
-  background: #f5f5f7;
-  color: #1d1d1f;
-}
-
-.footer-wave {
-  position: absolute;
-  inset: -1px 0 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.footer-wave-path {
-  fill: #ffffff;
-}
-
-.motion-footer::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: #f5f5f7;
-  opacity: 0.18;
-  pointer-events: none;
-}
-
-.footer-inner {
-  position: relative;
-  z-index: 1;
-  width: min(1180px, calc(100% - 44px));
-  margin: 0 auto;
-  padding: 0 0 42px;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 24px;
-  color: #1d1d1f;
-}
-
-.footer-inner span,
-.footer-inner strong {
-  letter-spacing: 0;
-}
-
-.footer-inner span {
-  font-size: 14px;
-  font-weight: 700;
-  color: #86868b;
-}
-
-.footer-inner strong {
-  max-width: 520px;
-  font-family: "Sora", sans-serif;
-  font-weight: 800;
-  font-size: clamp(28px, 5vw, 64px);
-  line-height: 0.96;
-  text-align: right;
-  letter-spacing: -0.03em;
+  background: var(--page-bg);
 }
 
 @media (max-width: 860px) {
   .demo-label {
     top: 22px;
     left: 22px;
-  }
-
-  .motion-footer {
-    min-height: 30svh;
-  }
-
-  .footer-inner {
-    padding-bottom: 28px;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .footer-inner strong {
-    text-align: left;
   }
 }
 

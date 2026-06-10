@@ -166,8 +166,8 @@ onBeforeUnmount(() => {
   align-content: center;
   gap: 42px;
   padding: 86px max(24px, calc((100vw - 1240px) / 2));
-  color: #1d1d1f;
-  background: #f5f5f7;
+  color: var(--page-fg);
+  background: var(--page-bg);
 }
 
 .gallery-heading {
@@ -177,7 +177,7 @@ onBeforeUnmount(() => {
 
 .gallery-heading p {
   margin: 0 0 12px;
-  color: color-mix(in srgb, var(--accent), #1d1d1f 18%);
+  color: color-mix(in srgb, var(--accent), #ffffff 18%);
   font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -223,9 +223,11 @@ onBeforeUnmount(() => {
   padding: 24px;
   border: 0;
   border-radius: 18px;
-  background: #ffffff;
-  color: #1d1d1f;
-  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.05);
+  background:
+    radial-gradient(circle at 78% 20%, color-mix(in srgb, var(--accent), transparent 78%), transparent 34%),
+    var(--card-bg);
+  color: var(--page-fg);
+  box-shadow: var(--gallery-card-shadow);
 }
 
 .gallery-card::before {
@@ -235,7 +237,7 @@ onBeforeUnmount(() => {
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, #1d1d1f, var(--accent), #1d1d1f);
+  background: linear-gradient(90deg, #ffffff, var(--accent), #ffffff);
 }
 
 .gallery-index {
@@ -243,7 +245,7 @@ onBeforeUnmount(() => {
   top: 22px;
   left: 24px;
   z-index: 1;
-  color: #aeaeb2;
+  color: color-mix(in srgb, var(--muted-fg), transparent 18%);
   font-size: 14px;
   font-family: "Sora", sans-serif;
   font-weight: 700;
@@ -256,8 +258,8 @@ onBeforeUnmount(() => {
   aspect-ratio: 1;
   border: 0;
   border-radius: 18px;
-  background: #f5f5f7;
-  opacity: 0.72;
+  background: color-mix(in srgb, var(--panel-bg), var(--page-fg) 8%);
+  opacity: 0.9;
 }
 
 .gallery-card h3,
@@ -279,7 +281,7 @@ onBeforeUnmount(() => {
 .gallery-card p {
   max-width: 390px;
   margin: 18px 0 0;
-  color: #86868b;
+  color: var(--muted-fg);
   font-size: 16px;
   line-height: 1.6;
 }
@@ -298,8 +300,8 @@ onBeforeUnmount(() => {
   padding: 0 10px;
   border: 0;
   border-radius: 999px;
-  background: #f0f0f2;
-  color: #6e6e73;
+  background: color-mix(in srgb, var(--panel-bg), var(--page-fg) 8%);
+  color: var(--muted-fg);
   font-size: 12px;
   font-weight: 600;
 }

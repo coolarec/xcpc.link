@@ -113,8 +113,8 @@ onBeforeUnmount(() => {
   padding: 14px 16px 16px;
   border: 0;
   border-radius: 24px;
-  background: #ffffff;
-  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.05);
+  background: color-mix(in srgb, var(--panel-bg), transparent 22%);
+  box-shadow: var(--dock-shadow);
   backdrop-filter: blur(30px) saturate(1.42);
   transform: translateX(-50%);
 }
@@ -126,9 +126,9 @@ onBeforeUnmount(() => {
   place-items: center;
   border: 0;
   border-radius: 18px;
-  background: #f5f5f7;
-  color: #1d1d1f;
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.035);
+  background: color-mix(in srgb, var(--panel-bg), var(--page-fg) 8%);
+  color: var(--panel-fg);
+  box-shadow: inset 0 0 0 1px var(--soft-line);
   cursor: pointer;
   transform-origin: 50% 115%;
   will-change: transform;
@@ -140,8 +140,10 @@ onBeforeUnmount(() => {
   display: grid;
   place-items: center;
   border-radius: 14px;
-  background: #1d1d1f;
-  color: #f5f5f7;
+  background:
+    radial-gradient(circle at 32% 24%, rgba(255, 255, 255, 0.24), transparent 34%),
+    var(--panel-fg);
+  color: var(--page-bg);
   font-size: 18px;
   font-weight: 850;
   line-height: 1;

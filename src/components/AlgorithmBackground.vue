@@ -135,7 +135,7 @@ onBeforeUnmount(() => {
   overflow: hidden;
   padding: 30px 22px 20px;
   pointer-events: none;
-  background: #f5f5f7;
+  background: transparent;
   mask-image: linear-gradient(180deg, #000 0%, #000 72%, transparent 100%);
 }
 
@@ -151,7 +151,7 @@ onBeforeUnmount(() => {
 .algorithm-word {
   min-width: 0;
   opacity: var(--word-opacity);
-  color: rgba(0, 113, 227, 0.2);
+  color: color-mix(in srgb, var(--panel-fg), transparent 84%);
   font-family: "Sora", ui-monospace, "SFMono-Regular", Consolas, monospace;
   font-size: var(--word-size);
   font-weight: 800;
@@ -165,15 +165,15 @@ onBeforeUnmount(() => {
 }
 
 .algorithm-word-1 {
-  color: rgba(0, 180, 216, 0.18);
+  color: color-mix(in srgb, #5bd6ff, transparent 84%);
 }
 
 .algorithm-word-2 {
-  color: rgba(255, 107, 107, 0.16);
+  color: color-mix(in srgb, #ff92a6, transparent 86%);
 }
 
 .algorithm-word-3 {
-  color: rgba(52, 211, 153, 0.18);
+  color: color-mix(in srgb, #6be6bd, transparent 85%);
 }
 
 @media (max-width: 860px) {

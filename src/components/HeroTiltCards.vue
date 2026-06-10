@@ -63,6 +63,13 @@ const setupMotion = (isSmall) => {
       const rect = getTrackingRect()
       const pointerX = clamp01((event.clientX - rect.left) / rect.width)
       const pointerY = clamp01((event.clientY - rect.top) / rect.height)
+      const castX = (0.5 - pointerX) * titleShift * 1.15
+      const castY = (0.5 - pointerY) * titleShift * 0.72
+
+      section?.style.setProperty('--light-x', `${pointerX * 100}%`)
+      section?.style.setProperty('--light-y', `${pointerY * 100}%`)
+      root.value.style.setProperty('--cast-x', `${castX}px`)
+      root.value.style.setProperty('--cast-y', `${castY}px`)
 
       rotateX(gsap.utils.interpolate(rotationRange, -rotationRange, pointerY))
       rotateY(gsap.utils.interpolate(-rotationRange, rotationRange, pointerX))
@@ -89,6 +96,10 @@ const setupMotion = (isSmall) => {
       rotateY(0)
       coreX(0)
       coreY(0)
+      section?.style.setProperty('--light-x', '50%')
+      section?.style.setProperty('--light-y', '44%')
+      root.value.style.setProperty('--cast-x', '0px')
+      root.value.style.setProperty('--cast-y', '0px')
 
       if (title.value) {
         gsap.to(title.value, {
@@ -186,6 +197,7 @@ onBeforeUnmount(() => {
       <span>ALGORITHM COLLECTION</span>
       <strong ref="title">XCPC</strong>
     </div>
+    <div class="title-cast" aria-hidden="true">XCPC</div>
     <div
       v-for="(panel, index) in panels"
       :key="panel"
@@ -199,6 +211,8 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .tilt-layer {
+  --cast-x: 0px;
+  --cast-y: 0px;
   position: relative;
   z-index: 1;
   width: min(80vw, 1080px);
@@ -210,7 +224,7 @@ onBeforeUnmount(() => {
 .tilt-orbit {
   position: absolute;
   inset: 8%;
-  border: 1px solid rgba(29, 29, 31, 0.1);
+  border: 1px solid var(--hero-orbit-line);
   border-radius: 999px;
   transform: translateZ(-80px) rotateX(68deg);
 }
@@ -220,27 +234,26 @@ onBeforeUnmount(() => {
   position: absolute;
   border: 0;
   border-radius: 18px;
-  background: #ffffff;
-  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.05);
+  background:
+    radial-gradient(circle at var(--light-x, 50%) var(--light-y, 44%), var(--panel-highlight), transparent 38%),
+    var(--panel-bg);
+  box-shadow: var(--hero-card-shadow);
 }
 
 .tilt-core {
   inset: 16% 21%;
-  z-index: 2;
+  z-index: 3;
   display: grid;
   place-items: center;
   text-align: center;
   padding: 24px;
   transform: translateZ(90px);
-  box-shadow:
-    0 28px 100px rgba(0, 113, 227, 0.16),
-    0 18px 54px rgba(0, 0, 0, 0.1),
-    0 1px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--hero-core-shadow);
   will-change: transform;
 }
 
 .tilt-core span {
-  color: #86868b;
+  color: var(--muted-fg);
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -250,18 +263,35 @@ onBeforeUnmount(() => {
 .tilt-core strong {
   display: inline-block;
   transform-origin: center;
-  color: #1d1d1f;
+  color: var(--panel-fg);
   font-family: "Sora", sans-serif;
   font-weight: 800;
   font-size: clamp(72px, 9vw, 132px);
   line-height: 0.92;
   letter-spacing: -0.03em;
   text-align: center;
-  text-shadow:
-    0 18px 42px rgba(0, 113, 227, 0.22),
-    0 24px 72px rgba(0, 0, 0, 0.18),
-    0 2px 0 rgba(255, 255, 255, 0.9);
+  text-shadow: var(--title-glow);
   will-change: transform;
+}
+
+.title-cast {
+  position: absolute;
+  inset: 16% 21%;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  color: var(--title-cast-color);
+  font-family: "Sora", sans-serif;
+  font-size: clamp(72px, 9vw, 132px);
+  font-weight: 900;
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  pointer-events: none;
+  filter: blur(8px);
+  opacity: var(--title-cast-opacity);
+  mix-blend-mode: multiply;
+  transform: translate3d(var(--cast-x), var(--cast-y), 132px) scale(1.08);
+  transition: transform 0.24s ease, opacity 0.24s ease;
 }
 
 .tilt-panel {
@@ -270,7 +300,7 @@ onBeforeUnmount(() => {
   height: 112px;
   display: grid;
   place-items: center;
-  color: #1d1d1f;
+  color: var(--panel-fg);
   font-family: "Sora", sans-serif;
   font-size: 28px;
   font-weight: 800;
