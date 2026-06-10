@@ -14,10 +14,6 @@ const props = defineProps({
     type: String,
     required: true,
   },
-  items: {
-    type: Array,
-    required: true,
-  },
   accent: {
     type: String,
     default: '#007aff',
@@ -58,6 +54,7 @@ onMounted(async () => {
       }
 
       const getScrollDistance = () => horizontalScrollLength * 1.05
+      const cards = () => gsap.utils.toArray(strip.value.children)
 
       refresh()
 
@@ -74,9 +71,8 @@ onMounted(async () => {
         ease: 'none',
       })
 
-      gsap.from('.gallery-card', {
+      gsap.from(cards(), {
         autoAlpha: 0,
-        y: 42,
         duration: 0.6,
         ease: 'power3.out',
         stagger: 0.08,
@@ -105,9 +101,8 @@ onMounted(async () => {
     const context = gsap.context(() => {
       gsap.set(strip.value, { clearProps: 'transform' })
 
-      gsap.from('.gallery-card', {
+      gsap.from(gsap.utils.toArray(strip.value.children), {
         autoAlpha: 0,
-        y: 28,
         duration: 0.5,
         ease: 'power3.out',
         stagger: 0.08,
@@ -139,19 +134,7 @@ onBeforeUnmount(() => {
 
     <div ref="wrapper" class="horiz-gallery-wrapper">
       <div ref="strip" class="horiz-gallery-strip">
-        <article
-          v-for="(item, index) in items"
-          :key="`${item.title}-${index}`"
-          class="gallery-card"
-        >
-          <span class="gallery-index">{{ String(index + 1).padStart(2, '0') }}</span>
-          <div class="gallery-orbit" aria-hidden="true"></div>
-          <h3>{{ item.title }}</h3>
-          <p>{{ item.description }}</p>
-          <div class="gallery-tags" aria-label="tags">
-            <span v-for="tag in item.tags" :key="tag">{{ tag }}</span>
-          </div>
-        </article>
+        <slot />
       </div>
     </div>
   </section>
@@ -159,6 +142,8 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .horizontal-gallery {
+  --gallery-card-width: clamp(360px, 32vw, 600px);
+  --gallery-card-height: 480px;
   position: relative;
   min-height: 100svh;
   overflow: hidden;
@@ -209,105 +194,23 @@ onBeforeUnmount(() => {
 .horiz-gallery-strip {
   width: 118vw;
   min-width: max-content;
+  align-items: stretch;
   gap: 50px;
 }
 
-.gallery-card {
-  position: relative;
-  width: clamp(360px, 32vw, 600px);
-  min-height: 480px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: 24px;
-  border: 0;
-  border-radius: 18px;
-  background:
-    radial-gradient(circle at 78% 20%, color-mix(in srgb, var(--accent), transparent 78%), transparent 34%),
-    var(--card-bg);
-  color: var(--page-fg);
-  box-shadow: var(--gallery-card-shadow);
-}
-
-.gallery-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, #ffffff, var(--accent), #ffffff);
-}
-
-.gallery-index {
-  position: absolute;
-  top: 22px;
-  left: 24px;
-  z-index: 1;
-  color: color-mix(in srgb, var(--muted-fg), transparent 18%);
-  font-size: 14px;
-  font-family: "Sora", sans-serif;
-  font-weight: 700;
-}
-
-.gallery-orbit {
-  position: absolute;
-  inset: 18% 14% auto auto;
-  width: 210px;
-  aspect-ratio: 1;
-  border: 0;
-  border-radius: 18px;
-  background: color-mix(in srgb, var(--panel-bg), var(--page-fg) 8%);
-  opacity: 0.9;
-}
-
-.gallery-card h3,
-.gallery-card p,
-.gallery-tags {
-  position: relative;
-  z-index: 1;
-}
-
-.gallery-card h3 {
-  margin: 0;
-  font-family: "Sora", sans-serif;
-  font-weight: 800;
-  font-size: clamp(34px, 4.8vw, 66px);
-  line-height: 0.96;
-  letter-spacing: -0.03em;
-}
-
-.gallery-card p {
-  max-width: 390px;
-  margin: 18px 0 0;
-  color: var(--muted-fg);
-  font-size: 16px;
-  line-height: 1.6;
-}
-
-.gallery-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 22px;
-}
-
-.gallery-tags span {
-  min-height: 32px;
-  display: inline-flex;
-  align-items: center;
-  padding: 0 10px;
-  border: 0;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--panel-bg), var(--page-fg) 8%);
-  color: var(--muted-fg);
-  font-size: 12px;
-  font-weight: 600;
+.horiz-gallery-strip :deep(.gallery-card) {
+  flex: 0 0 var(--gallery-card-width);
+  width: var(--gallery-card-width);
+  height: var(--gallery-card-height);
+  min-height: var(--gallery-card-height);
+  max-height: var(--gallery-card-height);
+  align-self: stretch;
 }
 
 @media (max-width: 720px) {
   .horizontal-gallery {
+    --gallery-card-width: 100%;
+    --gallery-card-height: 360px;
     min-height: auto;
     padding: 64px 18px;
     gap: 28px;
@@ -334,10 +237,10 @@ onBeforeUnmount(() => {
     gap: 50px;
   }
 
-  .gallery-card {
+  .horiz-gallery-strip :deep(.gallery-card) {
     width: 100%;
-    min-height: 340px;
-    padding: 20px;
+    min-width: 0;
+    max-width: 100%;
   }
 }
 </style>
