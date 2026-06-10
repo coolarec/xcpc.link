@@ -2,15 +2,17 @@
 import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { gsap } from 'gsap'
 import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin'
+import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import HorizontalGallery from '../components/HorizontalGallery.vue'
 
-gsap.registerPlugin(ScrambleTextPlugin, ScrollTrigger)
+gsap.registerPlugin(ScrambleTextPlugin, ScrollToPlugin, ScrollTrigger)
 
 const pageRoot = ref(null)
 const tiltSection = ref(null)
 const tiltLayer = ref(null)
 const tiltCore = ref(null)
+const dockBar = ref(null)
 const gallerySection = ref(null)
 
 const tiltPanels = ['01', '02', '03', '04', '05', '06']
@@ -154,8 +156,28 @@ const galleryGroups = [
     ],
   },
 ]
+const dockItems = [
+  { label: 'Graph', glyph: 'G' },
+  { label: 'String', glyph: 'S' },
+  { label: 'Struct', glyph: 'D' },
+]
 
 let motionMedia
+
+const scrollToGallery = (index) => {
+  const target = gallerySection.value?.querySelectorAll('.horizontal-gallery')[index]
+
+  if (!target) return
+
+  gsap.to(window, {
+    duration: 1.15,
+    scrollTo: {
+      y: target,
+      offsetY: 0,
+    },
+    ease: 'power3.inOut',
+  })
+}
 
 onMounted(async () => {
   await nextTick()
@@ -166,6 +188,7 @@ onMounted(async () => {
     const tilt = tiltSection.value
     const layer = tiltLayer.value
     const core = tiltCore.value
+    const dock = dockBar.value
     const second = gallerySection.value
     const cleanup = []
 
@@ -266,6 +289,64 @@ onMounted(async () => {
         })
       }
 
+      if (dock) {
+        const icons = gsap.utils.toArray('.hero-dock-item')
+        const firstIcon = icons[0]
+
+        gsap.set(icons, {
+          transformOrigin: '50% 115%',
+          scale: 1,
+          x: 0,
+        })
+
+        const updateDock = (event) => {
+          if (!firstIcon) return
+
+          const min = firstIcon.offsetWidth + 10
+          const max = Math.min(104, min * 2.05)
+          const bound = min * Math.PI
+          const offset = dock.getBoundingClientRect().left + firstIcon.offsetLeft
+          const pointer = event.clientX - offset
+
+          icons.forEach((icon, index) => {
+            const distance = index * min + min / 2 - pointer
+            let x = 0
+            let scale = 1
+
+            if (-bound < distance && distance < bound) {
+              const rad = (distance / min) * 0.5
+              scale = 1 + (max / min - 1) * Math.cos(rad)
+              x = 2 * (max - min) * Math.sin(rad)
+            } else {
+              x = (-bound < distance ? 2 : -2) * (max - min)
+            }
+
+            gsap.to(icon, {
+              duration: 0.28,
+              x,
+              scale,
+              ease: 'power3.out',
+            })
+          })
+        }
+
+        const resetDock = () => {
+          gsap.to(icons, {
+            duration: 0.28,
+            x: 0,
+            scale: 1,
+            ease: 'power3.out',
+          })
+        }
+
+        dock.addEventListener('pointermove', updateDock)
+        dock.addEventListener('pointerleave', resetDock)
+        cleanup.push(() => {
+          dock.removeEventListener('pointermove', updateDock)
+          dock.removeEventListener('pointerleave', resetDock)
+        })
+      }
+
       if (tilt && second) {
         gsap
           .timeline({
@@ -353,6 +434,19 @@ onBeforeUnmount(() => {
         >
           <span>{{ panel }}</span>
         </div>
+      </div>
+
+      <div ref="dockBar" class="hero-dock" aria-label="Jump to algorithm sections">
+        <button
+          v-for="(item, index) in dockItems"
+          :key="item.label"
+          class="hero-dock-item"
+          type="button"
+          :aria-label="`Jump to ${item.label}`"
+          @click="scrollToGallery(index)"
+        >
+          <span>{{ item.glyph }}</span>
+        </button>
       </div>
     </section>
 
@@ -556,6 +650,63 @@ onBeforeUnmount(() => {
   transform: translateZ(152px) rotateZ(-7deg);
 }
 
+.hero-dock {
+  position: absolute;
+  left: 50%;
+  bottom: max(26px, env(safe-area-inset-bottom));
+  z-index: 8;
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  height: 82px;
+  padding: 11px;
+  border: 1px solid rgba(29, 29, 31, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.62);
+  box-shadow:
+    0 24px 70px rgba(29, 29, 31, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(24px) saturate(1.35);
+  transform: translateX(-50%);
+}
+
+.hero-dock-item {
+  width: 52px;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(29, 29, 31, 0.1);
+  border-radius: 8px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(245, 245, 247, 0.52)),
+    rgba(255, 255, 255, 0.64);
+  color: #1d1d1f;
+  box-shadow:
+    0 12px 28px rgba(29, 29, 31, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  transform-origin: 50% 115%;
+  will-change: transform;
+}
+
+.hero-dock-item span {
+  width: 30px;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: #1d1d1f;
+  color: #f5f5f7;
+  font-size: 15px;
+  font-weight: 850;
+  line-height: 1;
+}
+
+.hero-dock-item:focus-visible {
+  outline: 3px solid rgba(0, 122, 255, 0.34);
+  outline-offset: 4px;
+}
+
 .gallery-section {
   position: relative;
   z-index: 2;
@@ -597,6 +748,20 @@ onBeforeUnmount(() => {
   .tilt-panel {
     width: 116px;
     height: 86px;
+  }
+
+  .hero-dock {
+    height: 72px;
+    padding: 9px;
+  }
+
+  .hero-dock-item {
+    width: 46px;
+  }
+
+  .hero-dock-item span {
+    width: 27px;
+    font-size: 14px;
   }
 
 }
