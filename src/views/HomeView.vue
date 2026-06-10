@@ -183,21 +183,35 @@ onMounted(async () => {
   await nextTick()
 
   motionMedia = gsap.matchMedia()
-  motionMedia.add('(prefers-reduced-motion: no-preference)', () => {
-    const root = pageRoot.value
-    const tilt = tiltSection.value
-    const layer = tiltLayer.value
-    const core = tiltCore.value
-    const dock = dockBar.value
-    const second = gallerySection.value
-    const cleanup = []
+  motionMedia.add(
+    {
+      isSmall: '(max-width: 760px)',
+      reduceMotion: '(prefers-reduced-motion: reduce)',
+    },
+    ({ conditions }) => {
+      if (conditions.reduceMotion) return undefined
+
+      const isSmall = conditions.isSmall
+      const root = pageRoot.value
+      const tilt = tiltSection.value
+      const layer = tiltLayer.value
+      const core = tiltCore.value
+      const dock = dockBar.value
+      const second = gallerySection.value
+      const cleanup = []
 
     if (!root) return undefined
 
     const context = gsap.context(() => {
       if (tilt && layer && core) {
-        gsap.set(tilt, { perspective: 650 })
-        gsap.set(layer, { transformStyle: 'preserve-3d' })
+        const rotationRange = isSmall ? 6 : 15
+        const coreShift = isSmall ? 12 : 30
+
+        gsap.set(tilt, { perspective: isSmall ? 520 : 760 })
+        gsap.set(layer, {
+          transformStyle: 'preserve-3d',
+          transformOrigin: isSmall ? '50% 58%' : '50% 50%',
+        })
 
         gsap.utils.toArray('.algorithm-word').forEach((word, index) => {
           const text = word.dataset.word || ''
@@ -241,10 +255,10 @@ onMounted(async () => {
           const pointerX = event.clientX - rect.left
           const pointerY = event.clientY - rect.top
 
-          rotateX(gsap.utils.interpolate(15, -15, pointerY / rect.height))
-          rotateY(gsap.utils.interpolate(-15, 15, pointerX / rect.width))
-          coreX(gsap.utils.interpolate(-30, 30, pointerX / rect.width))
-          coreY(gsap.utils.interpolate(-30, 30, pointerY / rect.height))
+          rotateX(gsap.utils.interpolate(rotationRange, -rotationRange, pointerY / rect.height))
+          rotateY(gsap.utils.interpolate(-rotationRange, rotationRange, pointerX / rect.width))
+          coreX(gsap.utils.interpolate(-coreShift, coreShift, pointerX / rect.width))
+          coreY(gsap.utils.interpolate(-coreShift, coreShift, pointerY / rect.height))
           tilt.style.setProperty('--cursor-x', `${(pointerX / rect.width) * 100}%`)
           tilt.style.setProperty('--cursor-y', `${(pointerY / rect.height) * 100}%`)
         }
@@ -269,15 +283,42 @@ onMounted(async () => {
           tilt.removeEventListener('pointerleave', handlePointerLeave)
         })
 
-        gsap.from('.tilt-panel', {
-          autoAlpha: 0,
-          z: -180,
-          y: 44,
-          duration: 0.9,
-          ease: 'power3.out',
+        if (isSmall) {
+          gsap.from('.tilt-panel', {
+            autoAlpha: 0,
+            scale: 0.82,
+            y: 28,
+            duration: 0.72,
+            ease: 'back.out(1.4)',
+            stagger: {
+              amount: 0.34,
+              from: 'center',
+            },
+          })
+        } else {
+          gsap.from('.tilt-panel', {
+            autoAlpha: 0,
+            z: -180,
+            y: 44,
+            duration: 0.9,
+            ease: 'power3.out',
+            stagger: {
+              amount: 0.42,
+              from: 'center',
+            },
+          })
+        }
+
+        gsap.to('.tilt-panel', {
+          y: isSmall ? 8 : 14,
+          delay: isSmall ? 0.72 : 0.9,
+          duration: isSmall ? 2.4 : 3.2,
+          ease: 'sine.inOut',
+          repeat: -1,
+          yoyo: true,
           stagger: {
-            amount: 0.42,
-            from: 'center',
+            each: isSmall ? 0.12 : 0.18,
+            from: 'random',
           },
         })
 
