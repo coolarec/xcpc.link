@@ -27,6 +27,10 @@ const props = defineProps({
     default: 'left',
     validator: (value) => ['left', 'right'].includes(value),
   },
+  scrollDistanceRatio: {
+    type: Number,
+    default: 0.58,
+  },
 })
 
 const root = ref(null)
@@ -53,6 +57,11 @@ onMounted(async () => {
         horizontalScrollLength = Math.max(0, pinWrapWidth - window.innerWidth)
       }
 
+      const getScrollDistance = () => {
+        const ratio = gsap.utils.clamp(0.25, 1.6, props.scrollDistanceRatio)
+        return Math.max(window.innerWidth * 0.35, horizontalScrollLength * ratio)
+      }
+
       refresh()
 
       const tween = gsap.to(strip.value, {
@@ -61,7 +70,7 @@ onMounted(async () => {
           trigger: root.value,
           pin: root.value,
           start: 'top top',
-          end: () => `+=${pinWrapWidth}`,
+          end: () => `+=${getScrollDistance()}`,
           invalidateOnRefresh: true,
         },
         x: () => (props.direction === 'left' ? -horizontalScrollLength : horizontalScrollLength),
@@ -195,7 +204,7 @@ onBeforeUnmount(() => {
 }
 
 .horiz-gallery-strip {
-  width: 132vw;
+  width: 118vw;
   min-width: max-content;
   gap: 22px;
 }
