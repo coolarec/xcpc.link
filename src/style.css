@@ -1,30 +1,36 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Sora:wght@400;600;700;800&display=swap");
+
 :root {
   font-family:
-    -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI",
-    sans-serif;
+    "DM Sans", -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display",
+    "Segoe UI", sans-serif;
   color: #1d1d1f;
-  background: #fbfbfd;
+  background: #f5f5f7;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color-scheme: light;
 
-  --surface: #fbfbfd;
+  --surface: #f5f5f7;
   --surface-soft: #f5f5f7;
-  --surface-elevated: rgba(255, 255, 255, 0.82);
-  --surface-glass: rgba(255, 255, 255, 0.68);
-  --text: #3a3a3c;
+  --surface-elevated: #ffffff;
+  --surface-glass: #ffffff;
+  --text: #1d1d1f;
   --text-strong: #1d1d1f;
-  --muted: #6e6e73;
-  --line: rgba(29, 29, 31, 0.08);
-  --line-strong: rgba(29, 29, 31, 0.14);
-  --blue: #007aff;
-  --green: #30d158;
-  --orange: #ff9f0a;
-  --pink: #ff2d55;
-  --shadow-soft: 0 28px 80px rgba(29, 29, 31, 0.08);
-  --shadow-card: 0 18px 56px rgba(29, 29, 31, 0.1);
+  --muted: #86868b;
+  --tertiary: #aeaeb2;
+  --pill-bg: #f0f0f2;
+  --pill-text: #6e6e73;
+  --line: rgba(0, 0, 0, 0.045);
+  --line-strong: rgba(0, 0, 0, 0.08);
+  --blue: #0071e3;
+  --cyan: #00b4d8;
+  --green: #34d399;
+  --orange: #ff6b6b;
+  --pink: #ff6b6b;
+  --shadow-soft: 0 1px 8px rgba(0, 0, 0, 0.05);
+  --shadow-card: 0 1px 8px rgba(0, 0, 0, 0.05);
 }
 
 * {
@@ -48,7 +54,8 @@ body {
 body,
 button,
 input {
-  font: 16px/1.5 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+  font: 16px/1.5 "DM Sans", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI",
+    sans-serif;
 }
 
 button,
@@ -77,45 +84,50 @@ a {
 .route-page {
   min-height: 100svh;
   display: grid;
-  grid-template-columns: minmax(0, 1.02fr) minmax(360px, 0.86fr);
+  grid-template-columns: minmax(0, 1fr) minmax(350px, 0.82fr);
   align-content: center;
   align-items: center;
-  gap: 24px 72px;
+  gap: 6px;
   padding: 72px max(28px, calc((100vw - 1180px) / 2));
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(251, 251, 253, 0.92)),
-    radial-gradient(circle at 18% 16%, rgba(0, 122, 255, 0.08), transparent 30%),
-    radial-gradient(circle at 88% 72%, rgba(48, 209, 88, 0.06), transparent 28%),
-    #fbfbfd;
+  background: #f5f5f7;
 }
 
 .route-kicker {
   align-self: end;
   width: fit-content;
-  min-height: 44px;
+  min-height: 42px;
   display: inline-flex;
   align-items: center;
   gap: 9px;
   padding: 0 14px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
+  border: 0;
+  border-radius: 18px;
   color: var(--text-strong);
-  background: var(--surface-glass);
-  box-shadow: 0 12px 34px rgba(29, 29, 31, 0.06);
-  backdrop-filter: blur(22px) saturate(1.25);
-  font-weight: 750;
+  background: #ffffff;
+  box-shadow: var(--shadow-card);
+  font-weight: 700;
 }
 
 .route-hero {
   max-width: 800px;
+  min-height: 318px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 28px;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: var(--shadow-card);
 }
 
 .route-hero h1 {
   margin: 0;
   color: var(--text-strong);
+  font-family: "Sora", sans-serif;
+  font-weight: 700;
   font-size: clamp(56px, 8vw, 94px);
   line-height: 0.96;
-  letter-spacing: 0;
+  letter-spacing: -0.03em;
 }
 
 .route-hero p {
@@ -130,21 +142,18 @@ a {
   grid-column: 1;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
+  gap: 6px;
   width: 100%;
-  max-width: 760px;
+  max-width: 800px;
 }
 
 .route-panel {
-  min-height: 188px;
-  padding: 24px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(255, 255, 255, 0.64)),
-    rgba(255, 255, 255, 0.7);
+  min-height: 178px;
+  padding: 20px 22px;
+  border: 0;
+  border-radius: 18px;
+  background: #ffffff;
   box-shadow: var(--shadow-card);
-  backdrop-filter: blur(22px) saturate(1.18);
 }
 
 .route-panel svg {
@@ -154,9 +163,10 @@ a {
 .route-panel h2 {
   margin: 20px 0 8px;
   color: var(--text-strong);
+  font-family: "Sora", sans-serif;
   font-size: 22px;
   line-height: 1.22;
-  letter-spacing: 0;
+  letter-spacing: -0.03em;
 }
 
 .route-panel p {
@@ -173,16 +183,11 @@ a {
   justify-self: end;
   display: grid;
   place-items: center;
-  padding: 22px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(242, 242, 247, 0.72)),
-    rgba(255, 255, 255, 0.74);
-  box-shadow:
-    0 42px 120px rgba(29, 29, 31, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(24px) saturate(1.2);
+  padding: 6px;
+  border: 0;
+  border-radius: 24px;
+  background: #ffffff;
+  box-shadow: var(--shadow-card);
 }
 
 .route-screen {
@@ -192,30 +197,27 @@ a {
   align-content: end;
   gap: 14px;
   padding: 28px;
-  border: 1px solid rgba(29, 29, 31, 0.08);
-  border-radius: 8px;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.74), rgba(251, 251, 253, 0.48)),
-    linear-gradient(145deg, color-mix(in srgb, var(--route-accent, var(--blue)), transparent 74%), transparent 58%),
-    #ffffff;
-  box-shadow:
-    0 24px 70px rgba(29, 29, 31, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  border: 0;
+  border-radius: 18px;
+  background: #f5f5f7;
+  box-shadow: none;
 }
 
 .route-screen span {
   color: color-mix(in srgb, var(--route-accent, var(--blue)), #1d1d1f 18%);
   font-size: 13px;
-  font-weight: 850;
-  letter-spacing: 0;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .route-screen strong {
   color: var(--text-strong);
+  font-family: "Sora", sans-serif;
+  font-weight: 800;
   font-size: clamp(68px, 10vw, 112px);
   line-height: 0.9;
-  letter-spacing: 0;
+  letter-spacing: -0.03em;
 }
 
 .route-screen p {

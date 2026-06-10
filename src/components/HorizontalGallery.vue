@@ -167,32 +167,33 @@ onBeforeUnmount(() => {
   overflow: hidden;
   display: grid;
   align-content: center;
-  gap: 58px;
+  gap: 42px;
   padding: 86px max(24px, calc((100vw - 1240px) / 2));
   color: #1d1d1f;
-  background:
-    radial-gradient(circle at 18% 12%, color-mix(in srgb, var(--accent), transparent 86%), transparent 32%),
-    linear-gradient(180deg, #f5f5f7 0%, #ffffff 46%, #f2f2f7 100%);
+  background: #f5f5f7;
 }
 
 .gallery-heading {
   width: min(860px, 100%);
+  padding: 0 6px;
 }
 
 .gallery-heading p {
   margin: 0 0 12px;
   color: color-mix(in srgb, var(--accent), #1d1d1f 18%);
   font-size: 14px;
-  font-weight: 850;
-  letter-spacing: 0;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .gallery-heading h2 {
   margin: 0;
+  font-family: "Sora", sans-serif;
+  font-weight: 800;
   font-size: clamp(52px, 8.8vw, 112px);
   line-height: 0.95;
-  letter-spacing: 0;
+  letter-spacing: -0.03em;
 }
 
 .horiz-gallery-wrapper,
@@ -206,7 +207,7 @@ onBeforeUnmount(() => {
 .horiz-gallery-strip {
   width: 118vw;
   min-width: max-content;
-  gap: 22px;
+  gap: 6px;
 }
 
 .gallery-card {
@@ -217,27 +218,22 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  padding: 26px;
-  border: 1px solid rgba(29, 29, 31, 0.08);
-  border-radius: 8px;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.68)),
-    rgba(255, 255, 255, 0.78);
+  padding: 24px;
+  border: 0;
+  border-radius: 18px;
+  background: #ffffff;
   color: #1d1d1f;
-  box-shadow:
-    0 34px 90px rgba(29, 29, 31, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(28px) saturate(1.18);
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.05);
 }
 
 .gallery-card::before {
   content: '';
   position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(circle at 18% 10%, color-mix(in srgb, var(--accent), transparent 82%), transparent 36%),
-    radial-gradient(circle at 78% 16%, rgba(255, 255, 255, 0.62), transparent 28%);
-  opacity: 0.78;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #1d1d1f, var(--accent), #1d1d1f);
 }
 
 .gallery-index {
@@ -245,9 +241,10 @@ onBeforeUnmount(() => {
   top: 22px;
   left: 24px;
   z-index: 1;
-  color: rgba(29, 29, 31, 0.46);
+  color: #aeaeb2;
   font-size: 14px;
-  font-weight: 850;
+  font-family: "Sora", sans-serif;
+  font-weight: 700;
 }
 
 .gallery-orbit {
@@ -255,8 +252,10 @@ onBeforeUnmount(() => {
   inset: 18% 14% auto auto;
   width: 210px;
   aspect-ratio: 1;
-  border: 1px solid rgba(29, 29, 31, 0.1);
-  border-radius: 999px;
+  border: 0;
+  border-radius: 18px;
+  background: #f5f5f7;
+  opacity: 0.72;
 }
 
 .gallery-card h3,
@@ -268,15 +267,17 @@ onBeforeUnmount(() => {
 
 .gallery-card h3 {
   margin: 0;
+  font-family: "Sora", sans-serif;
+  font-weight: 800;
   font-size: clamp(34px, 4.8vw, 66px);
   line-height: 0.96;
-  letter-spacing: 0;
+  letter-spacing: -0.03em;
 }
 
 .gallery-card p {
   max-width: 390px;
   margin: 18px 0 0;
-  color: rgba(29, 29, 31, 0.68);
+  color: #86868b;
   font-size: 16px;
   line-height: 1.6;
 }
@@ -293,19 +294,19 @@ onBeforeUnmount(() => {
   display: inline-flex;
   align-items: center;
   padding: 0 10px;
-  border: 1px solid rgba(29, 29, 31, 0.1);
-  border-radius: 8px;
-  background: rgba(29, 29, 31, 0.045);
-  color: rgba(29, 29, 31, 0.7);
+  border: 0;
+  border-radius: 999px;
+  background: #f0f0f2;
+  color: #6e6e73;
   font-size: 12px;
-  font-weight: 750;
+  font-weight: 600;
 }
 
 @media (max-width: 720px) {
   .horizontal-gallery {
     min-height: auto;
     padding: 64px 18px;
-    gap: 34px;
+    gap: 28px;
   }
 
   .gallery-heading {
@@ -326,13 +327,13 @@ onBeforeUnmount(() => {
 
   .horiz-gallery-strip {
     grid-template-columns: 1fr;
-    gap: 14px;
+    gap: 6px;
   }
 
   .gallery-card {
     width: 100%;
     min-height: 340px;
-    padding: 22px;
+    padding: 20px;
   }
 }
 </style>
