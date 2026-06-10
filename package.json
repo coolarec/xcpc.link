@@ -1,0 +1,21 @@
+{
+  "name": "xcpc.link",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@lucide/vue": "^1.17.0",
+    "gsap": "^3.15.0",
+    "vue": "^3.5.34",
+    "vue-router": "^5.1.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.6",
+    "vite": "^8.0.12"
+  }
+}
