@@ -67,7 +67,7 @@ const backgroundRows = Array.from({ length: 12 }, (_, rowIndex) => ({
     return {
       word: algorithmWords[index % algorithmWords.length],
       size: `${12 + ((index * 7) % 9)}px`,
-      opacity: `${0.08 + rowIndex * 0.026}`,
+      opacity: `${0.37 - rowIndex * 0.026}`,
       repeatDelay: `${5 + ((index * 47) % 501) / 100}`,
       tone: index % 4,
     }
@@ -409,15 +409,15 @@ onBeforeUnmount(() => {
 
 .algorithm-row {
   width: 100%;
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
   align-items: baseline;
-  justify-content: space-between;
-  gap: 18px;
+  column-gap: 18px;
   white-space: nowrap;
 }
 
 .algorithm-word {
-  flex: 0 1 auto;
+  min-width: 0;
   opacity: var(--word-opacity);
   color: rgba(0, 122, 255, 0.24);
   font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
@@ -426,6 +426,8 @@ onBeforeUnmount(() => {
   line-height: 1;
   letter-spacing: 0;
   text-transform: uppercase;
+  overflow: hidden;
+  text-overflow: clip;
   white-space: nowrap;
   will-change: contents;
 }
