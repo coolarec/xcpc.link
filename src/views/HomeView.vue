@@ -669,6 +669,7 @@ onBeforeUnmount(() => {
 
 .tilt-core {
   inset: 16% 21%;
+  z-index: 2;
   display: grid;
   place-items: center;
   text-align: center;
@@ -691,6 +692,7 @@ onBeforeUnmount(() => {
 }
 
 .tilt-panel {
+  z-index: 1;
   width: 170px;
   height: 112px;
   display: grid;
@@ -904,16 +906,16 @@ onBeforeUnmount(() => {
   }
 
   .hero-dock {
-    height: 88px;
-    padding: 12px 13px 13px;
+    height: 98px;
+    padding: 13px 13px 15px;
   }
 
   .hero-dock-item {
-    width: 56px;
+    width: 64px;
   }
 
   .hero-dock-item span {
-    width: 33px;
+    width: 36px;
     font-size: 16px;
   }
 
@@ -957,12 +959,12 @@ onBeforeUnmount(() => {
   }
 
   .tilt-layer {
-    width: 94vw;
-    aspect-ratio: 0.72;
+    width: 90vw;
+    aspect-ratio: 0.86;
   }
 
   .tilt-core {
-    inset: 28% 10%;
+    inset: 29% 6%;
   }
 
   .tilt-core span {
@@ -974,39 +976,45 @@ onBeforeUnmount(() => {
   }
 
   .tilt-panel {
-    width: 86px;
-    height: 62px;
-    font-size: 20px;
+    width: 72px;
+    height: 52px;
+    font-size: 18px;
   }
 
   .tilt-panel-1 {
-    top: 6%;
-    left: 6%;
+    top: 7%;
+    left: 12%;
+    transform: translateZ(42px) rotateZ(-8deg);
   }
 
   .tilt-panel-2 {
     top: 8%;
-    right: 4%;
+    right: 10%;
+    transform: translateZ(42px) rotateZ(7deg);
   }
 
   .tilt-panel-3 {
-    top: 38%;
-    left: -2%;
+    top: 36%;
+    left: 4%;
+    transform: translateZ(34px) rotateZ(5deg);
   }
 
   .tilt-panel-4 {
     top: 39%;
-    right: -2%;
+    right: 10%;
+    transform: translateZ(34px) rotateZ(-5deg);
   }
 
   .tilt-panel-5 {
     bottom: 11%;
-    left: 8%;
+    left: 12%;
+    transform: translateZ(42px) rotateZ(8deg);
   }
 
   .tilt-panel-6 {
-    right: 8%;
-    bottom: 6%;
+    right: 12%;
+    bottom: 8%;
+    transform: translateZ(42px) rotateZ(-7deg);
   }
 
 }
