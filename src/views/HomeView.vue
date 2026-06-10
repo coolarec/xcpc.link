@@ -2,9 +2,10 @@
 import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { gsap } from 'gsap'
 import { MotionPathPlugin } from 'gsap/MotionPathPlugin'
+import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
-gsap.registerPlugin(MotionPathPlugin, ScrollTrigger)
+gsap.registerPlugin(MotionPathPlugin, ScrambleTextPlugin, ScrollTrigger)
 
 const pageRoot = ref(null)
 const tiltSection = ref(null)
@@ -15,6 +16,54 @@ const waypointBox = ref(null)
 const activeWaypoint = ref(0)
 
 const tiltPanels = ['01', '02', '03', '04', '05', '06']
+const algorithmWords = [
+  'DIJKSTRA',
+  'BELLMAN-FORD',
+  'FLOYD',
+  'SPFA',
+  'A*',
+  'KMP',
+  'Z-ALGORITHM',
+  'MANACHER',
+  'AC-AUTOMATON',
+  'SUFFIX ARRAY',
+  'SAM',
+  'LCP',
+  'FFT',
+  'NTT',
+  'FWT',
+  'MILLER-RABIN',
+  'POLLARD-RHO',
+  'CRT',
+  'GAUSS',
+  'DSU',
+  'LCT',
+  'HLD',
+  'SEGMENT TREE',
+  'FENWICK',
+  'SPARSE TABLE',
+  'TREAP',
+  'SPLAY',
+  'DINIC',
+  'ISAP',
+  'MCMF',
+  'HOPCROFT-KARP',
+  'TARJAN',
+  'KOSARAJU',
+  'TOPO SORT',
+  'LCA',
+  'CENTROID',
+  'MO ALGORITHM',
+  'CDQ',
+  'KNUTH',
+  'MONOTONE QUEUE',
+  'CONVEX HULL',
+  'MIN-COST FLOW',
+]
+const backgroundWords = Array.from(
+  { length: 96 },
+  (_, index) => algorithmWords[index % algorithmWords.length],
+)
 const waypoints = [
   { label: '01', title: 'Waypoint One', tone: 'blue' },
   { label: '02', title: 'Waypoint Two', tone: 'green' },
@@ -47,6 +96,25 @@ onMounted(async () => {
       if (tilt && layer && core) {
         gsap.set(tilt, { perspective: 650 })
         gsap.set(layer, { transformStyle: 'preserve-3d' })
+
+        gsap.utils.toArray('.algorithm-word').forEach((word, index) => {
+          const text = word.dataset.word || ''
+          word.textContent = ''
+
+          gsap.to(word, {
+            duration: 1.4 + (index % 5) * 0.18,
+            delay: (index % 12) * 0.035,
+            repeat: -1,
+            repeatDelay: 2 + (index % 7) * 0.16,
+            ease: 'none',
+            scrambleText: {
+              text,
+              chars: '01[]{}+-*/',
+              speed: 0.35,
+              revealDelay: 0.12,
+            },
+          })
+        })
 
         const rotateX = gsap.quickTo(layer, 'rotationX', {
           duration: 0.25,
@@ -219,6 +287,18 @@ onBeforeUnmount(() => {
 <template>
   <main ref="pageRoot" class="motion-page">
     <section ref="tiltSection" class="tilt-section" aria-label="Cursor-driven perspective tilt">
+      <div class="algorithm-band" aria-hidden="true">
+        <span
+          v-for="(word, index) in backgroundWords"
+          :key="`${word}-${index}`"
+          class="algorithm-word"
+          :class="`algorithm-word-${index % 4}`"
+          :data-word="word"
+        >
+          {{ word }}
+        </span>
+      </div>
+
       <p class="demo-label">Cursor-driven perspective tilt</p>
 
       <div ref="tiltLayer" class="tilt-layer">
@@ -285,10 +365,49 @@ onBeforeUnmount(() => {
   display: grid;
   place-items: center;
   background:
-    radial-gradient(circle at var(--cursor-x) var(--cursor-y), rgba(255, 255, 255, 0.8), transparent 24%),
-    linear-gradient(135deg, #f5f5f7 0%, #ffffff 44%, #e8eef8 100%);
+    radial-gradient(circle at var(--cursor-x) var(--cursor-y), rgba(255, 255, 255, 0.82), transparent 24%),
+    linear-gradient(135deg, #eef7ff 0%, #ffffff 46%, #f3fbef 100%);
   transform-origin: center bottom;
   isolation: isolate;
+}
+
+.algorithm-band {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 0;
+  height: 50%;
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  grid-auto-rows: minmax(24px, auto);
+  gap: 10px 16px;
+  overflow: hidden;
+  padding: 52px 34px 28px;
+  pointer-events: none;
+  mask-image: linear-gradient(180deg, #000 0%, #000 72%, transparent 100%);
+}
+
+.algorithm-word {
+  min-width: 0;
+  color: rgba(0, 122, 255, 0.24);
+  font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.algorithm-word-1 {
+  color: rgba(52, 199, 89, 0.24);
+}
+
+.algorithm-word-2 {
+  color: rgba(255, 45, 85, 0.18);
+}
+
+.algorithm-word-3 {
+  color: rgba(255, 149, 0, 0.22);
 }
 
 .demo-label {
@@ -306,6 +425,7 @@ onBeforeUnmount(() => {
 
 .tilt-layer {
   position: relative;
+  z-index: 1;
   width: min(76vw, 980px);
   aspect-ratio: 1.55;
   transform-style: preserve-3d;
@@ -406,8 +526,13 @@ onBeforeUnmount(() => {
   min-height: 320svh;
   overflow: hidden;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(245, 245, 247, 0.9)),
-    #f5f5f7;
+    linear-gradient(180deg, rgba(18, 19, 24, 0.96), rgba(6, 7, 10, 0.98)),
+    #0b0c10;
+  color: #f5f5f7;
+}
+
+.waypoint-section .demo-label {
+  color: rgba(245, 245, 247, 0.62);
 }
 
 .waypoint-field {
@@ -423,10 +548,11 @@ onBeforeUnmount(() => {
   align-content: center;
   gap: 14px;
   padding: 24px;
-  border: 1px solid rgba(29, 29, 31, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.72);
-  box-shadow: 0 28px 84px rgba(29, 29, 31, 0.1);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 28px 84px rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(24px) saturate(1.2);
 }
 
 .waypoint-start {
@@ -443,9 +569,9 @@ onBeforeUnmount(() => {
   display: grid;
   place-items: center;
   border-radius: 8px;
-  color: #fff;
-  background: #1d1d1f;
-  box-shadow: 0 20px 54px rgba(29, 29, 31, 0.22);
+  color: #101114;
+  background: #f5f5f7;
+  box-shadow: 0 20px 54px rgba(0, 0, 0, 0.34);
   will-change: transform;
 }
 
@@ -456,7 +582,7 @@ onBeforeUnmount(() => {
 
 .waypoint-start h2 {
   margin: 0;
-  color: #1d1d1f;
+  color: #f5f5f7;
   font-size: 42px;
   line-height: 1.1;
   letter-spacing: 0;
@@ -472,7 +598,7 @@ onBeforeUnmount(() => {
 
 .waypoint-target.is-active {
   opacity: 1;
-  border-color: rgba(29, 29, 31, 0.16);
+  border-color: rgba(255, 255, 255, 0.24);
   transform: translateY(-4px);
 }
 
@@ -511,14 +637,14 @@ onBeforeUnmount(() => {
 }
 
 .waypoint-target small {
-  color: rgba(29, 29, 31, 0.48);
+  color: rgba(245, 245, 247, 0.5);
   font-size: 14px;
   font-weight: 850;
 }
 
 .waypoint-target h3 {
   margin: 0;
-  color: #1d1d1f;
+  color: #f5f5f7;
   font-size: 38px;
   line-height: 1.08;
   letter-spacing: 0;
@@ -530,7 +656,7 @@ onBeforeUnmount(() => {
   left: 8%;
   right: 8%;
   height: 70%;
-  border: 1px dashed rgba(29, 29, 31, 0.12);
+  border: 1px dashed rgba(245, 245, 247, 0.14);
   border-radius: 50%;
   pointer-events: none;
 }
