@@ -704,37 +704,37 @@ onBeforeUnmount(() => {
 .tilt-panel-1 {
   top: 5%;
   left: 8%;
-  transform: translateZ(140px);
+  transform: translateZ(140px) rotateZ(-8deg);
 }
 
 .tilt-panel-2 {
   top: 6%;
   right: 10%;
-  transform: translateZ(118px);
+  transform: translateZ(118px) rotateZ(7deg);
 }
 
 .tilt-panel-3 {
   top: 42%;
   left: 0;
-  transform: translateZ(78px);
+  transform: translateZ(78px) rotateZ(5deg);
 }
 
 .tilt-panel-4 {
   top: 42%;
   right: 1%;
-  transform: translateZ(100px);
+  transform: translateZ(100px) rotateZ(-5deg);
 }
 
 .tilt-panel-5 {
   bottom: 5%;
   left: 18%;
-  transform: translateZ(124px);
+  transform: translateZ(124px) rotateZ(8deg);
 }
 
 .tilt-panel-6 {
   right: 20%;
   bottom: 1%;
-  transform: translateZ(152px);
+  transform: translateZ(152px) rotateZ(-7deg);
 }
 
 .hero-dock {
@@ -968,45 +968,7 @@ onBeforeUnmount(() => {
   }
 
   .tilt-panel {
-    width: 72px;
-    height: 52px;
-    font-size: 18px;
-  }
-
-  .tilt-panel-1 {
-    top: 7%;
-    left: 12%;
-    transform: translateZ(42px);
-  }
-
-  .tilt-panel-2 {
-    top: 8%;
-    right: 10%;
-    transform: translateZ(42px);
-  }
-
-  .tilt-panel-3 {
-    top: 36%;
-    left: 4%;
-    transform: translateZ(34px);
-  }
-
-  .tilt-panel-4 {
-    top: 39%;
-    right: 10%;
-    transform: translateZ(34px);
-  }
-
-  .tilt-panel-5 {
-    bottom: 11%;
-    left: 12%;
-    transform: translateZ(42px);
-  }
-
-  .tilt-panel-6 {
-    right: 12%;
-    bottom: 8%;
-    transform: translateZ(42px);
+    display: none;
   }
 
 }
