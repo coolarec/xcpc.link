@@ -12,6 +12,7 @@ const pageRoot = ref(null)
 const tiltSection = ref(null)
 const tiltLayer = ref(null)
 const tiltCore = ref(null)
+const tiltTitle = ref(null)
 const dockBar = ref(null)
 const gallerySection = ref(null)
 const footerBar = ref(null)
@@ -192,6 +193,7 @@ onMounted(async () => {
     const tilt = tiltSection.value
     const layer = tiltLayer.value
     const core = tiltCore.value
+    const title = tiltTitle.value
     const dock = dockBar.value
     const second = gallerySection.value
     const footer = footerBar.value
@@ -204,6 +206,7 @@ onMounted(async () => {
       if (tilt && layer && core) {
         const rotationRange = isSmall ? 6 : 15
         const coreShift = isSmall ? 12 : 30
+        const titleShift = isSmall ? 22 : 84
 
         gsap.set(tilt, { perspective: isSmall ? 520 : 760 })
         gsap.set(layer, {
@@ -257,6 +260,21 @@ onMounted(async () => {
           rotateY(gsap.utils.interpolate(-rotationRange, rotationRange, pointerX / rect.width))
           coreX(gsap.utils.interpolate(-coreShift, coreShift, pointerX / rect.width))
           coreY(gsap.utils.interpolate(-coreShift, coreShift, pointerY / rect.height))
+
+          if (title) {
+            const titleX = gsap.utils.clamp(-1, 1, (pointerX / rect.width - 0.5) * 2)
+            const titleY = gsap.utils.clamp(-1, 1, (pointerY / rect.height - 0.5) * 2)
+
+            gsap.to(title, {
+              x: titleX * titleShift,
+              y: titleY * titleShift,
+              scale: isSmall ? 1.02 : 1.045,
+              duration: 0.32,
+              ease: 'power2.out',
+              overwrite: 'auto',
+            })
+          }
+
           tilt.style.setProperty('--cursor-x', `${(pointerX / rect.width) * 100}%`)
           tilt.style.setProperty('--cursor-y', `${(pointerY / rect.height) * 100}%`)
         }
@@ -266,6 +284,16 @@ onMounted(async () => {
           rotateY(0)
           coreX(0)
           coreY(0)
+          if (title) {
+            gsap.to(title, {
+              x: 0,
+              y: 0,
+              scale: 1,
+              duration: 0.75,
+              ease: 'elastic.out(1, 0.45)',
+              overwrite: 'auto',
+            })
+          }
           tilt.style.setProperty('--cursor-x', '50%')
           tilt.style.setProperty('--cursor-y', '50%')
         }
@@ -492,7 +520,7 @@ onBeforeUnmount(() => {
         <div class="tilt-orbit" aria-hidden="true"></div>
         <div ref="tiltCore" class="tilt-core">
           <span>ALGORITHM COLLECTION</span>
-          <strong>XCPC</strong>
+          <strong ref="tiltTitle">XCPC</strong>
         </div>
         <div
           v-for="(panel, index) in tiltPanels"
@@ -681,12 +709,15 @@ onBeforeUnmount(() => {
 }
 
 .tilt-core strong {
+  display: inline-block;
+  transform-origin: center;
   color: #1d1d1f;
   font-family: "Sora", sans-serif;
   font-weight: 800;
   font-size: clamp(72px, 9vw, 132px);
   line-height: 0.92;
   letter-spacing: -0.03em;
+  will-change: transform;
 }
 
 .tilt-panel {

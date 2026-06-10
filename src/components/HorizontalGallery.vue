@@ -209,7 +209,7 @@ onBeforeUnmount(() => {
 .horiz-gallery-strip {
   width: 118vw;
   min-width: max-content;
-  gap: 6px;
+  gap: 50px;
 }
 
 .gallery-card {
@@ -329,7 +329,7 @@ onBeforeUnmount(() => {
 
   .horiz-gallery-strip {
     grid-template-columns: 1fr;
-    gap: 6px;
+    gap: 50px;
   }
 
   .gallery-card {
