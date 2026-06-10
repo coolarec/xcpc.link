@@ -25,29 +25,38 @@ defineProps({
 })
 
 const root = ref(null)
-const track = ref(null)
+const wrapper = ref(null)
+const strip = ref(null)
 let context
+let removeRefreshListener
 
 onMounted(async () => {
   await nextTick()
 
-  if (!root.value || !track.value) return
+  if (!root.value || !wrapper.value || !strip.value) return
 
   context = gsap.context(() => {
-    const getDistance = () => Math.max(0, track.value.scrollWidth - root.value.clientWidth)
+    let pinWrapWidth = 0
+    let horizontalScrollLength = 0
 
-    const tween = gsap.to(track.value, {
-      x: () => -getDistance(),
-      ease: 'none',
+    const refresh = () => {
+      pinWrapWidth = strip.value.scrollWidth
+      horizontalScrollLength = pinWrapWidth - window.innerWidth
+    }
+
+    refresh()
+
+    const tween = gsap.to(strip.value, {
       scrollTrigger: {
+        scrub: true,
         trigger: root.value,
+        pin: root.value,
         start: 'top top',
-        end: () => `+=${getDistance()}`,
-        pin: true,
-        scrub: 1,
-        anticipatePin: 1,
+        end: () => `+=${pinWrapWidth}`,
         invalidateOnRefresh: true,
       },
+      x: () => -horizontalScrollLength,
+      ease: 'none',
     })
 
     gsap.from('.gallery-card', {
@@ -63,6 +72,8 @@ onMounted(async () => {
       },
     })
 
+    ScrollTrigger.addEventListener('refreshInit', refresh)
+    removeRefreshListener = () => ScrollTrigger.removeEventListener('refreshInit', refresh)
     requestAnimationFrame(() => {
       tween.scrollTrigger?.refresh()
       ScrollTrigger.refresh()
@@ -71,6 +82,7 @@ onMounted(async () => {
 })
 
 onBeforeUnmount(() => {
+  removeRefreshListener?.()
   context?.revert()
 })
 </script>
@@ -82,20 +94,22 @@ onBeforeUnmount(() => {
       <h2>{{ title }}</h2>
     </div>
 
-    <div ref="track" class="gallery-track">
-      <article
-        v-for="(item, index) in items"
-        :key="`${item.title}-${index}`"
-        class="gallery-card"
-      >
-        <span class="gallery-index">{{ String(index + 1).padStart(2, '0') }}</span>
-        <div class="gallery-orbit" aria-hidden="true"></div>
-        <h3>{{ item.title }}</h3>
-        <p>{{ item.description }}</p>
-        <div class="gallery-tags" aria-label="tags">
-          <span v-for="tag in item.tags" :key="tag">{{ tag }}</span>
-        </div>
-      </article>
+    <div ref="wrapper" class="horiz-gallery-wrapper">
+      <div ref="strip" class="horiz-gallery-strip">
+        <article
+          v-for="(item, index) in items"
+          :key="`${item.title}-${index}`"
+          class="gallery-card"
+        >
+          <span class="gallery-index">{{ String(index + 1).padStart(2, '0') }}</span>
+          <div class="gallery-orbit" aria-hidden="true"></div>
+          <h3>{{ item.title }}</h3>
+          <p>{{ item.description }}</p>
+          <div class="gallery-tags" aria-label="tags">
+            <span v-for="tag in item.tags" :key="tag">{{ tag }}</span>
+          </div>
+        </article>
+      </div>
     </div>
   </section>
 </template>
@@ -135,11 +149,17 @@ onBeforeUnmount(() => {
   letter-spacing: 0;
 }
 
-.gallery-track {
-  width: max-content;
+.horiz-gallery-wrapper,
+.horiz-gallery-strip {
+  position: relative;
   display: flex;
-  gap: 18px;
+  flex-wrap: nowrap;
   will-change: transform;
+}
+
+.horiz-gallery-strip {
+  width: max-content;
+  gap: 18px;
 }
 
 .gallery-card {
@@ -242,7 +262,7 @@ onBeforeUnmount(() => {
     padding: 22px;
   }
 
-  .gallery-track {
+  .horiz-gallery-strip {
     gap: 12px;
   }
 }
