@@ -8,7 +8,6 @@ gsap.registerPlugin(ScrollTrigger)
 const pageRoot = ref(null)
 const tiltSection = ref(null)
 const tiltLayer = ref(null)
-const overscrollSection = ref(null)
 const waypointSection = ref(null)
 const activeWaypoint = ref(0)
 
@@ -153,44 +152,53 @@ onMounted(async () => {
         })
       }
 
-      if (overscrollSection.value) {
-        const pin = overscrollSection.value.querySelector('.overscroll-pin')
-        const timeline = gsap.timeline({
+      if (section && waypointSection.value) {
+        const handoffTimeline = gsap.timeline({
           scrollTrigger: {
-            trigger: overscrollSection.value,
+            trigger: section,
             start: 'top top',
-            end: '+=165%',
-            pin,
+            end: '+=100%',
+            pin: section,
+            pinSpacing: false,
             scrub: 1,
             anticipatePin: 1,
             invalidateOnRefresh: true,
           },
         })
 
-        timeline
+        handoffTimeline
           .to(
-            '.panel-a',
+            '.tilt-layer',
             {
-              yPercent: -34,
-              scale: 0.82,
-              autoAlpha: 0.28,
-              duration: 0.72,
+              scale: 0.9,
+              autoAlpha: 0.32,
+              duration: 0.78,
               ease: 'none',
             },
             0,
           )
-          .fromTo(
-            '.panel-b',
-            { yPercent: 118, scale: 0.94 },
+          .to(
+            '.tilt-section .demo-label',
             {
-              yPercent: -8,
+              y: -24,
+              autoAlpha: 0,
+              duration: 0.42,
+              ease: 'none',
+            },
+            0.1,
+          )
+          .fromTo(
+            waypointSection.value,
+            { yPercent: 112, scale: 0.96 },
+            {
+              yPercent: -5,
               scale: 1.02,
               duration: 0.76,
               ease: 'none',
             },
             0,
           )
-          .to('.panel-b', {
+          .to(waypointSection.value, {
             yPercent: 0,
             scale: 1,
             duration: 0.24,
@@ -199,24 +207,31 @@ onMounted(async () => {
       }
 
       if (waypointSection.value) {
-        gsap.utils.toArray('.waypoint-step').forEach((step, index) => {
-          ScrollTrigger.create({
-            trigger: step,
-            start: 'top center',
-            end: 'bottom center',
-            onEnter: () => activateWaypoint(index),
-            onEnterBack: () => activateWaypoint(index),
-          })
-        })
+        const waypointStart = () => waypointSection.value.offsetTop
+        const waypointEnd = () => document.documentElement.scrollHeight - window.innerHeight
 
         gsap.to('.waypoint-progress-fill', {
           height: '100%',
           ease: 'none',
           scrollTrigger: {
-            trigger: waypointSection.value,
-            start: 'top center',
-            end: 'bottom center',
+            start: waypointStart,
+            end: waypointEnd,
             scrub: true,
+            invalidateOnRefresh: true,
+          },
+        })
+
+        ScrollTrigger.create({
+          start: waypointStart,
+          end: waypointEnd,
+          invalidateOnRefresh: true,
+          onUpdate: (self) => {
+            const nextIndex = Math.min(
+              waypoints.length - 1,
+              Math.floor(self.progress * waypoints.length),
+            )
+
+            activateWaypoint(nextIndex)
           },
         })
       }
@@ -255,23 +270,6 @@ onBeforeUnmount(() => {
         >
           <span>{{ panel }}</span>
         </div>
-      </div>
-    </section>
-
-    <section
-      ref="overscrollSection"
-      class="overscroll-section"
-      aria-label="Pinned panels with overscroll"
-    >
-      <div class="overscroll-pin">
-        <article class="overscroll-panel panel-a">
-          <span>Pinned panel</span>
-          <strong>A</strong>
-        </article>
-        <article class="overscroll-panel panel-b">
-          <span>Overscroll panel</span>
-          <strong>B</strong>
-        </article>
       </div>
     </section>
 
@@ -334,6 +332,7 @@ onBeforeUnmount(() => {
   --cursor-x: 50%;
   --cursor-y: 50%;
   position: relative;
+  z-index: 1;
   min-height: 100svh;
   overflow: hidden;
   display: grid;
@@ -452,66 +451,13 @@ onBeforeUnmount(() => {
   transform: translateZ(152px) rotateZ(-7deg);
 }
 
-.overscroll-section {
-  min-height: 100svh;
-  background: #08090b;
-  color: #f5f5f7;
-}
-
-.overscroll-pin {
-  position: relative;
-  min-height: 100svh;
-  overflow: hidden;
-  display: grid;
-  place-items: center;
-}
-
-.overscroll-panel {
-  position: absolute;
-  width: min(74vw, 980px);
-  height: min(66svh, 650px);
-  display: grid;
-  place-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 8px;
-  box-shadow: 0 34px 110px rgba(0, 0, 0, 0.38);
-}
-
-.overscroll-panel span {
-  align-self: end;
-  color: rgba(255, 255, 255, 0.62);
-  font-size: 15px;
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
-.overscroll-panel strong {
-  align-self: start;
-  font-size: 180px;
-  line-height: 1;
-  letter-spacing: 0;
-}
-
-.panel-a {
-  z-index: 1;
-  background: linear-gradient(145deg, #1d1d1f, #2c2c2e);
-}
-
-.panel-b {
-  z-index: 2;
-  color: #1d1d1f;
-  background: linear-gradient(145deg, #ffffff, #eaf2ff);
-  transform: translateY(118%);
-}
-
-.panel-b span {
-  color: rgba(29, 29, 31, 0.56);
-}
-
 .waypoint-section {
+  position: relative;
+  z-index: 2;
   min-height: 100svh;
   padding: 12svh max(22px, calc((100vw - 1180px) / 2));
   background: #f5f5f7;
+  transform-origin: center top;
 }
 
 .waypoint-layout {
@@ -687,15 +633,6 @@ onBeforeUnmount(() => {
     height: 86px;
   }
 
-  .overscroll-panel {
-    width: calc(100% - 32px);
-    height: 64svh;
-  }
-
-  .overscroll-panel strong {
-    font-size: 120px;
-  }
-
   .waypoint-layout {
     grid-template-columns: 1fr;
     gap: 28px;
@@ -727,28 +664,13 @@ onBeforeUnmount(() => {
 @media (prefers-reduced-motion: reduce) {
   .tilt-layer,
   .tilt-panel,
-  .overscroll-panel,
   .waypoint-card,
   .waypoint-step {
     transition: none;
     transform: none;
   }
 
-  .overscroll-section,
-  .overscroll-pin {
-    min-height: auto;
-  }
-
-  .overscroll-pin {
-    gap: 16px;
-    padding: 80px 20px;
-  }
-
-  .overscroll-panel {
-    position: relative;
-  }
-
-  .panel-b {
+  .waypoint-section {
     transform: none;
   }
 }
