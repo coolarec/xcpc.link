@@ -32,63 +32,95 @@ const props = defineProps({
 const root = ref(null)
 const wrapper = ref(null)
 const strip = ref(null)
-let context
-let removeRefreshListener
+let motionMedia
 
 onMounted(async () => {
   await nextTick()
 
   if (!root.value || !wrapper.value || !strip.value) return
 
-  context = gsap.context(() => {
-    let pinWrapWidth = 0
-    let horizontalScrollLength = 0
+  motionMedia = gsap.matchMedia()
 
-    const refresh = () => {
-      pinWrapWidth = strip.value.scrollWidth
-      horizontalScrollLength = Math.max(0, pinWrapWidth - window.innerWidth)
+  motionMedia.add('(min-width: 721px)', () => {
+    let removeRefreshListener
+
+    const context = gsap.context(() => {
+      let pinWrapWidth = 0
+      let horizontalScrollLength = 0
+
+      const refresh = () => {
+        pinWrapWidth = strip.value.scrollWidth
+        horizontalScrollLength = Math.max(0, pinWrapWidth - window.innerWidth)
+      }
+
+      refresh()
+
+      const tween = gsap.to(strip.value, {
+        scrollTrigger: {
+          scrub: true,
+          trigger: root.value,
+          pin: root.value,
+          start: 'top top',
+          end: () => `+=${pinWrapWidth}`,
+          invalidateOnRefresh: true,
+        },
+        x: () => (props.direction === 'left' ? -horizontalScrollLength : horizontalScrollLength),
+        ease: 'none',
+      })
+
+      gsap.from('.gallery-card', {
+        autoAlpha: 0,
+        y: 42,
+        duration: 0.6,
+        ease: 'power3.out',
+        stagger: 0.08,
+        scrollTrigger: {
+          trigger: root.value,
+          start: 'top 70%',
+          once: true,
+        },
+      })
+
+      ScrollTrigger.addEventListener('refreshInit', refresh)
+      removeRefreshListener = () => ScrollTrigger.removeEventListener('refreshInit', refresh)
+      requestAnimationFrame(() => {
+        tween.scrollTrigger?.refresh()
+        ScrollTrigger.refresh()
+      })
+    }, root.value)
+
+    return () => {
+      removeRefreshListener?.()
+      context.revert()
     }
+  })
 
-    refresh()
+  motionMedia.add('(max-width: 720px)', () => {
+    const context = gsap.context(() => {
+      gsap.set(strip.value, { clearProps: 'transform' })
 
-    const tween = gsap.to(strip.value, {
-      scrollTrigger: {
-        scrub: true,
-        trigger: root.value,
-        pin: root.value,
-        start: 'top top',
-        end: () => `+=${pinWrapWidth}`,
-        invalidateOnRefresh: true,
-      },
-      x: () => (props.direction === 'left' ? -horizontalScrollLength : horizontalScrollLength),
-      ease: 'none',
-    })
+      gsap.from('.gallery-card', {
+        autoAlpha: 0,
+        y: 28,
+        duration: 0.5,
+        ease: 'power3.out',
+        stagger: 0.08,
+        scrollTrigger: {
+          trigger: root.value,
+          start: 'top 78%',
+          once: true,
+        },
+      })
 
-    gsap.from('.gallery-card', {
-      autoAlpha: 0,
-      y: 42,
-      duration: 0.6,
-      ease: 'power3.out',
-      stagger: 0.08,
-      scrollTrigger: {
-        trigger: root.value,
-        start: 'top 70%',
-        once: true,
-      },
-    })
+      requestAnimationFrame(() => ScrollTrigger.refresh())
+    }, root.value)
 
-    ScrollTrigger.addEventListener('refreshInit', refresh)
-    removeRefreshListener = () => ScrollTrigger.removeEventListener('refreshInit', refresh)
-    requestAnimationFrame(() => {
-      tween.scrollTrigger?.refresh()
-      ScrollTrigger.refresh()
-    })
-  }, root.value)
+    return () => context.revert()
+  })
 })
 
 onBeforeUnmount(() => {
-  removeRefreshListener?.()
-  context?.revert()
+  motionMedia?.revert()
 })
 </script>
 
@@ -262,18 +294,36 @@ onBeforeUnmount(() => {
 
 @media (max-width: 720px) {
   .horizontal-gallery {
+    min-height: auto;
     padding: 64px 18px;
     gap: 34px;
   }
 
-  .gallery-card {
-    width: min(84vw, 380px);
-    min-height: 390px;
-    padding: 22px;
+  .gallery-heading {
+    width: 100%;
+  }
+
+  .gallery-heading h2 {
+    font-size: clamp(42px, 13vw, 58px);
+  }
+
+  .horiz-gallery-wrapper,
+  .horiz-gallery-strip {
+    display: grid;
+    width: 100%;
+    min-width: 0;
+    transform: none !important;
   }
 
   .horiz-gallery-strip {
-    gap: 12px;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .gallery-card {
+    width: 100%;
+    min-height: 340px;
+    padding: 22px;
   }
 }
 </style>
