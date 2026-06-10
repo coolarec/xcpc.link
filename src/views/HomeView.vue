@@ -1,62 +1,31 @@
 <script setup>
 import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { gsap } from 'gsap'
+import { MotionPathPlugin } from 'gsap/MotionPathPlugin'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
-gsap.registerPlugin(ScrollTrigger)
+gsap.registerPlugin(MotionPathPlugin, ScrollTrigger)
 
 const pageRoot = ref(null)
 const tiltSection = ref(null)
 const tiltLayer = ref(null)
+const tiltCore = ref(null)
 const waypointSection = ref(null)
+const waypointBox = ref(null)
 const activeWaypoint = ref(0)
 
 const tiltPanels = ['01', '02', '03', '04', '05', '06']
 const waypoints = [
-  {
-    label: '01',
-    title: 'Waypoint One',
-    tone: 'blue',
-    rows: ['Alpha', 'Beta', 'Gamma'],
-  },
-  {
-    label: '02',
-    title: 'Waypoint Two',
-    tone: 'green',
-    rows: ['Delta', 'Epsilon', 'Zeta'],
-  },
-  {
-    label: '03',
-    title: 'Waypoint Three',
-    tone: 'amber',
-    rows: ['Eta', 'Theta', 'Iota'],
-  },
+  { label: '01', title: 'Waypoint One', tone: 'blue' },
+  { label: '02', title: 'Waypoint Two', tone: 'green' },
+  { label: '03', title: 'Waypoint Three', tone: 'amber' },
 ]
 
 let motionMedia
 
 function activateWaypoint(index) {
   if (activeWaypoint.value === index) return
-
   activeWaypoint.value = index
-  nextTick(() => {
-    const current = pageRoot.value?.querySelector(`[data-waypoint-card="${index}"]`)
-
-    if (!current) return
-
-    gsap.fromTo(
-      current.querySelectorAll('.waypoint-card-line, .waypoint-token'),
-      { autoAlpha: 0, y: 20 },
-      {
-        autoAlpha: 1,
-        y: 0,
-        duration: 0.45,
-        ease: 'power2.out',
-        stagger: 0.06,
-        overwrite: 'auto',
-      },
-    )
-  })
 }
 
 onMounted(async () => {
@@ -65,24 +34,74 @@ onMounted(async () => {
   motionMedia = gsap.matchMedia()
   motionMedia.add('(prefers-reduced-motion: no-preference)', () => {
     const root = pageRoot.value
-    const section = tiltSection.value
+    const tilt = tiltSection.value
     const layer = tiltLayer.value
+    const core = tiltCore.value
+    const second = waypointSection.value
+    const movingBox = waypointBox.value
     const cleanup = []
 
     if (!root) return undefined
 
     const context = gsap.context(() => {
-      if (section && layer) {
-        gsap.set(layer, {
-          transformPerspective: 1100,
-          transformOrigin: 'center center',
-          transformStyle: 'preserve-3d',
+      if (tilt && layer && core) {
+        gsap.set(tilt, { perspective: 650 })
+        gsap.set(layer, { transformStyle: 'preserve-3d' })
+
+        const rotateX = gsap.quickTo(layer, 'rotationX', {
+          duration: 0.25,
+          ease: 'power3.out',
+        })
+        const rotateY = gsap.quickTo(layer, 'rotationY', {
+          duration: 0.25,
+          ease: 'power3.out',
+        })
+        const coreX = gsap.quickTo(core, 'x', {
+          duration: 0.25,
+          ease: 'power3.out',
+        })
+        const coreY = gsap.quickTo(core, 'y', {
+          duration: 0.25,
+          ease: 'power3.out',
+        })
+
+        const handlePointerMove = (event) => {
+          const rect = tilt.getBoundingClientRect()
+          const pointerX = event.clientX - rect.left
+          const pointerY = event.clientY - rect.top
+
+          rotateX(gsap.utils.interpolate(15, -15, pointerY / rect.height))
+          rotateY(gsap.utils.interpolate(-15, 15, pointerX / rect.width))
+          coreX(gsap.utils.interpolate(-30, 30, pointerX / rect.width))
+          coreY(gsap.utils.interpolate(-30, 30, pointerY / rect.height))
+          tilt.style.setProperty('--cursor-x', `${(pointerX / rect.width) * 100}%`)
+          tilt.style.setProperty('--cursor-y', `${(pointerY / rect.height) * 100}%`)
+        }
+
+        const handlePointerLeave = () => {
+          rotateX(0)
+          rotateY(0)
+          coreX(0)
+          coreY(0)
+          tilt.style.setProperty('--cursor-x', '50%')
+          tilt.style.setProperty('--cursor-y', '50%')
+        }
+
+        tilt.addEventListener('mousemove', handlePointerMove)
+        tilt.addEventListener('pointermove', handlePointerMove)
+        tilt.addEventListener('mouseleave', handlePointerLeave)
+        tilt.addEventListener('pointerleave', handlePointerLeave)
+        cleanup.push(() => {
+          tilt.removeEventListener('mousemove', handlePointerMove)
+          tilt.removeEventListener('pointermove', handlePointerMove)
+          tilt.removeEventListener('mouseleave', handlePointerLeave)
+          tilt.removeEventListener('pointerleave', handlePointerLeave)
         })
 
         gsap.from('.tilt-panel', {
-          z: -160,
-          y: 42,
           autoAlpha: 0,
+          z: -180,
+          y: 44,
           duration: 0.9,
           ease: 'power3.out',
           stagger: {
@@ -92,147 +111,93 @@ onMounted(async () => {
         })
 
         gsap.from('.tilt-core', {
-          scale: 0.9,
           autoAlpha: 0,
-          duration: 0.8,
+          scale: 0.9,
+          duration: 0.75,
           ease: 'power3.out',
-        })
-
-        gsap.to('.tilt-ring', {
-          rotation: 360,
-          duration: 34,
-          repeat: -1,
-          ease: 'none',
-        })
-
-        const rotateX = gsap.quickTo(layer, 'rotationX', {
-          duration: 0.55,
-          ease: 'power3.out',
-        })
-        const rotateY = gsap.quickTo(layer, 'rotationY', {
-          duration: 0.55,
-          ease: 'power3.out',
-        })
-        const moveX = gsap.quickTo(layer, 'x', {
-          duration: 0.55,
-          ease: 'power3.out',
-        })
-        const moveY = gsap.quickTo(layer, 'y', {
-          duration: 0.55,
-          ease: 'power3.out',
-        })
-
-        const handlePointerMove = (event) => {
-          const bounds = section.getBoundingClientRect()
-          const x = (event.clientX - bounds.left) / bounds.width - 0.5
-          const y = (event.clientY - bounds.top) / bounds.height - 0.5
-
-          rotateY(x * 22)
-          rotateX(y * -16)
-          moveX(x * 24)
-          moveY(y * 18)
-          section.style.setProperty('--cursor-x', `${(x + 0.5) * 100}%`)
-          section.style.setProperty('--cursor-y', `${(y + 0.5) * 100}%`)
-        }
-
-        const handlePointerLeave = () => {
-          rotateX(0)
-          rotateY(0)
-          moveX(0)
-          moveY(0)
-          section.style.setProperty('--cursor-x', '50%')
-          section.style.setProperty('--cursor-y', '50%')
-        }
-
-        section.addEventListener('pointermove', handlePointerMove)
-        section.addEventListener('pointerleave', handlePointerLeave)
-        cleanup.push(() => {
-          section.removeEventListener('pointermove', handlePointerMove)
-          section.removeEventListener('pointerleave', handlePointerLeave)
         })
       }
 
-      if (section && waypointSection.value) {
-        const handoffTimeline = gsap.timeline({
-          scrollTrigger: {
-            trigger: section,
-            start: 'top top',
-            end: '+=100%',
-            pin: section,
-            pinSpacing: false,
-            scrub: 1,
-            anticipatePin: 1,
-            invalidateOnRefresh: true,
-          },
-        })
-
-        handoffTimeline
-          .to(
-            '.tilt-layer',
-            {
-              scale: 0.9,
-              autoAlpha: 0.32,
-              duration: 0.78,
-              ease: 'none',
+      if (tilt && second) {
+        gsap
+          .timeline({
+            scrollTrigger: {
+              trigger: tilt,
+              start: 'bottom bottom',
+              end: 'bottom top',
+              pin: true,
+              pinSpacing: false,
+              scrub: true,
+              invalidateOnRefresh: true,
             },
-            0,
-          )
-          .to(
-            '.tilt-section .demo-label',
-            {
-              y: -24,
-              autoAlpha: 0,
-              duration: 0.42,
-              ease: 'none',
-            },
-            0.1,
-          )
+          })
           .fromTo(
-            waypointSection.value,
-            { yPercent: 112, scale: 0.96 },
+            tilt,
+            { scale: 1, autoAlpha: 1 },
             {
-              yPercent: -5,
-              scale: 1.02,
-              duration: 0.76,
+              scale: 0.7,
+              autoAlpha: 0.5,
               ease: 'none',
+              duration: 0.9,
             },
-            0,
           )
-          .to(waypointSection.value, {
-            yPercent: 0,
-            scale: 1,
-            duration: 0.24,
+          .to(tilt, {
+            autoAlpha: 0,
             ease: 'none',
+            duration: 0.1,
           })
       }
 
-      if (waypointSection.value) {
-        const waypointStart = () => waypointSection.value.offsetTop
-        const waypointEnd = () => document.documentElement.scrollHeight - window.innerHeight
+      if (second && movingBox) {
+        let waypointTween
 
-        gsap.to('.waypoint-progress-fill', {
-          height: '100%',
-          ease: 'none',
-          scrollTrigger: {
-            start: waypointStart,
-            end: waypointEnd,
-            scrub: true,
-            invalidateOnRefresh: true,
-          },
-        })
+        const buildWaypointTween = () => {
+          waypointTween?.scrollTrigger?.kill()
+          waypointTween?.kill()
+          gsap.set(movingBox, { clearProps: 'transform' })
 
-        ScrollTrigger.create({
-          start: waypointStart,
-          end: waypointEnd,
-          invalidateOnRefresh: true,
-          onUpdate: (self) => {
-            const nextIndex = Math.min(
-              waypoints.length - 1,
-              Math.floor(self.progress * waypoints.length),
-            )
+          const boxRect = movingBox.getBoundingClientRect()
+          const boxCenter = {
+            x: boxRect.left + boxRect.width / 2,
+            y: boxRect.top + boxRect.height / 2,
+          }
+          const markers = gsap.utils.toArray('.waypoint-marker')
+          const path = markers.map((marker) => {
+            const markerRect = marker.getBoundingClientRect()
 
-            activateWaypoint(nextIndex)
-          },
+            return {
+              x: markerRect.left + markerRect.width / 2 - boxCenter.x,
+              y: markerRect.top + markerRect.height / 2 - boxCenter.y,
+            }
+          })
+
+          waypointTween = gsap.to(movingBox, {
+            ease: 'none',
+            duration: 1,
+            motionPath: {
+              path,
+              curviness: 1.5,
+            },
+            scrollTrigger: {
+              trigger: '.waypoint-start',
+              start: 'clamp(top center)',
+              endTrigger: '.waypoint-final',
+              end: 'clamp(top center)',
+              scrub: 1,
+              invalidateOnRefresh: true,
+              onUpdate: (self) => {
+                activateWaypoint(Math.min(waypoints.length - 1, Math.floor(self.progress * waypoints.length)))
+              },
+            },
+          })
+        }
+
+        buildWaypointTween()
+        window.addEventListener('resize', buildWaypointTween)
+        cleanup.push(() => {
+          window.removeEventListener('resize', buildWaypointTween)
+          waypointTween?.scrollTrigger?.kill()
+          waypointTween?.kill()
         })
       }
 
@@ -240,7 +205,7 @@ onMounted(async () => {
     }, root)
 
     return () => {
-      cleanup.forEach((removeListener) => removeListener())
+      cleanup.forEach((remove) => remove())
       context.revert()
     }
   })
@@ -257,8 +222,8 @@ onBeforeUnmount(() => {
       <p class="demo-label">Cursor-driven perspective tilt</p>
 
       <div ref="tiltLayer" class="tilt-layer">
-        <div class="tilt-ring" aria-hidden="true"></div>
-        <div class="tilt-core">
+        <div class="tilt-orbit" aria-hidden="true"></div>
+        <div ref="tiltCore" class="tilt-core">
           <span>FULL SCREEN</span>
           <strong>TILT</strong>
         </div>
@@ -274,47 +239,29 @@ onBeforeUnmount(() => {
     </section>
 
     <section ref="waypointSection" class="waypoint-section" aria-label="Scroll waypoints">
-      <div class="waypoint-layout">
-        <div class="waypoint-stage">
-          <p class="demo-label">Scroll waypoints</p>
-          <div class="waypoint-card-stack">
-            <article
-              v-for="(waypoint, index) in waypoints"
-              :key="waypoint.label"
-              class="waypoint-card"
-              :class="[`tone-${waypoint.tone}`, { 'is-active': activeWaypoint === index }]"
-              :data-waypoint-card="index"
-            >
-              <span class="waypoint-token">{{ waypoint.label }}</span>
-              <h2>{{ waypoint.title }}</h2>
-              <div class="waypoint-card-lines">
-                <span
-                  v-for="row in waypoint.rows"
-                  :key="row"
-                  class="waypoint-card-line"
-                >
-                  {{ row }}
-                </span>
-              </div>
-            </article>
+      <p class="demo-label">Scroll waypoints</p>
+
+      <div class="waypoint-field">
+        <article class="waypoint-node waypoint-start">
+          <div ref="waypointBox" class="waypoint-box">
+            <span>{{ waypoints[activeWaypoint].label }}</span>
           </div>
-        </div>
+          <h2>{{ waypoints[activeWaypoint].title }}</h2>
+        </article>
 
-        <div class="waypoint-progress" aria-hidden="true">
-          <span class="waypoint-progress-fill"></span>
-        </div>
+        <article
+          v-for="(waypoint, index) in waypoints"
+          :key="waypoint.label"
+          class="waypoint-node waypoint-target"
+          :class="[`waypoint-target-${index + 1}`, `tone-${waypoint.tone}`, { 'is-active': activeWaypoint === index }]"
+        >
+          <span class="waypoint-marker"></span>
+          <small>{{ waypoint.label }}</small>
+          <h3>{{ waypoint.title }}</h3>
+        </article>
 
-        <div class="waypoint-steps">
-          <article
-            v-for="(waypoint, index) in waypoints"
-            :key="waypoint.title"
-            class="waypoint-step"
-            :class="{ 'is-active': activeWaypoint === index }"
-          >
-            <span>{{ waypoint.label }}</span>
-            <h3>{{ waypoint.title }}</h3>
-          </article>
-        </div>
+        <span class="waypoint-path-line" aria-hidden="true"></span>
+        <span class="waypoint-final" aria-hidden="true"></span>
       </div>
     </section>
   </main>
@@ -338,8 +285,9 @@ onBeforeUnmount(() => {
   display: grid;
   place-items: center;
   background:
-    radial-gradient(circle at var(--cursor-x) var(--cursor-y), rgba(255, 255, 255, 0.76), transparent 25%),
+    radial-gradient(circle at var(--cursor-x) var(--cursor-y), rgba(255, 255, 255, 0.8), transparent 24%),
     linear-gradient(135deg, #f5f5f7 0%, #ffffff 44%, #e8eef8 100%);
+  transform-origin: center bottom;
   isolation: isolate;
 }
 
@@ -347,11 +295,11 @@ onBeforeUnmount(() => {
   position: absolute;
   top: 32px;
   left: 32px;
-  z-index: 3;
+  z-index: 5;
   margin: 0;
   color: rgba(29, 29, 31, 0.58);
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 0;
   text-transform: uppercase;
 }
@@ -364,7 +312,7 @@ onBeforeUnmount(() => {
   will-change: transform;
 }
 
-.tilt-ring {
+.tilt-orbit {
   position: absolute;
   inset: 8%;
   border: 1px solid rgba(29, 29, 31, 0.1);
@@ -389,7 +337,8 @@ onBeforeUnmount(() => {
   display: grid;
   place-items: center;
   text-align: center;
-  transform: translateZ(86px);
+  transform: translateZ(90px);
+  will-change: transform;
 }
 
 .tilt-core span {
@@ -454,159 +403,144 @@ onBeforeUnmount(() => {
 .waypoint-section {
   position: relative;
   z-index: 2;
-  min-height: 100svh;
-  padding: 12svh max(22px, calc((100vw - 1180px) / 2));
-  background: #f5f5f7;
-  transform-origin: center top;
+  min-height: 320svh;
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(245, 245, 247, 0.9)),
+    #f5f5f7;
 }
 
-.waypoint-layout {
+.waypoint-field {
   position: relative;
-  display: grid;
-  grid-template-columns: minmax(420px, 0.9fr) 2px minmax(280px, 0.7fr);
-  gap: 58px;
-  align-items: start;
+  min-height: 320svh;
 }
 
-.waypoint-stage {
-  position: sticky;
-  top: 8svh;
-  min-height: 84svh;
+.waypoint-node {
+  position: absolute;
+  width: min(32vw, 360px);
+  min-height: 220px;
   display: grid;
   align-content: center;
-}
-
-.waypoint-stage .demo-label {
-  position: static;
-  margin-bottom: 22px;
-}
-
-.waypoint-card-stack {
-  position: relative;
-  height: 560px;
+  gap: 14px;
+  padding: 24px;
   border: 1px solid rgba(29, 29, 31, 0.08);
   border-radius: 8px;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.62);
-  box-shadow: 0 32px 90px rgba(29, 29, 31, 0.1);
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 28px 84px rgba(29, 29, 31, 0.1);
 }
 
-.waypoint-card {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 38px;
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(24px) scale(0.98);
-  transition:
-    opacity 220ms ease,
-    transform 220ms ease,
-    visibility 220ms ease;
+.waypoint-start {
+  top: 16svh;
+  left: 50%;
+  transform: translateX(-50%);
+  justify-items: center;
+  text-align: center;
 }
 
-.waypoint-card.is-active {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0) scale(1);
-}
-
-.waypoint-token {
-  width: 64px;
-  height: 48px;
+.waypoint-box {
+  width: 78px;
+  height: 78px;
   display: grid;
   place-items: center;
   border-radius: 8px;
   color: #fff;
-  font-weight: 800;
+  background: #1d1d1f;
+  box-shadow: 0 20px 54px rgba(29, 29, 31, 0.22);
+  will-change: transform;
 }
 
-.tone-blue .waypoint-token {
+.waypoint-box span {
+  font-size: 22px;
+  font-weight: 850;
+}
+
+.waypoint-start h2 {
+  margin: 0;
+  color: #1d1d1f;
+  font-size: 42px;
+  line-height: 1.1;
+  letter-spacing: 0;
+}
+
+.waypoint-target {
+  opacity: 0.45;
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease,
+    border-color 180ms ease;
+}
+
+.waypoint-target.is-active {
+  opacity: 1;
+  border-color: rgba(29, 29, 31, 0.16);
+  transform: translateY(-4px);
+}
+
+.waypoint-target-1 {
+  top: 36%;
+  left: 9%;
+}
+
+.waypoint-target-2 {
+  top: 57%;
+  right: 9%;
+}
+
+.waypoint-target-3 {
+  top: 79%;
+  left: 34%;
+}
+
+.waypoint-marker {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: #1d1d1f;
+}
+
+.tone-blue .waypoint-marker {
   background: #007aff;
 }
 
-.tone-green .waypoint-token {
+.tone-green .waypoint-marker {
   background: #34c759;
 }
 
-.tone-amber .waypoint-token {
+.tone-amber .waypoint-marker {
   background: #ff9f0a;
 }
 
-.waypoint-card h2 {
+.waypoint-target small {
+  color: rgba(29, 29, 31, 0.48);
+  font-size: 14px;
+  font-weight: 850;
+}
+
+.waypoint-target h3 {
   margin: 0;
   color: #1d1d1f;
-  font-size: 72px;
-  line-height: 1;
-  letter-spacing: 0;
-}
-
-.waypoint-card-lines {
-  display: grid;
-  gap: 12px;
-}
-
-.waypoint-card-line {
-  min-height: 56px;
-  display: flex;
-  align-items: center;
-  padding: 0 18px;
-  border: 1px solid rgba(29, 29, 31, 0.08);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.76);
-  font-weight: 700;
-}
-
-.waypoint-progress {
-  position: sticky;
-  top: 8svh;
-  width: 2px;
-  height: 84svh;
-  overflow: hidden;
-  background: rgba(29, 29, 31, 0.08);
-}
-
-.waypoint-progress-fill {
-  display: block;
-  width: 100%;
-  height: 0;
-  background: linear-gradient(180deg, #007aff, #34c759 55%, #ff9f0a);
-}
-
-.waypoint-steps {
-  padding: 18svh 0;
-}
-
-.waypoint-step {
-  min-height: 70svh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  border-top: 1px solid rgba(29, 29, 31, 0.08);
-  opacity: 0.38;
-  transition:
-    opacity 180ms ease,
-    transform 180ms ease;
-}
-
-.waypoint-step.is-active {
-  opacity: 1;
-  transform: translateX(-4px);
-}
-
-.waypoint-step span {
-  color: rgba(29, 29, 31, 0.45);
-  font-weight: 800;
-}
-
-.waypoint-step h3 {
-  margin: 14px 0 0;
-  color: #1d1d1f;
-  font-size: 40px;
+  font-size: 38px;
   line-height: 1.08;
   letter-spacing: 0;
+}
+
+.waypoint-path-line {
+  position: absolute;
+  top: 20%;
+  left: 8%;
+  right: 8%;
+  height: 70%;
+  border: 1px dashed rgba(29, 29, 31, 0.12);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.waypoint-final {
+  position: absolute;
+  left: 50%;
+  bottom: 14svh;
+  width: 1px;
+  height: 1px;
 }
 
 @media (max-width: 860px) {
@@ -633,44 +567,34 @@ onBeforeUnmount(() => {
     height: 86px;
   }
 
-  .waypoint-layout {
-    grid-template-columns: 1fr;
-    gap: 28px;
+  .waypoint-node {
+    width: min(78vw, 360px);
   }
 
-  .waypoint-stage,
-  .waypoint-progress {
-    position: relative;
-    top: auto;
+  .waypoint-target-1 {
+    top: 34%;
+    left: 8%;
   }
 
-  .waypoint-progress {
-    display: none;
+  .waypoint-target-2 {
+    top: 56%;
+    right: 8%;
   }
 
-  .waypoint-card-stack {
-    height: 420px;
-  }
-
-  .waypoint-card h2 {
-    font-size: 44px;
-  }
-
-  .waypoint-steps {
-    padding: 0;
+  .waypoint-target-3 {
+    top: 78%;
+    left: 12%;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .tilt-section,
   .tilt-layer,
+  .tilt-core,
   .tilt-panel,
-  .waypoint-card,
-  .waypoint-step {
+  .waypoint-box,
+  .waypoint-target {
     transition: none;
-    transform: none;
-  }
-
-  .waypoint-section {
     transform: none;
   }
 }
