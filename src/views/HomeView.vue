@@ -67,7 +67,8 @@ const backgroundRows = Array.from({ length: 12 }, (_, rowIndex) => ({
     return {
       word: algorithmWords[index % algorithmWords.length],
       size: `${12 + ((index * 7) % 9)}px`,
-      opacity: `${0.17 + (index % 5) * 0.035}`,
+      opacity: `${0.08 + rowIndex * 0.026}`,
+      repeatDelay: `${5 + ((index * 47) % 501) / 100}`,
       tone: index % 4,
     }
   }),
@@ -107,13 +108,14 @@ onMounted(async () => {
 
         gsap.utils.toArray('.algorithm-word').forEach((word, index) => {
           const text = word.dataset.word || ''
+          const repeatDelay = Number.parseFloat(word.dataset.repeatDelay || '7')
           word.textContent = ''
 
           gsap.to(word, {
             duration: 1.4 + (index % 5) * 0.18,
             delay: (index % 12) * 0.035,
             repeat: -1,
-            repeatDelay: 2 + (index % 7) * 0.16,
+            repeatDelay,
             ease: 'none',
             scrambleText: {
               text,
@@ -307,6 +309,7 @@ onBeforeUnmount(() => {
             class="algorithm-word"
             :class="`algorithm-word-${item.tone}`"
             :data-word="item.word"
+            :data-repeat-delay="item.repeatDelay"
             :style="{
               '--word-size': item.size,
               '--word-opacity': item.opacity,
@@ -396,9 +399,10 @@ onBeforeUnmount(() => {
   height: 50%;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  justify-content: space-between;
+  gap: 0;
   overflow: hidden;
-  padding: 34px 22px 18px;
+  padding: 30px 22px 20px;
   pointer-events: none;
   mask-image: linear-gradient(180deg, #000 0%, #000 72%, transparent 100%);
 }
