@@ -880,12 +880,12 @@ onBeforeUnmount(() => {
   }
 
   .tilt-layer {
-    width: min(92vw, 620px);
-    aspect-ratio: 0.78;
+    width: min(90vw, 620px);
+    aspect-ratio: 0.86;
   }
 
   .tilt-core {
-    inset: 24% 12%;
+    inset: 28% 6%;
   }
 
   .tilt-core strong {
@@ -893,8 +893,7 @@ onBeforeUnmount(() => {
   }
 
   .tilt-panel {
-    width: 116px;
-    height: 86px;
+    display: none;
   }
 
   .hero-dock {
@@ -965,10 +964,6 @@ onBeforeUnmount(() => {
 
   .tilt-core strong {
     font-size: 46px;
-  }
-
-  .tilt-panel {
-    display: none;
   }
 
 }
