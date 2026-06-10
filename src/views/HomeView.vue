@@ -799,7 +799,7 @@ onBeforeUnmount(() => {
   position: relative;
   z-index: 2;
   background:
-    linear-gradient(180deg, #1c1c1e 0%, #101012 32%, #000000 100%);
+    linear-gradient(180deg, #f2f2f7 0%, #fbfbfd 48%, #f5f5f7 100%);
 }
 
 .motion-footer {
@@ -809,8 +809,8 @@ onBeforeUnmount(() => {
   overflow: hidden;
   display: grid;
   align-items: end;
-  background: #000000;
-  color: #f5f5f7;
+  background: #f5f5f7;
+  color: #1d1d1f;
 }
 
 .footer-wave {
@@ -822,7 +822,7 @@ onBeforeUnmount(() => {
 }
 
 .footer-wave-path {
-  fill: #fbfbfd;
+  fill: #ffffff;
 }
 
 .motion-footer::after {
