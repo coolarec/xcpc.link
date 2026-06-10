@@ -60,10 +60,14 @@ const algorithmWords = [
   'CONVEX HULL',
   'MIN-COST FLOW',
 ]
-const backgroundWords = Array.from(
-  { length: 96 },
-  (_, index) => algorithmWords[index % algorithmWords.length],
-)
+const backgroundWords = Array.from({ length: 118 }, (_, index) => ({
+  word: algorithmWords[index % algorithmWords.length],
+  x: `${((index * 37) % 108) - 5}%`,
+  y: `${(index * 53) % 94}%`,
+  rotate: `${((index * 29) % 38) - 19}deg`,
+  size: `${12 + ((index * 7) % 17)}px`,
+  opacity: `${0.16 + (index % 6) * 0.035}`,
+}))
 const waypoints = [
   { label: '01', title: 'Waypoint One', tone: 'blue' },
   { label: '02', title: 'Waypoint Two', tone: 'green' },
@@ -289,13 +293,20 @@ onBeforeUnmount(() => {
     <section ref="tiltSection" class="tilt-section" aria-label="Cursor-driven perspective tilt">
       <div class="algorithm-band" aria-hidden="true">
         <span
-          v-for="(word, index) in backgroundWords"
-          :key="`${word}-${index}`"
+          v-for="(item, index) in backgroundWords"
+          :key="`${item.word}-${index}`"
           class="algorithm-word"
           :class="`algorithm-word-${index % 4}`"
-          :data-word="word"
+          :data-word="item.word"
+          :style="{
+            '--word-x': item.x,
+            '--word-y': item.y,
+            '--word-rotate': item.rotate,
+            '--word-size': item.size,
+            '--word-opacity': item.opacity,
+          }"
         >
-          {{ word }}
+          {{ item.word }}
         </span>
       </div>
 
@@ -376,26 +387,28 @@ onBeforeUnmount(() => {
   inset: 0 0 auto;
   z-index: 0;
   height: 50%;
-  display: grid;
-  grid-template-columns: repeat(8, minmax(0, 1fr));
-  grid-auto-rows: minmax(24px, auto);
-  gap: 10px 16px;
   overflow: hidden;
-  padding: 52px 34px 28px;
+  padding: 0;
   pointer-events: none;
   mask-image: linear-gradient(180deg, #000 0%, #000 72%, transparent 100%);
 }
 
 .algorithm-word {
-  min-width: 0;
+  position: absolute;
+  top: var(--word-y);
+  left: var(--word-x);
+  opacity: var(--word-opacity);
+  transform: rotate(var(--word-rotate));
+  transform-origin: center;
   color: rgba(0, 122, 255, 0.24);
   font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
-  font-size: 15px;
+  font-size: var(--word-size);
   font-weight: 800;
   line-height: 1;
   letter-spacing: 0;
   text-transform: uppercase;
   white-space: nowrap;
+  will-change: contents;
 }
 
 .algorithm-word-1 {
