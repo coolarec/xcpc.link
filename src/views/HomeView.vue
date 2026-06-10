@@ -1,19 +1,17 @@
 <script setup>
 import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { gsap } from 'gsap'
-import { MotionPathPlugin } from 'gsap/MotionPathPlugin'
 import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import HorizontalGallery from '../components/HorizontalGallery.vue'
 
-gsap.registerPlugin(MotionPathPlugin, ScrambleTextPlugin, ScrollTrigger)
+gsap.registerPlugin(ScrambleTextPlugin, ScrollTrigger)
 
 const pageRoot = ref(null)
 const tiltSection = ref(null)
 const tiltLayer = ref(null)
 const tiltCore = ref(null)
-const waypointSection = ref(null)
-const waypointBox = ref(null)
-const activeWaypoint = ref(0)
+const gallerySection = ref(null)
 
 const tiltPanels = ['01', '02', '03', '04', '05', '06']
 const algorithmWords = [
@@ -73,18 +71,91 @@ const backgroundRows = Array.from({ length: 12 }, (_, rowIndex) => ({
     }
   }),
 }))
-const waypoints = [
-  { label: '01', title: 'Waypoint One', tone: 'blue' },
-  { label: '02', title: 'Waypoint Two', tone: 'green' },
-  { label: '03', title: 'Waypoint Three', tone: 'amber' },
+const galleryGroups = [
+  {
+    eyebrow: 'Graph toolkit',
+    title: 'Shortest paths and cuts',
+    accent: '#007aff',
+    items: [
+      {
+        title: 'Dijkstra',
+        description: 'Priority queue relaxation for non-negative weighted graphs.',
+        tags: ['graph', 'heap', 'single-source'],
+      },
+      {
+        title: 'Dinic',
+        description: 'Level graph plus blocking flow for maximum-flow routines.',
+        tags: ['flow', 'bfs', 'dfs'],
+      },
+      {
+        title: 'Tarjan',
+        description: 'Low-link structure for SCC, bridges, and articulation points.',
+        tags: ['lowlink', 'scc', 'dfs'],
+      },
+      {
+        title: 'LCA',
+        description: 'Binary lifting and tree jumps for path queries.',
+        tags: ['tree', 'sparse', 'query'],
+      },
+    ],
+  },
+  {
+    eyebrow: 'String lab',
+    title: 'Pattern matching systems',
+    accent: '#34c759',
+    items: [
+      {
+        title: 'KMP',
+        description: 'Prefix-function matching with linear scanning guarantees.',
+        tags: ['string', 'prefix', 'linear'],
+      },
+      {
+        title: 'Suffix Array',
+        description: 'Sorted suffix indices for substring ordering and LCP queries.',
+        tags: ['suffix', 'lcp', 'sort'],
+      },
+      {
+        title: 'Manacher',
+        description: 'Palindrome radii expansion in linear time.',
+        tags: ['palindrome', 'radius', 'linear'],
+      },
+      {
+        title: 'AC Automaton',
+        description: 'Trie failure links for multi-pattern matching.',
+        tags: ['trie', 'fail', 'multi-match'],
+      },
+    ],
+  },
+  {
+    eyebrow: 'Data structures',
+    title: 'Dynamic query engines',
+    accent: '#ff9f0a',
+    items: [
+      {
+        title: 'Segment Tree',
+        description: 'Range aggregation and lazy propagation for mutable arrays.',
+        tags: ['range', 'lazy', 'merge'],
+      },
+      {
+        title: 'Fenwick',
+        description: 'Compact prefix sums with logarithmic updates.',
+        tags: ['bit', 'prefix', 'log'],
+      },
+      {
+        title: 'Treap',
+        description: 'Randomized balanced binary search tree with split and merge.',
+        tags: ['bst', 'random', 'merge'],
+      },
+      {
+        title: 'HLD',
+        description: 'Path decomposition for tree range queries.',
+        tags: ['tree', 'path', 'segment'],
+      },
+    ],
+  },
 ]
 
 let motionMedia
-
-function activateWaypoint(index) {
-  if (activeWaypoint.value === index) return
-  activeWaypoint.value = index
-}
 
 onMounted(async () => {
   await nextTick()
@@ -95,8 +166,7 @@ onMounted(async () => {
     const tilt = tiltSection.value
     const layer = tiltLayer.value
     const core = tiltCore.value
-    const second = waypointSection.value
-    const movingBox = waypointBox.value
+    const second = gallerySection.value
     const cleanup = []
 
     if (!root) return undefined
@@ -226,59 +296,6 @@ onMounted(async () => {
           })
       }
 
-      if (second && movingBox) {
-        let waypointTween
-
-        const buildWaypointTween = () => {
-          waypointTween?.scrollTrigger?.kill()
-          waypointTween?.kill()
-          gsap.set(movingBox, { clearProps: 'transform' })
-
-          const boxRect = movingBox.getBoundingClientRect()
-          const boxCenter = {
-            x: boxRect.left + boxRect.width / 2,
-            y: boxRect.top + boxRect.height / 2,
-          }
-          const markers = gsap.utils.toArray('.waypoint-marker')
-          const path = markers.map((marker) => {
-            const markerRect = marker.getBoundingClientRect()
-
-            return {
-              x: markerRect.left + markerRect.width / 2 - boxCenter.x,
-              y: markerRect.top + markerRect.height / 2 - boxCenter.y,
-            }
-          })
-
-          waypointTween = gsap.to(movingBox, {
-            ease: 'none',
-            duration: 1,
-            motionPath: {
-              path,
-              curviness: 1.5,
-            },
-            scrollTrigger: {
-              trigger: '.waypoint-start',
-              start: 'clamp(top center)',
-              endTrigger: '.waypoint-final',
-              end: 'clamp(top center)',
-              scrub: 1,
-              invalidateOnRefresh: true,
-              onUpdate: (self) => {
-                activateWaypoint(Math.min(waypoints.length - 1, Math.floor(self.progress * waypoints.length)))
-              },
-            },
-          })
-        }
-
-        buildWaypointTween()
-        window.addEventListener('resize', buildWaypointTween)
-        cleanup.push(() => {
-          window.removeEventListener('resize', buildWaypointTween)
-          waypointTween?.scrollTrigger?.kill()
-          waypointTween?.kill()
-        })
-      }
-
       ScrollTrigger.refresh()
     }, root)
 
@@ -339,31 +356,15 @@ onBeforeUnmount(() => {
       </div>
     </section>
 
-    <section ref="waypointSection" class="waypoint-section" aria-label="Scroll waypoints">
-      <p class="demo-label">Scroll waypoints</p>
-
-      <div class="waypoint-field">
-        <article class="waypoint-node waypoint-start">
-          <div ref="waypointBox" class="waypoint-box">
-            <span>{{ waypoints[activeWaypoint].label }}</span>
-          </div>
-          <h2>{{ waypoints[activeWaypoint].title }}</h2>
-        </article>
-
-        <article
-          v-for="(waypoint, index) in waypoints"
-          :key="waypoint.label"
-          class="waypoint-node waypoint-target"
-          :class="[`waypoint-target-${index + 1}`, `tone-${waypoint.tone}`, { 'is-active': activeWaypoint === index }]"
-        >
-          <span class="waypoint-marker"></span>
-          <small>{{ waypoint.label }}</small>
-          <h3>{{ waypoint.title }}</h3>
-        </article>
-
-        <span class="waypoint-path-line" aria-hidden="true"></span>
-        <span class="waypoint-final" aria-hidden="true"></span>
-      </div>
+    <section ref="gallerySection" class="gallery-section" aria-label="Horizontal algorithm galleries">
+      <HorizontalGallery
+        v-for="group in galleryGroups"
+        :key="group.title"
+        :eyebrow="group.eyebrow"
+        :title="group.title"
+        :items="group.items"
+        :accent="group.accent"
+      />
     </section>
   </main>
 </template>
@@ -554,153 +555,10 @@ onBeforeUnmount(() => {
   transform: translateZ(152px) rotateZ(-7deg);
 }
 
-.waypoint-section {
+.gallery-section {
   position: relative;
   z-index: 2;
-  min-height: 320svh;
-  overflow: hidden;
-  background:
-    linear-gradient(180deg, rgba(18, 19, 24, 0.96), rgba(6, 7, 10, 0.98)),
-    #0b0c10;
-  color: #f5f5f7;
-}
-
-.waypoint-section .demo-label {
-  color: rgba(245, 245, 247, 0.62);
-}
-
-.waypoint-field {
-  position: relative;
-  min-height: 320svh;
-}
-
-.waypoint-node {
-  position: absolute;
-  width: min(32vw, 360px);
-  min-height: 220px;
-  display: grid;
-  align-content: center;
-  gap: 14px;
-  padding: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 28px 84px rgba(0, 0, 0, 0.22);
-  backdrop-filter: blur(24px) saturate(1.2);
-}
-
-.waypoint-start {
-  top: 16svh;
-  left: 50%;
-  transform: translateX(-50%);
-  justify-items: center;
-  text-align: center;
-}
-
-.waypoint-box {
-  width: 78px;
-  height: 78px;
-  display: grid;
-  place-items: center;
-  border-radius: 8px;
-  color: #101114;
-  background: #f5f5f7;
-  box-shadow: 0 20px 54px rgba(0, 0, 0, 0.34);
-  will-change: transform;
-}
-
-.waypoint-box span {
-  font-size: 22px;
-  font-weight: 850;
-}
-
-.waypoint-start h2 {
-  margin: 0;
-  color: #f5f5f7;
-  font-size: 42px;
-  line-height: 1.1;
-  letter-spacing: 0;
-}
-
-.waypoint-target {
-  opacity: 0.45;
-  transition:
-    opacity 180ms ease,
-    transform 180ms ease,
-    border-color 180ms ease;
-}
-
-.waypoint-target.is-active {
-  opacity: 1;
-  border-color: rgba(255, 255, 255, 0.24);
-  transform: translateY(-4px);
-}
-
-.waypoint-target-1 {
-  top: 36%;
-  left: 9%;
-}
-
-.waypoint-target-2 {
-  top: 57%;
-  right: 9%;
-}
-
-.waypoint-target-3 {
-  top: 79%;
-  left: 34%;
-}
-
-.waypoint-marker {
-  width: 18px;
-  height: 18px;
-  border-radius: 999px;
-  background: #1d1d1f;
-}
-
-.tone-blue .waypoint-marker {
-  background: #007aff;
-}
-
-.tone-green .waypoint-marker {
-  background: #34c759;
-}
-
-.tone-amber .waypoint-marker {
-  background: #ff9f0a;
-}
-
-.waypoint-target small {
-  color: rgba(245, 245, 247, 0.5);
-  font-size: 14px;
-  font-weight: 850;
-}
-
-.waypoint-target h3 {
-  margin: 0;
-  color: #f5f5f7;
-  font-size: 38px;
-  line-height: 1.08;
-  letter-spacing: 0;
-}
-
-.waypoint-path-line {
-  position: absolute;
-  top: 20%;
-  left: 8%;
-  right: 8%;
-  height: 70%;
-  border: 1px dashed rgba(245, 245, 247, 0.14);
-  border-radius: 50%;
-  pointer-events: none;
-}
-
-.waypoint-final {
-  position: absolute;
-  left: 50%;
-  bottom: 14svh;
-  width: 1px;
-  height: 1px;
+  background: #08090b;
 }
 
 @media (max-width: 860px) {
@@ -740,24 +598,6 @@ onBeforeUnmount(() => {
     height: 86px;
   }
 
-  .waypoint-node {
-    width: min(78vw, 360px);
-  }
-
-  .waypoint-target-1 {
-    top: 34%;
-    left: 8%;
-  }
-
-  .waypoint-target-2 {
-    top: 56%;
-    right: 8%;
-  }
-
-  .waypoint-target-3 {
-    top: 78%;
-    left: 12%;
-  }
 }
 
 @media (max-width: 560px) {
@@ -836,30 +676,13 @@ onBeforeUnmount(() => {
     bottom: 6%;
   }
 
-  .waypoint-node {
-    width: min(86vw, 330px);
-    min-height: 178px;
-    padding: 18px;
-  }
-
-  .waypoint-box {
-    width: 62px;
-    height: 62px;
-  }
-
-  .waypoint-start h2,
-  .waypoint-target h3 {
-    font-size: 30px;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .tilt-section,
   .tilt-layer,
   .tilt-core,
-  .tilt-panel,
-  .waypoint-box,
-  .waypoint-target {
+  .tilt-panel {
     transition: none;
     transform: none;
   }

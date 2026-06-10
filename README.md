@@ -6,7 +6,7 @@ Vue 3 + GSAP prototype for a motion-first bookmark site.
 
 - Fullscreen cursor-driven perspective tilt section with an upper-half ScrambleText algorithm background
 - Pinned panels with overscroll transition from part one into part two
-- Scroll waypoints second section using MotionPath marker coordinates
+- Reusable horizontal gallery components for the second section
 - Vue Router scaffold with four placeholder subroutes
 
 ## Commands
