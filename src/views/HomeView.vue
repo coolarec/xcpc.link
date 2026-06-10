@@ -183,22 +183,14 @@ onMounted(async () => {
   await nextTick()
 
   motionMedia = gsap.matchMedia()
-  motionMedia.add(
-    {
-      isSmall: '(max-width: 760px)',
-      reduceMotion: '(prefers-reduced-motion: reduce)',
-    },
-    ({ conditions }) => {
-      if (conditions.reduceMotion) return undefined
-
-      const isSmall = conditions.isSmall
-      const root = pageRoot.value
-      const tilt = tiltSection.value
-      const layer = tiltLayer.value
-      const core = tiltCore.value
-      const dock = dockBar.value
-      const second = gallerySection.value
-      const cleanup = []
+  const setupMotion = (isSmall) => {
+    const root = pageRoot.value
+    const tilt = tiltSection.value
+    const layer = tiltLayer.value
+    const core = tiltCore.value
+    const dock = dockBar.value
+    const second = gallerySection.value
+    const cleanup = []
 
     if (!root) return undefined
 
@@ -425,7 +417,10 @@ onMounted(async () => {
       cleanup.forEach((remove) => remove())
       context.revert()
     }
-  })
+  }
+
+  motionMedia.add('(max-width: 760px)', () => setupMotion(true))
+  motionMedia.add('(min-width: 761px)', () => setupMotion(false))
 })
 
 onBeforeUnmount(() => {
