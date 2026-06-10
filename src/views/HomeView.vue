@@ -64,7 +64,6 @@ const backgroundWords = Array.from({ length: 118 }, (_, index) => ({
   word: algorithmWords[index % algorithmWords.length],
   x: `${((index * 37) % 108) - 5}%`,
   y: `${(index * 53) % 94}%`,
-  rotate: `${((index * 29) % 38) - 19}deg`,
   size: `${12 + ((index * 7) % 17)}px`,
   opacity: `${0.16 + (index % 6) * 0.035}`,
 }))
@@ -301,7 +300,6 @@ onBeforeUnmount(() => {
           :style="{
             '--word-x': item.x,
             '--word-y': item.y,
-            '--word-rotate': item.rotate,
             '--word-size': item.size,
             '--word-opacity': item.opacity,
           }"
@@ -398,8 +396,6 @@ onBeforeUnmount(() => {
   top: var(--word-y);
   left: var(--word-x);
   opacity: var(--word-opacity);
-  transform: rotate(var(--word-rotate));
-  transform-origin: center;
   color: rgba(0, 122, 255, 0.24);
   font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
   font-size: var(--word-size);
