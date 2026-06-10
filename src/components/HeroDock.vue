@@ -38,6 +38,7 @@ onMounted(async () => {
       const bound = min * Math.PI
       const offset = dock.value.getBoundingClientRect().left + firstIcon.offsetLeft
       const pointer = event.clientX - offset
+      let maxScale = 1
 
       icons.forEach((icon, index) => {
         const distance = index * min + min / 2 - pointer
@@ -52,12 +53,20 @@ onMounted(async () => {
           x = (-bound < distance ? 2 : -2) * (max - min)
         }
 
+        maxScale = Math.max(maxScale, scale)
+
         gsap.to(icon, {
           duration: 0.28,
           x,
           scale,
           ease: 'power3.out',
         })
+      })
+
+      gsap.to(dock.value, {
+        '--dock-stretch': 1 + (maxScale - 1) * 0.65,
+        duration: 0.28,
+        ease: 'power3.out',
       })
     }
 
@@ -66,6 +75,11 @@ onMounted(async () => {
         duration: 0.28,
         x: 0,
         scale: 1,
+        ease: 'power3.out',
+      })
+      gsap.to(dock.value, {
+        '--dock-stretch': 1,
+        duration: 0.28,
         ease: 'power3.out',
       })
     }
@@ -102,6 +116,7 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .hero-dock {
+  --dock-stretch: 1;
   position: absolute;
   left: 50%;
   bottom: 0;
@@ -113,13 +128,29 @@ onBeforeUnmount(() => {
   padding: 14px 16px 16px;
   border: 0;
   border-radius: 24px;
+  background: transparent;
+  box-shadow: none;
+  transform: translateX(-50%);
+  isolation: isolate;
+}
+
+.hero-dock::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
   background: color-mix(in srgb, var(--panel-bg), transparent 22%);
   box-shadow: var(--dock-shadow);
   backdrop-filter: blur(30px) saturate(1.42);
-  transform: translateX(-50%);
+  transform: scaleX(var(--dock-stretch));
+  transform-origin: 50% 100%;
+  will-change: transform;
 }
 
 .hero-dock-item {
+  position: relative;
+  z-index: 1;
   width: 66px;
   aspect-ratio: 1;
   display: grid;

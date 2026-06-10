@@ -23,6 +23,7 @@ const props = defineProps({
 const root = ref(null)
 const stage = ref(null)
 const activeLink = ref(null)
+const showDragHint = ref(true)
 const columnCount = ref(8)
 const rowCount = ref(8)
 const slots = useSlots()
@@ -233,7 +234,10 @@ const handlePointerMove = (event) => {
   const deltaX = event.clientX - lastX
   const deltaY = event.clientY - lastY
 
-  if (Math.hypot(dx, dy) > 7) suppressClick = true
+  if (Math.hypot(dx, dy) > 7) {
+    suppressClick = true
+    showDragHint.value = false
+  }
 
   offsetX = startOffsetX - dx
   offsetY = startOffsetY - dy
@@ -331,6 +335,11 @@ onBeforeUnmount(() => {
       </a>
     </div>
 
+    <div v-if="showDragHint" class="watch-drag-hint" aria-hidden="true">
+      <span class="watch-drag-grip"></span>
+      <span>拖动</span>
+    </div>
+
     <div class="watch-info" aria-live="polite">
       <span>{{ title }}</span>
       <h3>{{ active?.title }}</h3>
@@ -402,6 +411,35 @@ onBeforeUnmount(() => {
   border-radius: inherit;
   background: transparent;
   box-shadow: none;
+}
+
+.watch-drag-hint {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  z-index: 2002;
+  min-height: 30px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--card-bg), transparent 18%);
+  color: color-mix(in srgb, var(--page-fg), transparent 16%);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--page-fg), transparent 88%);
+  font-size: 12px;
+  font-weight: 800;
+  pointer-events: none;
+  backdrop-filter: blur(14px);
+}
+
+.watch-drag-grip {
+  width: 13px;
+  height: 13px;
+  opacity: 0.86;
+  background-image: radial-gradient(currentColor 1.5px, transparent 1.5px);
+  background-size: 6px 6px;
+  background-position: 0 0;
 }
 
 .watch-icon {

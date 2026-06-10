@@ -389,7 +389,7 @@ onBeforeUnmount(() => {
   background: var(--hero-bg);
   transform-origin: center bottom;
   isolation: isolate;
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Ccircle cx='30' cy='30' r='30' fill='%23ffffff'/%3E%3C/svg%3E") 30 30, auto;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Ccircle cx='30' cy='30' r='30' fill='%23ffffff' fill-opacity='0.5'/%3E%3C/svg%3E") 30 30, auto;
 }
 
 .tilt-section :deep(*) {
@@ -397,7 +397,7 @@ onBeforeUnmount(() => {
 }
 
 .is-day .tilt-section {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Ccircle cx='30' cy='30' r='30' fill='%231d1d1f'/%3E%3C/svg%3E") 30 30, auto;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Ccircle cx='30' cy='30' r='30' fill='%231d1d1f' fill-opacity='0.5'/%3E%3C/svg%3E") 30 30, auto;
 }
 
 .mode-toggle {

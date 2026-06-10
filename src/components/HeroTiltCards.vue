@@ -5,7 +5,7 @@ import { gsap } from 'gsap'
 const root = ref(null)
 const core = ref(null)
 const title = ref(null)
-const panels = ['01', '02', '03', '04', '05', '06']
+const panels = ['🏆', '💻', '🧠', '🧩', '🥇', '⏱️']
 
 let motionMedia
 
@@ -302,7 +302,7 @@ onBeforeUnmount(() => {
   place-items: center;
   color: var(--panel-fg);
   font-family: "Sora", sans-serif;
-  font-size: 28px;
+  font-size: 44px;
   font-weight: 800;
 }
 
