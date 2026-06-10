@@ -1,0 +1,366 @@
+<script setup>
+import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
+import { gsap } from 'gsap'
+
+const root = ref(null)
+const core = ref(null)
+const title = ref(null)
+const panels = ['01', '02', '03', '04', '05', '06']
+
+let motionMedia
+
+const clamp01 = gsap.utils.clamp(0, 1)
+
+const getTrackingRect = () => {
+  const section = root.value?.closest('.tilt-section')
+
+  return section?.getBoundingClientRect() ?? {
+    left: 0,
+    top: 0,
+    width: window.innerWidth,
+    height: window.innerHeight,
+  }
+}
+
+const setupMotion = (isSmall) => {
+  if (!root.value || !core.value) return undefined
+
+  const cleanup = []
+  const context = gsap.context(() => {
+    const section = root.value.closest('.tilt-section')
+    const trackingTarget = section || window
+    const rotationRange = isSmall ? 6 : 15
+    const coreShift = isSmall ? 12 : 30
+    const titleShift = isSmall ? 22 : 84
+
+    if (section) {
+      gsap.set(section, { perspective: isSmall ? 520 : 760 })
+    }
+
+    gsap.set(root.value, {
+      transformStyle: 'preserve-3d',
+      transformOrigin: isSmall ? '50% 58%' : '50% 50%',
+    })
+
+    const rotateX = gsap.quickTo(root.value, 'rotationX', {
+      duration: 0.25,
+      ease: 'power3.out',
+    })
+    const rotateY = gsap.quickTo(root.value, 'rotationY', {
+      duration: 0.25,
+      ease: 'power3.out',
+    })
+    const coreX = gsap.quickTo(core.value, 'x', {
+      duration: 0.25,
+      ease: 'power3.out',
+    })
+    const coreY = gsap.quickTo(core.value, 'y', {
+      duration: 0.25,
+      ease: 'power3.out',
+    })
+
+    const handlePointerMove = (event) => {
+      const rect = getTrackingRect()
+      const pointerX = clamp01((event.clientX - rect.left) / rect.width)
+      const pointerY = clamp01((event.clientY - rect.top) / rect.height)
+
+      rotateX(gsap.utils.interpolate(rotationRange, -rotationRange, pointerY))
+      rotateY(gsap.utils.interpolate(-rotationRange, rotationRange, pointerX))
+      coreX(gsap.utils.interpolate(-coreShift, coreShift, pointerX))
+      coreY(gsap.utils.interpolate(-coreShift, coreShift, pointerY))
+
+      if (title.value) {
+        const titleX = gsap.utils.clamp(-1, 1, (pointerX - 0.5) * 2)
+        const titleY = gsap.utils.clamp(-1, 1, (pointerY - 0.5) * 2)
+
+        gsap.to(title.value, {
+          x: titleX * titleShift,
+          y: titleY * titleShift,
+          scale: isSmall ? 1.02 : 1.045,
+          duration: 0.32,
+          ease: 'power2.out',
+          overwrite: 'auto',
+        })
+      }
+    }
+
+    const resetTilt = () => {
+      rotateX(0)
+      rotateY(0)
+      coreX(0)
+      coreY(0)
+
+      if (title.value) {
+        gsap.to(title.value, {
+          x: 0,
+          y: 0,
+          scale: 1,
+          duration: 0.75,
+          ease: 'elastic.out(1, 0.45)',
+          overwrite: 'auto',
+        })
+      }
+    }
+
+    trackingTarget.addEventListener('pointermove', handlePointerMove)
+    trackingTarget.addEventListener('pointerleave', resetTilt)
+    window.addEventListener('blur', resetTilt)
+    cleanup.push(() => {
+      trackingTarget.removeEventListener('pointermove', handlePointerMove)
+      trackingTarget.removeEventListener('pointerleave', resetTilt)
+      window.removeEventListener('blur', resetTilt)
+    })
+
+    if (isSmall) {
+      gsap.from('.tilt-panel', {
+        autoAlpha: 0,
+        scale: 0.82,
+        y: 28,
+        duration: 0.72,
+        ease: 'back.out(1.4)',
+        stagger: {
+          amount: 0.34,
+          from: 'center',
+        },
+      })
+    } else {
+      gsap.from('.tilt-panel', {
+        autoAlpha: 0,
+        z: -180,
+        y: 44,
+        duration: 0.9,
+        ease: 'power3.out',
+        stagger: {
+          amount: 0.42,
+          from: 'center',
+        },
+      })
+    }
+
+    gsap.to('.tilt-panel', {
+      y: isSmall ? 8 : 14,
+      delay: isSmall ? 0.72 : 0.9,
+      duration: isSmall ? 2.4 : 3.2,
+      ease: 'sine.inOut',
+      repeat: -1,
+      yoyo: true,
+      stagger: {
+        each: isSmall ? 0.12 : 0.18,
+        from: 'random',
+      },
+    })
+
+    gsap.from(core.value, {
+      autoAlpha: 0,
+      scale: 0.9,
+      duration: 0.75,
+      ease: 'power3.out',
+    })
+  }, root.value)
+
+  return () => {
+    cleanup.forEach((remove) => remove())
+    context.revert()
+  }
+}
+
+onMounted(async () => {
+  await nextTick()
+
+  if (!root.value) return
+
+  motionMedia = gsap.matchMedia()
+  motionMedia.add('(max-width: 760px)', () => setupMotion(true))
+  motionMedia.add('(min-width: 761px)', () => setupMotion(false))
+})
+
+onBeforeUnmount(() => {
+  motionMedia?.revert()
+})
+</script>
+
+<template>
+  <div ref="root" class="tilt-layer">
+    <div class="tilt-orbit" aria-hidden="true"></div>
+    <div ref="core" class="tilt-core">
+      <span>ALGORITHM COLLECTION</span>
+      <strong ref="title">XCPC</strong>
+    </div>
+    <div
+      v-for="(panel, index) in panels"
+      :key="panel"
+      class="tilt-panel"
+      :class="`tilt-panel-${index + 1}`"
+    >
+      <span>{{ panel }}</span>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.tilt-layer {
+  position: relative;
+  z-index: 1;
+  width: min(80vw, 1080px);
+  aspect-ratio: 1.62;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.tilt-orbit {
+  position: absolute;
+  inset: 8%;
+  border: 1px solid rgba(29, 29, 31, 0.1);
+  border-radius: 999px;
+  transform: translateZ(-80px) rotateX(68deg);
+}
+
+.tilt-core,
+.tilt-panel {
+  position: absolute;
+  border: 0;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.05);
+}
+
+.tilt-core {
+  inset: 16% 21%;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 24px;
+  transform: translateZ(90px);
+  box-shadow:
+    0 28px 100px rgba(0, 113, 227, 0.16),
+    0 18px 54px rgba(0, 0, 0, 0.1),
+    0 1px 8px rgba(0, 0, 0, 0.05);
+  will-change: transform;
+}
+
+.tilt-core span {
+  color: #86868b;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tilt-core strong {
+  display: inline-block;
+  transform-origin: center;
+  color: #1d1d1f;
+  font-family: "Sora", sans-serif;
+  font-weight: 800;
+  font-size: clamp(72px, 9vw, 132px);
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  text-align: center;
+  text-shadow:
+    0 18px 42px rgba(0, 113, 227, 0.22),
+    0 24px 72px rgba(0, 0, 0, 0.18),
+    0 2px 0 rgba(255, 255, 255, 0.9);
+  will-change: transform;
+}
+
+.tilt-panel {
+  z-index: 1;
+  width: 170px;
+  height: 112px;
+  display: grid;
+  place-items: center;
+  color: #1d1d1f;
+  font-family: "Sora", sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.tilt-panel span {
+  line-height: 1;
+  text-align: center;
+}
+
+.tilt-panel-1 {
+  top: 5%;
+  left: 8%;
+  transform: translateZ(140px) rotateZ(-8deg);
+}
+
+.tilt-panel-2 {
+  top: 6%;
+  right: 10%;
+  transform: translateZ(118px) rotateZ(7deg);
+}
+
+.tilt-panel-3 {
+  top: 42%;
+  left: 0;
+  transform: translateZ(78px) rotateZ(5deg);
+}
+
+.tilt-panel-4 {
+  top: 42%;
+  right: 1%;
+  transform: translateZ(100px) rotateZ(-5deg);
+}
+
+.tilt-panel-5 {
+  bottom: 5%;
+  left: 18%;
+  transform: translateZ(124px) rotateZ(8deg);
+}
+
+.tilt-panel-6 {
+  right: 20%;
+  bottom: 1%;
+  transform: translateZ(152px) rotateZ(-7deg);
+}
+
+@media (max-width: 860px) {
+  .tilt-layer {
+    width: min(90vw, 620px);
+    aspect-ratio: 0.86;
+  }
+
+  .tilt-core {
+    inset: 28% 6%;
+  }
+
+  .tilt-core strong {
+    font-size: 58px;
+  }
+
+  .tilt-panel {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .tilt-layer {
+    width: 90vw;
+    aspect-ratio: 0.86;
+  }
+
+  .tilt-core {
+    inset: 29% 6%;
+  }
+
+  .tilt-core span {
+    font-size: 11px;
+  }
+
+  .tilt-core strong {
+    font-size: 46px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tilt-layer,
+  .tilt-core,
+  .tilt-panel {
+    transition: none;
+    transform: none;
+  }
+}
+</style>
