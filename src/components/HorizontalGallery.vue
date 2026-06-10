@@ -5,7 +5,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 gsap.registerPlugin(ScrollTrigger)
 
-defineProps({
+const props = defineProps({
   eyebrow: {
     type: String,
     default: 'Horizontal gallery',
@@ -21,6 +21,11 @@ defineProps({
   accent: {
     type: String,
     default: '#007aff',
+  },
+  direction: {
+    type: String,
+    default: 'left',
+    validator: (value) => ['left', 'right'].includes(value),
   },
 })
 
@@ -41,7 +46,7 @@ onMounted(async () => {
 
     const refresh = () => {
       pinWrapWidth = strip.value.scrollWidth
-      horizontalScrollLength = pinWrapWidth - window.innerWidth
+      horizontalScrollLength = Math.max(0, pinWrapWidth - window.innerWidth)
     }
 
     refresh()
@@ -55,7 +60,7 @@ onMounted(async () => {
         end: () => `+=${pinWrapWidth}`,
         invalidateOnRefresh: true,
       },
-      x: () => -horizontalScrollLength,
+      x: () => (props.direction === 'left' ? -horizontalScrollLength : horizontalScrollLength),
       ease: 'none',
     })
 
@@ -158,13 +163,14 @@ onBeforeUnmount(() => {
 }
 
 .horiz-gallery-strip {
-  width: max-content;
+  width: 132vw;
+  min-width: max-content;
   gap: 18px;
 }
 
 .gallery-card {
   position: relative;
-  width: min(68vw, 520px);
+  width: clamp(320px, 30vw, 520px);
   min-height: 420px;
   overflow: hidden;
   display: flex;

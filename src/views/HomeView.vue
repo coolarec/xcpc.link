@@ -364,6 +364,7 @@ onBeforeUnmount(() => {
         :title="group.title"
         :items="group.items"
         :accent="group.accent"
+        direction="left"
       />
     </section>
   </main>
