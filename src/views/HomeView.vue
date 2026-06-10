@@ -653,13 +653,13 @@ onBeforeUnmount(() => {
 .hero-dock {
   position: absolute;
   left: 50%;
-  bottom: max(26px, env(safe-area-inset-bottom));
+  bottom: 0;
   z-index: 8;
   display: flex;
   align-items: flex-end;
-  gap: 10px;
-  height: 82px;
-  padding: 11px;
+  gap: 13px;
+  height: 104px;
+  padding: 14px 16px 16px;
   border: 1px solid rgba(29, 29, 31, 0.1);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.62);
@@ -671,7 +671,7 @@ onBeforeUnmount(() => {
 }
 
 .hero-dock-item {
-  width: 52px;
+  width: 66px;
   aspect-ratio: 1;
   display: grid;
   place-items: center;
@@ -690,14 +690,14 @@ onBeforeUnmount(() => {
 }
 
 .hero-dock-item span {
-  width: 30px;
+  width: 38px;
   aspect-ratio: 1;
   display: grid;
   place-items: center;
   border-radius: 8px;
   background: #1d1d1f;
   color: #f5f5f7;
-  font-size: 15px;
+  font-size: 18px;
   font-weight: 850;
   line-height: 1;
 }
@@ -751,17 +751,17 @@ onBeforeUnmount(() => {
   }
 
   .hero-dock {
-    height: 72px;
-    padding: 9px;
+    height: 88px;
+    padding: 12px 13px 13px;
   }
 
   .hero-dock-item {
-    width: 46px;
+    width: 56px;
   }
 
   .hero-dock-item span {
-    width: 27px;
-    font-size: 14px;
+    width: 33px;
+    font-size: 16px;
   }
 
 }
