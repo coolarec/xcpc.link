@@ -255,6 +255,7 @@ onBeforeUnmount(() => {
 }
 
 .horiz-gallery-strip :deep(.gallery-card) {
+  box-sizing: border-box;
   flex: 0 0 var(--gallery-card-width);
   width: var(--gallery-card-width);
   height: var(--gallery-card-height);
@@ -266,11 +267,11 @@ onBeforeUnmount(() => {
 @media (max-width: 720px) {
   .horizontal-gallery {
     --gallery-card-width: 100%;
-    --gallery-card-height: 360px;
+    --gallery-card-height: clamp(300px, 76svh, 330px);
     min-height: auto;
-    contain-intrinsic-size: auto 1760px;
-    padding: 64px 18px;
-    gap: 28px;
+    contain-intrinsic-size: auto 1560px;
+    padding: 52px 14px;
+    gap: 24px;
   }
 
   .gallery-heading {
@@ -278,13 +279,15 @@ onBeforeUnmount(() => {
   }
 
   .gallery-heading h2 {
-    font-size: clamp(42px, 13vw, 58px);
+    font-size: clamp(34px, 11vw, 50px);
   }
 
   .horiz-gallery-wrapper {
     display: block;
     width: 100%;
     min-width: 0;
+    max-width: 100%;
+    overflow: visible;
     transform: none !important;
   }
 
@@ -292,10 +295,12 @@ onBeforeUnmount(() => {
     display: flex;
     flex-direction: column;
     width: 100%;
-    gap: 50px;
+    min-width: 0;
+    gap: 28px;
   }
 
   .horiz-gallery-strip :deep(.gallery-card) {
+    flex-basis: auto;
     width: 100%;
     min-width: 0;
     max-width: 100%;

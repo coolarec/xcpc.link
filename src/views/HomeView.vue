@@ -142,6 +142,8 @@ onMounted(async () => {
             trigger: tilt,
             start: 'top top',
             end: 'bottom top',
+            pin: true,
+            pinSpacing: false,
             scrub: true,
             invalidateOnRefresh: true,
           },

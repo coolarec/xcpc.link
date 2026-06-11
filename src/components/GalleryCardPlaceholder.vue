@@ -9,6 +9,7 @@
 
 <style scoped>
 .gallery-card {
+  box-sizing: border-box;
   position: relative;
   width: clamp(360px, 32vw, 600px);
   height: 480px;
@@ -54,9 +55,18 @@
 @media (max-width: 720px) {
   .gallery-card {
     width: 100%;
-    height: 360px;
-    min-height: 360px;
-    max-height: 360px;
+    max-width: 100%;
+    height: clamp(300px, 76svh, 330px);
+    min-height: clamp(300px, 76svh, 330px);
+    max-height: clamp(300px, 76svh, 330px);
+  }
+}
+
+@media (max-width: 420px) {
+  .gallery-card {
+    height: clamp(290px, 72svh, 315px);
+    min-height: clamp(290px, 72svh, 315px);
+    max-height: clamp(290px, 72svh, 315px);
   }
 }
 </style>

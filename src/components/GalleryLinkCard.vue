@@ -55,6 +55,7 @@ defineProps({
 
 <style scoped>
 .gallery-card {
+  box-sizing: border-box;
   position: relative;
   width: clamp(360px, 32vw, 600px);
   height: 480px;
@@ -136,6 +137,7 @@ defineProps({
 .link-content {
   align-self: end;
   max-width: 410px;
+  min-width: 0;
 }
 
 .link-kicker {
@@ -160,6 +162,7 @@ defineProps({
 .gallery-card p {
   max-width: 390px;
   margin: 20px 0 0;
+  overflow-wrap: anywhere;
   color: var(--muted-fg);
   font-size: 17px;
   line-height: 1.5;
@@ -206,24 +209,89 @@ defineProps({
 @media (max-width: 720px) {
   .gallery-card {
     width: 100%;
-    height: 360px;
-    padding: 20px;
+    max-width: 100%;
+    height: clamp(300px, 76svh, 330px);
+    gap: 14px;
+    padding: 16px;
     border-radius: 18px;
   }
 
+  .gallery-index {
+    min-height: 28px;
+    padding: 0 10px;
+    font-size: 11px;
+  }
+
+  .link-avatar {
+    top: 16px;
+    right: 16px;
+    width: 50px;
+    border-radius: 16px;
+    font-size: 19px;
+  }
+
+  .link-content {
+    max-width: calc(100% - 4px);
+  }
+
+  .link-kicker {
+    margin-bottom: 8px;
+    font-size: 11px;
+  }
+
   .gallery-card h3 {
-    font-size: clamp(34px, 11vw, 48px);
+    font-size: clamp(28px, 9vw, 40px);
+    line-height: 0.96;
   }
 
   .gallery-card p {
-    font-size: 15px;
+    display: -webkit-box;
+    margin-top: 12px;
+    overflow: hidden;
+    font-size: 13px;
+    line-height: 1.45;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
   }
 
   .gallery-tags {
+    min-width: 0;
     padding-right: 0;
+    overflow: hidden;
+  }
+
+  .gallery-tags span {
+    min-height: 22px;
+    padding: 2px 8px;
+    font-size: 10px;
   }
 
   .link-action {
+    display: none;
+  }
+}
+
+@media (max-width: 420px) {
+  .gallery-card {
+    height: clamp(290px, 72svh, 315px);
+    padding: 14px;
+  }
+
+  .link-avatar {
+    width: 46px;
+    border-radius: 14px;
+    font-size: 18px;
+  }
+
+  .gallery-card h3 {
+    font-size: clamp(26px, 8.4vw, 34px);
+  }
+
+  .gallery-card p {
+    -webkit-line-clamp: 2;
+  }
+
+  .gallery-tags span:nth-child(n + 4) {
     display: none;
   }
 }

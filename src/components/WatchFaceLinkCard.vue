@@ -396,6 +396,7 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .gallery-card {
+  box-sizing: border-box;
   position: relative;
   width: clamp(360px, 32vw, 600px);
   height: 480px;
@@ -620,8 +621,9 @@ onBeforeUnmount(() => {
 @media (max-width: 720px) {
   .gallery-card {
     width: 100%;
-    height: 360px;
-    padding: 20px;
+    max-width: 100%;
+    height: clamp(300px, 76svh, 330px);
+    padding: 0;
     border-radius: 18px;
   }
 
@@ -634,12 +636,12 @@ onBeforeUnmount(() => {
   }
 
   .watch-shell {
-    grid-template-columns: 54px minmax(0, 1fr);
+    grid-template-columns: 42px minmax(0, 1fr);
   }
 
   .watch-rail span {
-    font-size: 10px;
-    letter-spacing: 0.14em;
+    font-size: 9px;
+    letter-spacing: 0.12em;
   }
 
   .watch-face::after {
@@ -661,11 +663,38 @@ onBeforeUnmount(() => {
   }
 
   .watch-info h3 {
-    font-size: clamp(32px, 10vw, 46px);
+    font-size: clamp(26px, 8.6vw, 38px);
+    line-height: 0.98;
   }
 
   .watch-info p {
-    font-size: 14px;
+    display: -webkit-box;
+    overflow: hidden;
+    font-size: 13px;
+    line-height: 1.45;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+}
+
+@media (max-width: 420px) {
+  .gallery-card {
+    height: clamp(290px, 72svh, 315px);
+  }
+
+  .watch-shell {
+    grid-template-columns: 38px minmax(0, 1fr);
+  }
+
+  .watch-info {
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    min-height: 86px;
+  }
+
+  .watch-info h3 {
+    font-size: clamp(24px, 8vw, 32px);
   }
 }
 </style>
