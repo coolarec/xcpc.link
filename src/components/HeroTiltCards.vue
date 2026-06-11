@@ -78,7 +78,10 @@ const setupMotion = (isSmall) => {
       ? gsap.quickTo(title.value, 'y', { duration: 0.32, ease: 'power2.out' })
       : undefined
     const titleScaleTo = title.value
-      ? gsap.quickTo(title.value, 'scale', { duration: 0.32, ease: 'power2.out' })
+      ? [
+          gsap.quickTo(title.value, 'scaleX', { duration: 0.32, ease: 'power2.out' }),
+          gsap.quickTo(title.value, 'scaleY', { duration: 0.32, ease: 'power2.out' }),
+        ]
       : undefined
 
     const updatePointerMotion = () => {
@@ -108,7 +111,7 @@ const setupMotion = (isSmall) => {
 
         titleXTo?.(titleX * titleShift)
         titleYTo?.(titleY * titleShift)
-        titleScaleTo?.(isSmall ? 1.02 : 1.045)
+        titleScaleTo?.forEach((scaleTo) => scaleTo(isSmall ? 1.02 : 1.045))
       }
     }
 
@@ -135,7 +138,7 @@ const setupMotion = (isSmall) => {
       if (title.value) {
         titleXTo?.(0)
         titleYTo?.(0)
-        titleScaleTo?.(1)
+        titleScaleTo?.forEach((scaleTo) => scaleTo(1))
       }
     }
 
@@ -200,7 +203,8 @@ const setupMotion = (isSmall) => {
     if (!disableMotion) {
       gsap.from(core.value, {
         autoAlpha: 0,
-        scale: 0.9,
+        scaleX: 0.9,
+        scaleY: 0.9,
         duration: 0.75,
         ease: 'power3.out',
       })

@@ -26,7 +26,8 @@ onMounted(async () => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       gsap.set(icons, {
         transformOrigin: '50% 115%',
-        scale: 1,
+        scaleX: 1,
+        scaleY: 1,
         x: 0,
       })
       dock.value.style.setProperty('--dock-stretch', '1')
@@ -41,7 +42,8 @@ onMounted(async () => {
 
     gsap.set(icons, {
       transformOrigin: '50% 115%',
-      scale: 1,
+      scaleX: 1,
+      scaleY: 1,
       x: 0,
     })
 
@@ -73,7 +75,8 @@ onMounted(async () => {
         gsap.to(icon, {
           duration: 0.28,
           x,
-          scale,
+          scaleX: scale,
+          scaleY: scale,
           ease: 'power3.out',
         })
       })
@@ -85,7 +88,8 @@ onMounted(async () => {
       gsap.to(icons, {
         duration: 0.28,
         x: 0,
-        scale: 1,
+        scaleX: 1,
+        scaleY: 1,
         ease: 'power3.out',
       })
       stretchTo(1)

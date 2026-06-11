@@ -108,6 +108,7 @@ let suppressClick = false
 let renderFrame = 0
 let inertiaFrame = 0
 let resizeObserver
+let activeIconIndex = null
 
 const isMobileWatch = () =>
   window.matchMedia('(max-width: 720px), (pointer: coarse), (prefers-reduced-motion: reduce)').matches
@@ -281,6 +282,16 @@ const handleIconClick = (event) => {
   event.stopPropagation()
 }
 
+const getVisibleIconTarget = (target) => {
+  const icon = target?.closest?.('.watch-icon')
+
+  if (!icon || !stage.value?.contains(icon)) return null
+
+  const opacity = Number.parseFloat(icon.style.opacity || '0')
+
+  return opacity > 0.2 ? icon : null
+}
+
 const showFaceHint = () => {
   if (hasDragged.value) return
   showDragHint.value = true
@@ -288,17 +299,38 @@ const showFaceHint = () => {
 
 const hideFaceHint = () => {
   showDragHint.value = false
-  showInfo.value = false
-  activeLink.value = null
+  hideIconInfo()
 }
 
-const showIconInfo = (item) => {
+const showIconInfo = (item, index = null) => {
+  if (activeIconIndex === index && activeLink.value === item && showInfo.value) return
+
+  activeIconIndex = index
   activeLink.value = item
   showInfo.value = true
 }
 
+const updateIconInfo = (event) => {
+  if (isDragging) return
+
+  const icon = getVisibleIconTarget(event.target)
+
+  if (!icon) {
+    hideIconInfo()
+    return
+  }
+
+  const index = Number(icon.dataset.baseIndex || 0)
+  const item = links.value[index]
+
+  if (item) showIconInfo(item, index)
+}
+
 const hideIconInfo = () => {
   if (isDragging) return
+  if (activeIconIndex === null && !showInfo.value && !activeLink.value) return
+
+  activeIconIndex = null
   showInfo.value = false
   activeLink.value = null
 }
@@ -352,7 +384,12 @@ onBeforeUnmount(() => {
         @pointerenter="showFaceHint"
         @pointerleave="hideFaceHint"
       >
-        <div ref="stage" class="watch-stage" aria-label="Draggable related links">
+        <div
+          ref="stage"
+          class="watch-stage"
+          aria-label="Draggable related links"
+          @pointermove="updateIconInfo"
+        >
           <a
             v-for="entry in visualItems"
             :key="entry.key"
@@ -368,9 +405,7 @@ onBeforeUnmount(() => {
             :aria-label="entry.item.title"
             :style="{ '--watch-color': entry.color }"
             draggable="false"
-            @pointerenter="showIconInfo(entry.item)"
-            @pointerleave="hideIconInfo"
-            @focus="showIconInfo(entry.item)"
+            @focus="showIconInfo(entry.item, entry.baseIndex)"
             @blur="hideIconInfo"
             @click="handleIconClick"
             @dragstart.prevent
@@ -384,7 +419,7 @@ onBeforeUnmount(() => {
           <span>拖动</span>
         </div>
 
-        <div v-if="showInfo && active" class="watch-info" aria-live="polite">
+        <div v-show="showInfo && active" class="watch-info" aria-live="polite">
           <span>{{ title }}</span>
           <h3>{{ active?.title }}</h3>
           <p>{{ active?.description }}</p>

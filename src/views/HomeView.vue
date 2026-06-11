@@ -47,9 +47,10 @@ const toggleTheme = () => {
 
   gsap.fromTo(
     modeToggle.value,
-    { scale: 0.94 },
+    { scaleX: 0.94, scaleY: 0.94 },
     {
-      scale: 1,
+      scaleX: 1,
+      scaleY: 1,
       duration: 0.34,
       ease: 'back.out(2)',
       overwrite: true,
@@ -113,9 +114,10 @@ onMounted(async () => {
         })
         .fromTo(
           tilt,
-          { scale: 1, autoAlpha: 1 },
+          { scaleX: 1, scaleY: 1, autoAlpha: 1 },
           {
-            scale: 0.7,
+            scaleX: 0.7,
+            scaleY: 0.7,
             autoAlpha: 0.5,
             ease: 'none',
             duration: 0.9,
@@ -150,9 +152,10 @@ onMounted(async () => {
         })
         .fromTo(
           tilt,
-          { scale: 1, autoAlpha: 1 },
+          { scaleX: 1, scaleY: 1, autoAlpha: 1 },
           {
-            scale: 0.92,
+            scaleX: 0.92,
+            scaleY: 0.92,
             autoAlpha: 0.72,
             ease: 'none',
             duration: 0.85,
