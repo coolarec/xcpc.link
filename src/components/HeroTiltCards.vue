@@ -42,6 +42,9 @@ const setupMotion = (isSmall) => {
     const rotationRange = isSmall ? 6 : 15
     const coreShift = isSmall ? 12 : 30
     const titleShift = isSmall ? 22 : 84
+    let latestPointerEvent
+    let pointerFrame = 0
+    let trackingRect = getTrackingRect()
 
     if (section) {
       gsap.set(section, { perspective: isSmall ? 520 : 760 })
@@ -68,9 +71,22 @@ const setupMotion = (isSmall) => {
       duration: 0.25,
       ease: 'power3.out',
     })
+    const titleXTo = title.value
+      ? gsap.quickTo(title.value, 'x', { duration: 0.32, ease: 'power2.out' })
+      : undefined
+    const titleYTo = title.value
+      ? gsap.quickTo(title.value, 'y', { duration: 0.32, ease: 'power2.out' })
+      : undefined
+    const titleScaleTo = title.value
+      ? gsap.quickTo(title.value, 'scale', { duration: 0.32, ease: 'power2.out' })
+      : undefined
 
-    const handlePointerMove = (event) => {
-      const rect = getTrackingRect()
+    const updatePointerMotion = () => {
+      pointerFrame = 0
+      if (!latestPointerEvent) return
+
+      const event = latestPointerEvent
+      const rect = trackingRect
       const pointerX = clamp01((event.clientX - rect.left) / rect.width)
       const pointerY = clamp01((event.clientY - rect.top) / rect.height)
       const castX = (0.5 - pointerX) * titleShift * 1.15
@@ -90,18 +106,23 @@ const setupMotion = (isSmall) => {
         const titleX = gsap.utils.clamp(-1, 1, (pointerX - 0.5) * 2)
         const titleY = gsap.utils.clamp(-1, 1, (pointerY - 0.5) * 2)
 
-        gsap.to(title.value, {
-          x: titleX * titleShift,
-          y: titleY * titleShift,
-          scale: isSmall ? 1.02 : 1.045,
-          duration: 0.32,
-          ease: 'power2.out',
-          overwrite: 'auto',
-        })
+        titleXTo?.(titleX * titleShift)
+        titleYTo?.(titleY * titleShift)
+        titleScaleTo?.(isSmall ? 1.02 : 1.045)
       }
     }
 
+    const handlePointerMove = (event) => {
+      latestPointerEvent = event
+      if (!pointerFrame) pointerFrame = requestAnimationFrame(updatePointerMotion)
+    }
+
     const resetTilt = () => {
+      if (pointerFrame) {
+        cancelAnimationFrame(pointerFrame)
+        pointerFrame = 0
+      }
+      latestPointerEvent = undefined
       rotateX(0)
       rotateY(0)
       coreX(0)
@@ -112,25 +133,27 @@ const setupMotion = (isSmall) => {
       root.value.style.setProperty('--cast-y', '0px')
 
       if (title.value) {
-        gsap.to(title.value, {
-          x: 0,
-          y: 0,
-          scale: 1,
-          duration: 0.75,
-          ease: 'elastic.out(1, 0.45)',
-          overwrite: 'auto',
-        })
+        titleXTo?.(0)
+        titleYTo?.(0)
+        titleScaleTo?.(1)
       }
     }
 
     if (!disableMotion) {
+      const refreshTrackingRect = () => {
+        trackingRect = getTrackingRect()
+      }
+      refreshTrackingRect()
       trackingTarget.addEventListener('pointermove', handlePointerMove)
       trackingTarget.addEventListener('pointerleave', resetTilt)
       window.addEventListener('blur', resetTilt)
+      window.addEventListener('resize', refreshTrackingRect)
       cleanup.push(() => {
+        if (pointerFrame) cancelAnimationFrame(pointerFrame)
         trackingTarget.removeEventListener('pointermove', handlePointerMove)
         trackingTarget.removeEventListener('pointerleave', resetTilt)
         window.removeEventListener('blur', resetTilt)
+        window.removeEventListener('resize', refreshTrackingRect)
       })
     } else {
       resetTilt()

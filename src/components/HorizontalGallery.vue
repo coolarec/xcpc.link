@@ -37,6 +37,9 @@ const root = ref(null)
 const wrapper = ref(null)
 const strip = ref(null)
 let motionMedia
+let resizeObserver
+let mutationObserver
+let refreshFrame = 0
 
 const isReversed = () => props.reverse || props.direction === 'right'
 
@@ -49,6 +52,7 @@ onMounted(async () => {
 
   motionMedia.add('(min-width: 721px)', () => {
     let removeRefreshListener
+    let tween
 
     const context = gsap.context(() => {
       let pinWrapWidth = 0
@@ -68,7 +72,7 @@ onMounted(async () => {
 
       gsap.set(strip.value, { x: getStartX })
 
-      const tween = gsap.fromTo(strip.value, {
+      tween = gsap.fromTo(strip.value, {
         x: getStartX,
       }, {
         scrollTrigger: {
@@ -97,13 +101,34 @@ onMounted(async () => {
 
       ScrollTrigger.addEventListener('refreshInit', refresh)
       removeRefreshListener = () => ScrollTrigger.removeEventListener('refreshInit', refresh)
+
+      const scheduleRefresh = () => {
+        if (refreshFrame) return
+        refreshFrame = requestAnimationFrame(() => {
+          refreshFrame = 0
+          refresh()
+          gsap.set(strip.value, { x: getStartX })
+          tween?.invalidate()
+          tween?.scrollTrigger?.refresh()
+        })
+      }
+
+      resizeObserver = new ResizeObserver(scheduleRefresh)
+      resizeObserver.observe(wrapper.value)
+      resizeObserver.observe(strip.value)
+
+      mutationObserver = new MutationObserver(scheduleRefresh)
+      mutationObserver.observe(strip.value, { childList: true, subtree: true })
+
       requestAnimationFrame(() => {
         tween.scrollTrigger?.refresh()
-        ScrollTrigger.refresh()
       })
     }, root.value)
 
     return () => {
+      if (refreshFrame) cancelAnimationFrame(refreshFrame)
+      resizeObserver?.disconnect()
+      mutationObserver?.disconnect()
       removeRefreshListener?.()
       context.revert()
     }
@@ -133,6 +158,9 @@ onMounted(async () => {
 })
 
 onBeforeUnmount(() => {
+  if (refreshFrame) cancelAnimationFrame(refreshFrame)
+  resizeObserver?.disconnect()
+  mutationObserver?.disconnect()
   motionMedia?.revert()
 })
 </script>
@@ -163,6 +191,8 @@ onBeforeUnmount(() => {
   --gallery-card-height: 480px;
   position: relative;
   min-height: 100svh;
+  contain: layout paint style;
+  contain-intrinsic-size: 100svh;
   overflow: hidden;
   display: grid;
   align-content: center;
@@ -238,6 +268,7 @@ onBeforeUnmount(() => {
     --gallery-card-width: 100%;
     --gallery-card-height: 360px;
     min-height: auto;
+    contain-intrinsic-size: auto 1760px;
     padding: 64px 18px;
     gap: 28px;
   }

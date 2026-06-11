@@ -9,18 +9,25 @@ const preloader = document.getElementById('app-preloader')
 
 if (preloader) {
   const progress = preloader.querySelector('.preloader-progress span')
+  let isWindowLoaded = document.readyState === 'complete'
+  let isAppReady = false
+  let isFinishing = false
 
   const removePreloader = () => {
     preloader.remove()
   }
 
   const hidePreloader = () => {
+    document.body.classList.add('is-app-visible')
     preloader.classList.add('is-hidden')
     window.dispatchEvent(new CustomEvent('app-preloader:hidden'))
     preloader.addEventListener('transitionend', removePreloader, { once: true })
   }
 
   const finishPreloader = () => {
+    if (isFinishing || !isWindowLoaded || !isAppReady) return
+
+    isFinishing = true
     preloader.classList.add('is-finishing')
 
     if (progress) {
@@ -31,9 +38,29 @@ if (preloader) {
     requestAnimationFrame(hidePreloader)
   }
 
-  if (document.readyState === 'complete') {
+  const markAppReady = () => {
+    isAppReady = true
+    requestAnimationFrame(finishPreloader)
+  }
+
+  window.addEventListener('app-preloader:ready', markAppReady, { once: true })
+
+  router.isReady().then(() => {
+    requestAnimationFrame(() => {
+      if (!document.querySelector('.motion-page')) markAppReady()
+    })
+  })
+
+  if (isWindowLoaded) {
     requestAnimationFrame(finishPreloader)
   } else {
-    window.addEventListener('load', () => requestAnimationFrame(finishPreloader), { once: true })
+    window.addEventListener(
+      'load',
+      () => {
+        isWindowLoaded = true
+        requestAnimationFrame(finishPreloader)
+      },
+      { once: true },
+    )
   }
 }

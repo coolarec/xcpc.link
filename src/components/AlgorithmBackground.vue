@@ -1,9 +1,6 @@
 <script setup>
 import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { gsap } from 'gsap'
-import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin'
-
-gsap.registerPlugin(ScrambleTextPlugin)
 
 const root = ref(null)
 
@@ -67,37 +64,75 @@ const backgroundRows = Array.from({ length: 12 }, (_, rowIndex) => ({
 }))
 
 let context
+let observer
+let backgroundTweens = []
+let isMounted = false
+
+const activeWordCount = 24
+const waitForIdle = () =>
+  new Promise((resolve) => {
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(resolve, { timeout: 1400 })
+      return
+    }
+
+    window.setTimeout(resolve, 700)
+  })
 
 onMounted(async () => {
+  isMounted = true
   await nextTick()
 
   if (!root.value) return
   if (window.matchMedia('(max-width: 760px), (prefers-reduced-motion: reduce)').matches) return
 
+  await waitForIdle()
+  if (!isMounted || !root.value) return
+
+  const { ScrambleTextPlugin } = await import('gsap/ScrambleTextPlugin')
+  if (!isMounted || !root.value) return
+
+  gsap.registerPlugin(ScrambleTextPlugin)
+
   context = gsap.context(() => {
     gsap.utils.toArray('.algorithm-word').forEach((word, index) => {
+      if (index % 5 !== 0 || index / 5 >= activeWordCount) return
+
       const text = word.dataset.word || ''
       const repeatDelay = Number.parseFloat(word.dataset.repeatDelay || '7')
       word.textContent = ''
 
-      gsap.to(word, {
-        duration: 1.4 + (index % 5) * 0.18,
-        delay: (index % 12) * 0.035,
-        repeat: -1,
-        repeatDelay,
-        ease: 'none',
-        scrambleText: {
-          text,
-          chars: '01[]{}+-*/',
-          speed: 0.35,
-          revealDelay: 0.12,
-        },
-      })
+      backgroundTweens.push(
+        gsap.to(word, {
+          duration: 1.4 + (index % 5) * 0.18,
+          delay: (index % 12) * 0.035,
+          repeat: -1,
+          repeatDelay,
+          ease: 'none',
+          scrambleText: {
+            text,
+            chars: '01[]{}+-*/',
+            speed: 0.35,
+            revealDelay: 0.12,
+          },
+        }),
+      )
     })
   }, root.value)
+
+  observer = new IntersectionObserver(
+    ([entry]) => {
+      backgroundTweens.forEach((tween) => (entry.isIntersecting ? tween.resume() : tween.pause()))
+    },
+    { threshold: 0.05 },
+  )
+  observer.observe(root.value)
 })
 
 onBeforeUnmount(() => {
+  isMounted = false
+  observer?.disconnect()
+  backgroundTweens = []
   context?.revert()
 })
 </script>

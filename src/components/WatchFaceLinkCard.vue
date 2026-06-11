@@ -105,6 +105,7 @@ let velocityX = 0
 let velocityY = 0
 let isDragging = false
 let suppressClick = false
+let renderFrame = 0
 let inertiaFrame = 0
 let resizeObserver
 
@@ -132,9 +133,9 @@ const measure = () => {
 
   stepX = safeDiameter
   stepY = safeDiameter * (mobile ? 0.96 : 0.9)
-  columnCount.value = mobile ? Math.max(4, Math.ceil(width / stepX) + 2) : Math.max(5, Math.ceil(width / stepX) + 4)
-  rowCount.value = mobile ? Math.max(4, Math.ceil(height / stepY) + 2) : Math.max(6, Math.ceil(height / stepY) + 4)
-  copyOffsets.value = mobile ? [0] : [-1, 0, 1]
+  columnCount.value = mobile ? Math.max(4, Math.ceil(width / stepX) + 2) : Math.max(7, Math.ceil(width / stepX) + 6)
+  rowCount.value = mobile ? Math.max(4, Math.ceil(height / stepY) + 2) : Math.max(8, Math.ceil(height / stepY) + 6)
+  copyOffsets.value = [0]
   root.value?.style.setProperty('--watch-icon-size', `${iconSizePx.toFixed(2)}px`)
 }
 
@@ -143,6 +144,7 @@ const refreshIconCache = () => {
 }
 
 const render = () => {
+  renderFrame = 0
   if (!root.value || !links.value.length) return
 
   normalizeOffsets()
@@ -157,11 +159,11 @@ const render = () => {
     const col = Number(node.dataset.col || 0)
     const row = Number(node.dataset.row || 0)
     const rowOffset = row % 2 ? stepX * 0.5 : 0
-    const mobile = copyOffsets.value.length === 1
     const rawX = col * stepX + rowOffset + copyX * cycles.width - offsetX - cycles.width / 2
     const rawY = row * stepY + copyY * cycles.height - offsetY - cycles.height / 2
-    const x = mobile ? wrap(rawX + cycles.width / 2, cycles.width) - cycles.width / 2 : rawX
-    const y = mobile ? wrap(rawY + cycles.height / 2, cycles.height) - cycles.height / 2 : rawY
+    const x = wrap(rawX + cycles.width / 2, cycles.width) - cycles.width / 2
+    const y = wrap(rawY + cycles.height / 2, cycles.height) - cycles.height / 2
+    const mobile = isMobileWatch()
     const distance = Math.hypot(x, y)
     const scale = mobile
       ? clamp(0.64, 1.16, 1.16 - distance / (stepX * 5))
@@ -170,46 +172,14 @@ const render = () => {
       ? clamp(0.34, 0.9, 1 - distance / (stepX * 5.6))
       : clamp(0.18, 0.92, 1.02 - distance / (stepX * 6.2))
 
-    node.style.setProperty('--watch-x', x.toFixed(2))
-    node.style.setProperty('--watch-y', y.toFixed(2))
-    node.style.setProperty('--watch-scale', scale.toFixed(3))
-    node.style.setProperty('--watch-opacity', opacity.toFixed(3))
-    node.style.zIndex = String(Math.round(1000 - distance))
+    node.style.transform = `translate(${x.toFixed(2)}px, ${y.toFixed(2)}px) translate(-50%, -50%) scale(${scale.toFixed(3)})`
+    node.style.opacity = opacity.toFixed(3)
   })
 }
 
-const updateNearestLink = (event) => {
-  const source = links.value
-
-  if (!stage.value || !source.length) return
-
-  if (isMobileWatch()) return
-
-  const icons = cachedIcons.length ? cachedIcons : [...stage.value.querySelectorAll('.watch-icon')]
-  const rect = stage.value.getBoundingClientRect()
-  const pointerX = event.clientX - rect.left - rect.width / 2
-  const pointerY = event.clientY - rect.top - rect.height / 2
-  let nearest
-  let nearestDistance = Number.POSITIVE_INFINITY
-
-  icons.forEach((icon) => {
-    const x = Number(icon.style.getPropertyValue('--watch-x') || 0)
-    const y = Number(icon.style.getPropertyValue('--watch-y') || 0)
-    const distance = (x - pointerX) ** 2 + (y - pointerY) ** 2
-
-    if (distance < nearestDistance) {
-      nearestDistance = distance
-      nearest = icon
-    }
-  })
-
-  const baseIndex = Number(nearest?.dataset.baseIndex || 0)
-  const next = source[baseIndex] || null
-
-  if (next) {
-    activeLink.value = next
-    showInfo.value = true
-  }
+const scheduleRender = () => {
+  if (renderFrame) return
+  renderFrame = requestAnimationFrame(render)
 }
 
 const stopInertia = () => {
@@ -255,8 +225,6 @@ const handlePointerDown = (event) => {
 const handlePointerMove = (event) => {
   if (!isDragging) return
 
-  updateNearestLink(event)
-
   const now = performance.now()
   const elapsed = Math.max(16, now - lastTime)
   const dx = event.clientX - startX
@@ -277,7 +245,7 @@ const handlePointerMove = (event) => {
   lastX = event.clientX
   lastY = event.clientY
   lastTime = now
-  render()
+  scheduleRender()
   event.preventDefault()
 }
 
@@ -349,13 +317,14 @@ onMounted(async () => {
     measure()
     nextTick(() => {
       refreshIconCache()
-      requestAnimationFrame(render)
+      scheduleRender()
     })
   })
   resizeObserver.observe(root.value)
 })
 
 onBeforeUnmount(() => {
+  if (renderFrame) cancelAnimationFrame(renderFrame)
   stopInertia()
   resizeObserver?.disconnect()
 })
@@ -569,10 +538,6 @@ onBeforeUnmount(() => {
 }
 
 .watch-icon {
-  --watch-x: 0;
-  --watch-y: 0;
-  --watch-scale: 0.7;
-  --watch-opacity: 0;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -588,19 +553,16 @@ onBeforeUnmount(() => {
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, #ffffff, transparent 72%),
     inset 0 -10px 18px rgba(0, 0, 0, 0.16);
-  opacity: var(--watch-opacity);
+  opacity: 0;
   text-decoration: none;
   user-select: none;
   -webkit-user-drag: none;
-  transform:
-    translate(calc(var(--watch-x) * 1px), calc(var(--watch-y) * 1px))
-    translate(-50%, -50%)
-    scale(var(--watch-scale));
+  transform: translate(-50%, -50%) scale(0.7);
   will-change: transform, opacity;
 }
 
-.watch-icon:hover,
-.watch-icon:focus-visible {
+.watch-card:not(.is-dragging) .watch-icon:hover,
+.watch-card:not(.is-dragging) .watch-icon:focus-visible {
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, #ffffff, transparent 56%),
     inset 0 -10px 18px rgba(0, 0, 0, 0.16),

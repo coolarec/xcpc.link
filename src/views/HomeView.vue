@@ -1,18 +1,28 @@
 <script setup>
-import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
+import { defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import AlgorithmBackground from '../components/AlgorithmBackground.vue'
-import GalleryLinkCard from '../components/GalleryLinkCard.vue'
+import GalleryCardPlaceholder from '../components/GalleryCardPlaceholder.vue'
 import HeroDock from '../components/HeroDock.vue'
 import HeroTiltCards from '../components/HeroTiltCards.vue'
 import HorizontalGallery from '../components/HorizontalGallery.vue'
-import MotionFooter from '../components/MotionFooter.vue'
 import WatchFaceLink from '../components/WatchFaceLink.vue'
-import WatchFaceLinkCard from '../components/WatchFaceLinkCard.vue'
 
 gsap.registerPlugin(ScrollToPlugin, ScrollTrigger)
+
+const asyncCardOptions = (loader) => ({
+  loader,
+  loadingComponent: GalleryCardPlaceholder,
+  delay: 0,
+})
+
+const GalleryLinkCard = defineAsyncComponent(asyncCardOptions(() => import('../components/GalleryLinkCard.vue')))
+const MotionFooter = defineAsyncComponent(() => import('../components/MotionFooter.vue'))
+const WatchFaceLinkCard = defineAsyncComponent(
+  asyncCardOptions(() => import('../components/WatchFaceLinkCard.vue')),
+)
 
 const pageRoot = ref(null)
 const tiltSection = ref(null)
@@ -64,6 +74,14 @@ const scrollToGallery = (index) => {
 
 const startHeroMotion = () => {
   isHeroMotionActive.value = true
+}
+
+const notifyPreloaderReady = () => {
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      window.dispatchEvent(new CustomEvent('app-preloader:ready'))
+    })
+  })
 }
 
 onMounted(async () => {
@@ -167,6 +185,7 @@ onMounted(async () => {
     removePreloaderListener = () => {
       window.removeEventListener('app-preloader:hidden', handlePreloaderHidden)
     }
+    notifyPreloaderReady()
   } else {
     requestAnimationFrame(startHeroMotion)
   }
