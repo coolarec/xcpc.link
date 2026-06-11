@@ -247,7 +247,7 @@ onBeforeUnmount(() => {
   place-items: center;
   text-align: center;
   padding: 24px;
-  transform: translateZ(90px);
+  transform: translateZ(90px) rotateX(2.5deg) rotateY(-3deg) rotateZ(-1deg);
   box-shadow: var(--hero-core-shadow);
   will-change: transform;
 }
@@ -314,37 +314,37 @@ onBeforeUnmount(() => {
 .tilt-panel-1 {
   top: 5%;
   left: 8%;
-  transform: translateZ(140px) rotateZ(-8deg);
+  transform: translateZ(140px) rotateX(-6deg) rotateY(8deg) rotateZ(-8deg);
 }
 
 .tilt-panel-2 {
   top: 6%;
   right: 10%;
-  transform: translateZ(118px) rotateZ(7deg);
+  transform: translateZ(118px) rotateX(5deg) rotateY(-7deg) rotateZ(7deg);
 }
 
 .tilt-panel-3 {
   top: 42%;
   left: 0;
-  transform: translateZ(78px) rotateZ(5deg);
+  transform: translateZ(78px) rotateX(7deg) rotateY(5deg) rotateZ(5deg);
 }
 
 .tilt-panel-4 {
   top: 42%;
   right: 1%;
-  transform: translateZ(100px) rotateZ(-5deg);
+  transform: translateZ(100px) rotateX(-5deg) rotateY(-9deg) rotateZ(-5deg);
 }
 
 .tilt-panel-5 {
   bottom: 5%;
   left: 18%;
-  transform: translateZ(124px) rotateZ(8deg);
+  transform: translateZ(124px) rotateX(4deg) rotateY(10deg) rotateZ(8deg);
 }
 
 .tilt-panel-6 {
   right: 20%;
   bottom: 1%;
-  transform: translateZ(152px) rotateZ(-7deg);
+  transform: translateZ(152px) rotateX(-7deg) rotateY(-4deg) rotateZ(-7deg);
 }
 
 @media (max-width: 860px) {

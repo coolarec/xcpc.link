@@ -360,6 +360,31 @@ onBeforeUnmount(() => {
           />
         </WatchFaceLinkCard>
       </HorizontalGallery>
+        <HorizontalGallery
+        eyebrow="For"
+        title="出题人"
+        accent="#ff9f0a"
+        direction="left"
+      >
+      <GalleryLinkCard
+          avatar="F"
+          title="Fenwick"
+          description="Compact prefix sums with logarithmic updates."
+          href="https://cp-algorithms.com/data_structures/fenwick.html"
+          :tags="['bit', 'prefix', 'log']"
+          :index="1"
+          accent="#ff9f0a"
+        />
+        <GalleryLinkCard
+          avatar="T"
+          title="Treap"
+          description="Randomized balanced binary search tree with split and merge."
+          href="https://cp-algorithms.com/data_structures/treap.html"
+          :tags="['bst', 'random', 'merge']"
+          :index="2"
+          accent="#ff9f0a"
+        />
+      </HorizontalGallery>
     </section>
 
     <MotionFooter />

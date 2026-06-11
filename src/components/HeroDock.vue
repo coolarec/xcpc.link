@@ -23,6 +23,10 @@ onMounted(async () => {
   context = gsap.context(() => {
     const icons = gsap.utils.toArray('.hero-dock-item')
     const firstIcon = icons[0]
+    const stretchTo = gsap.quickTo(dock.value, '--dock-stretch', {
+      duration: 0.46,
+      ease: 'power3.out',
+    })
 
     gsap.set(icons, {
       transformOrigin: '50% 115%',
@@ -63,11 +67,7 @@ onMounted(async () => {
         })
       })
 
-      gsap.to(dock.value, {
-        '--dock-stretch': 1 + (maxScale - 1) * 0.65,
-        duration: 0.28,
-        ease: 'power3.out',
-      })
+      stretchTo(1 + (maxScale - 1) * 0.7)
     }
 
     const resetDock = () => {
@@ -77,11 +77,7 @@ onMounted(async () => {
         scale: 1,
         ease: 'power3.out',
       })
-      gsap.to(dock.value, {
-        '--dock-stretch': 1,
-        duration: 0.28,
-        ease: 'power3.out',
-      })
+      stretchTo(1)
     }
 
     dock.value.addEventListener('pointermove', updateDock)
