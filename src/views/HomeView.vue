@@ -70,8 +70,12 @@ onMounted(async () => {
   if (!root) return
 
   context = gsap.context(() => {
-    if (tilt && second) {
-      gsap
+    const media = gsap.matchMedia()
+
+    media.add('(min-width: 761px)', () => {
+      if (!tilt || !second) return undefined
+
+      const timeline = gsap
         .timeline({
           scrollTrigger: {
             trigger: tilt,
@@ -98,9 +102,55 @@ onMounted(async () => {
           ease: 'none',
           duration: 0.1,
         })
+
+      return () => {
+        timeline.scrollTrigger?.kill()
+        timeline.kill()
+      }
+    })
+
+    media.add('(max-width: 760px)', () => {
+      if (!tilt || !second) return undefined
+
+      const timeline = gsap
+        .timeline({
+          scrollTrigger: {
+            trigger: tilt,
+            start: 'top top',
+            end: 'bottom top',
+            scrub: true,
+            invalidateOnRefresh: true,
+          },
+        })
+        .fromTo(
+          tilt,
+          { scale: 1, autoAlpha: 1 },
+          {
+            scale: 0.92,
+            autoAlpha: 0.72,
+            ease: 'none',
+            duration: 0.85,
+          },
+        )
+        .to(tilt, {
+          autoAlpha: 0,
+          ease: 'none',
+          duration: 0.15,
+        })
+
+      return () => {
+        timeline.scrollTrigger?.kill()
+        timeline.kill()
+      }
+    })
+
+    if (window.innerWidth <= 760) {
+      window.scrollTo(0, 0)
     }
 
     ScrollTrigger.refresh()
+
+    return () => media.revert()
   }, root)
 })
 
@@ -523,13 +573,34 @@ onBeforeUnmount(() => {
 }
 
 @media (max-width: 860px) {
+  .tilt-section {
+    min-height: 100vh;
+    min-height: 100dvh;
+    place-items: start center;
+    padding-top: max(76px, calc(env(safe-area-inset-top) + 54px));
+    cursor: auto;
+  }
+
+  .tilt-section :deep(*) {
+    cursor: auto;
+  }
+
   .demo-label {
     top: 22px;
     left: 22px;
   }
+
+  .mode-toggle {
+    top: 18px;
+    right: 18px;
+  }
 }
 
 @media (max-width: 560px) {
+  .tilt-section {
+    padding-top: max(70px, calc(env(safe-area-inset-top) + 48px));
+  }
+
   .demo-label {
     max-width: calc(100vw - 44px);
     font-size: 12px;

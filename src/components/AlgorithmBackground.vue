@@ -72,6 +72,7 @@ onMounted(async () => {
   await nextTick()
 
   if (!root.value) return
+  if (window.matchMedia('(max-width: 760px), (prefers-reduced-motion: reduce)').matches) return
 
   context = gsap.context(() => {
     gsap.utils.toArray('.algorithm-word').forEach((word, index) => {

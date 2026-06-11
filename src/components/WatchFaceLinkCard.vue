@@ -28,6 +28,7 @@ const showDragHint = ref(false)
 const hasDragged = ref(false)
 const columnCount = ref(8)
 const rowCount = ref(8)
+const copyOffsets = ref([-1, 0, 1])
 const slots = useSlots()
 
 const flattenNodes = (nodes) =>
@@ -56,11 +57,10 @@ const active = computed(() => activeLink.value)
 
 const visualItems = computed(() => {
   const source = links.value.length ? links.value : []
-  const copies = [-1, 0, 1]
   const palette = ['#007aff', '#34c759', '#ff9f0a', '#ff375f', '#5e5ce6', '#64d2ff']
 
-  return copies.flatMap((copyY) =>
-    copies.flatMap((copyX) =>
+  return copyOffsets.value.flatMap((copyY) =>
+    copyOffsets.value.flatMap((copyX) =>
       Array.from({ length: rowCount.value }).flatMap((_, row) =>
         Array.from({ length: columnCount.value }).map((__, col) => {
           const baseIndex = (row * columnCount.value + col) % source.length
@@ -91,6 +91,7 @@ const minIconGap = 8
 let stepX = 78
 let stepY = 68
 let iconSizePx = 54
+let cachedIcons = []
 let offsetX = 0
 let offsetY = 0
 let startX = 0
@@ -107,6 +108,9 @@ let suppressClick = false
 let inertiaFrame = 0
 let resizeObserver
 
+const isMobileWatch = () =>
+  window.matchMedia('(max-width: 720px), (pointer: coarse), (prefers-reduced-motion: reduce)').matches
+
 const getCycles = () => ({
   width: Math.max(1, columnCount.value * stepX),
   height: Math.max(1, rowCount.value * stepY),
@@ -121,14 +125,21 @@ const normalizeOffsets = () => {
 const measure = () => {
   const width = stage.value?.clientWidth || root.value?.clientWidth || 600
   const height = stage.value?.clientHeight || root.value?.clientHeight || 480
-  iconSizePx = clamp(40, 54, width / 8.8)
-  const safeDiameter = iconSizePx * maxIconScale + minIconGap
+  const mobile = isMobileWatch()
+
+  iconSizePx = mobile ? clamp(34, 42, width / 6.6) : clamp(40, 54, width / 8.8)
+  const safeDiameter = iconSizePx * maxIconScale + (mobile ? 6 : minIconGap)
 
   stepX = safeDiameter
-  stepY = safeDiameter * 0.9
-  columnCount.value = Math.max(5, Math.ceil(width / stepX) + 4)
-  rowCount.value = Math.max(6, Math.ceil(height / stepY) + 4)
+  stepY = safeDiameter * (mobile ? 0.96 : 0.9)
+  columnCount.value = mobile ? Math.max(4, Math.ceil(width / stepX) + 2) : Math.max(5, Math.ceil(width / stepX) + 4)
+  rowCount.value = mobile ? Math.max(4, Math.ceil(height / stepY) + 2) : Math.max(6, Math.ceil(height / stepY) + 4)
+  copyOffsets.value = mobile ? [0] : [-1, 0, 1]
   root.value?.style.setProperty('--watch-icon-size', `${iconSizePx.toFixed(2)}px`)
+}
+
+const refreshIconCache = () => {
+  cachedIcons = root.value ? [...root.value.querySelectorAll('.watch-icon')] : []
 }
 
 const render = () => {
@@ -137,7 +148,7 @@ const render = () => {
   normalizeOffsets()
 
   const cycles = getCycles()
-  const icons = root.value.querySelectorAll('.watch-icon')
+  const icons = cachedIcons.length ? cachedIcons : root.value.querySelectorAll('.watch-icon')
 
   icons.forEach((node) => {
     const baseIndex = Number(node.dataset.baseIndex || 0)
@@ -146,11 +157,18 @@ const render = () => {
     const col = Number(node.dataset.col || 0)
     const row = Number(node.dataset.row || 0)
     const rowOffset = row % 2 ? stepX * 0.5 : 0
-    const x = col * stepX + rowOffset + copyX * cycles.width - offsetX - cycles.width / 2
-    const y = row * stepY + copyY * cycles.height - offsetY - cycles.height / 2
+    const mobile = copyOffsets.value.length === 1
+    const rawX = col * stepX + rowOffset + copyX * cycles.width - offsetX - cycles.width / 2
+    const rawY = row * stepY + copyY * cycles.height - offsetY - cycles.height / 2
+    const x = mobile ? wrap(rawX + cycles.width / 2, cycles.width) - cycles.width / 2 : rawX
+    const y = mobile ? wrap(rawY + cycles.height / 2, cycles.height) - cycles.height / 2 : rawY
     const distance = Math.hypot(x, y)
-    const scale = clamp(0.46, maxIconScale, maxIconScale - distance / (stepX * 4.4))
-    const opacity = clamp(0.18, 0.92, 1.02 - distance / (stepX * 6.2))
+    const scale = mobile
+      ? clamp(0.64, 1.16, 1.16 - distance / (stepX * 5))
+      : clamp(0.46, maxIconScale, maxIconScale - distance / (stepX * 4.4))
+    const opacity = mobile
+      ? clamp(0.34, 0.9, 1 - distance / (stepX * 5.6))
+      : clamp(0.18, 0.92, 1.02 - distance / (stepX * 6.2))
 
     node.style.setProperty('--watch-x', x.toFixed(2))
     node.style.setProperty('--watch-y', y.toFixed(2))
@@ -165,7 +183,9 @@ const updateNearestLink = (event) => {
 
   if (!stage.value || !source.length) return
 
-  const icons = [...stage.value.querySelectorAll('.watch-icon')]
+  if (isMobileWatch()) return
+
+  const icons = cachedIcons.length ? cachedIcons : [...stage.value.querySelectorAll('.watch-icon')]
   const rect = stage.value.getBoundingClientRect()
   const pointerX = event.clientX - rect.left - rect.width / 2
   const pointerY = event.clientY - rect.top - rect.height / 2
@@ -269,6 +289,12 @@ const handlePointerUp = (event) => {
   root.value?.releasePointerCapture?.(event.pointerId)
 
   if (Math.hypot(velocityX, velocityY) > 0.018) {
+    if (isMobileWatch()) {
+      velocityX = 0
+      velocityY = 0
+      return
+    }
+
     stopInertia()
     inertiaFrame = requestAnimationFrame(glide)
   }
@@ -316,11 +342,15 @@ onMounted(async () => {
 
   measure()
   await nextTick()
+  refreshIconCache()
   render()
 
   resizeObserver = new ResizeObserver(() => {
     measure()
-    requestAnimationFrame(render)
+    nextTick(() => {
+      refreshIconCache()
+      requestAnimationFrame(render)
+    })
   })
   resizeObserver.observe(root.value)
 })
@@ -633,6 +663,10 @@ onBeforeUnmount(() => {
     border-radius: 18px;
   }
 
+  .watch-card {
+    box-shadow: inset 0 0 0 1px var(--soft-line);
+  }
+
   .watch-stage {
     inset: 4px;
   }
@@ -648,6 +682,20 @@ onBeforeUnmount(() => {
 
   .watch-face::after {
     height: 48%;
+  }
+
+  .watch-drag-hint {
+    backdrop-filter: none;
+  }
+
+  .watch-icon {
+    box-shadow: inset 0 1px 0 color-mix(in srgb, #ffffff, transparent 76%);
+    will-change: transform;
+  }
+
+  .watch-icon:hover,
+  .watch-icon:focus-visible {
+    box-shadow: inset 0 1px 0 color-mix(in srgb, #ffffff, transparent 76%);
   }
 
   .watch-info h3 {

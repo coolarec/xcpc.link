@@ -22,6 +22,17 @@ onMounted(async () => {
 
   context = gsap.context(() => {
     const icons = gsap.utils.toArray('.hero-dock-item')
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      gsap.set(icons, {
+        transformOrigin: '50% 115%',
+        scale: 1,
+        x: 0,
+      })
+      dock.value.style.setProperty('--dock-stretch', '1')
+      return
+    }
+
     const firstIcon = icons[0]
     const stretchTo = gsap.quickTo(dock.value, '--dock-stretch', {
       duration: 0.46,

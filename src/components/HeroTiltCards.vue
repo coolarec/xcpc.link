@@ -29,6 +29,9 @@ const setupMotion = (isSmall) => {
   const context = gsap.context(() => {
     const section = root.value.closest('.tilt-section')
     const trackingTarget = section || window
+    const isCoarsePointer = window.matchMedia('(pointer: coarse)').matches
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const disableMotion = isSmall || isCoarsePointer || reduceMotion
     const rotationRange = isSmall ? 6 : 15
     const coreShift = isSmall ? 12 : 30
     const titleShift = isSmall ? 22 : 84
@@ -113,28 +116,20 @@ const setupMotion = (isSmall) => {
       }
     }
 
-    trackingTarget.addEventListener('pointermove', handlePointerMove)
-    trackingTarget.addEventListener('pointerleave', resetTilt)
-    window.addEventListener('blur', resetTilt)
-    cleanup.push(() => {
-      trackingTarget.removeEventListener('pointermove', handlePointerMove)
-      trackingTarget.removeEventListener('pointerleave', resetTilt)
-      window.removeEventListener('blur', resetTilt)
-    })
-
-    if (isSmall) {
-      gsap.from('.tilt-panel', {
-        autoAlpha: 0,
-        scale: 0.82,
-        y: 28,
-        duration: 0.72,
-        ease: 'back.out(1.4)',
-        stagger: {
-          amount: 0.34,
-          from: 'center',
-        },
+    if (!disableMotion) {
+      trackingTarget.addEventListener('pointermove', handlePointerMove)
+      trackingTarget.addEventListener('pointerleave', resetTilt)
+      window.addEventListener('blur', resetTilt)
+      cleanup.push(() => {
+        trackingTarget.removeEventListener('pointermove', handlePointerMove)
+        trackingTarget.removeEventListener('pointerleave', resetTilt)
+        window.removeEventListener('blur', resetTilt)
       })
     } else {
+      resetTilt()
+    }
+
+    if (!disableMotion) {
       gsap.from('.tilt-panel', {
         autoAlpha: 0,
         z: -180,
@@ -148,25 +143,29 @@ const setupMotion = (isSmall) => {
       })
     }
 
-    gsap.to('.tilt-panel', {
-      y: isSmall ? 8 : 14,
-      delay: isSmall ? 0.72 : 0.9,
-      duration: isSmall ? 2.4 : 3.2,
-      ease: 'sine.inOut',
-      repeat: -1,
-      yoyo: true,
-      stagger: {
-        each: isSmall ? 0.12 : 0.18,
-        from: 'random',
-      },
-    })
+    if (!disableMotion) {
+      gsap.to('.tilt-panel', {
+        y: 14,
+        delay: 0.9,
+        duration: 3.2,
+        ease: 'sine.inOut',
+        repeat: -1,
+        yoyo: true,
+        stagger: {
+          each: 0.18,
+          from: 'random',
+        },
+      })
+    }
 
-    gsap.from(core.value, {
-      autoAlpha: 0,
-      scale: 0.9,
-      duration: 0.75,
-      ease: 'power3.out',
-    })
+    if (!disableMotion) {
+      gsap.from(core.value, {
+        autoAlpha: 0,
+        scale: 0.9,
+        duration: 0.75,
+        ease: 'power3.out',
+      })
+    }
   }, root.value)
 
   return () => {
