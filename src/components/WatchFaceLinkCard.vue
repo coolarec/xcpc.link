@@ -23,7 +23,9 @@ const props = defineProps({
 const root = ref(null)
 const stage = ref(null)
 const activeLink = ref(null)
-const showDragHint = ref(true)
+const showInfo = ref(false)
+const showDragHint = ref(false)
+const hasDragged = ref(false)
 const columnCount = ref(8)
 const rowCount = ref(8)
 const slots = useSlots()
@@ -50,10 +52,7 @@ const slotLinks = computed(() => {
 
 const links = computed(() => (slotLinks.value.length ? slotLinks.value : props.links))
 
-const active = computed(() => activeLink.value || links.value[0] || {
-  title: props.title,
-  description: props.description,
-})
+const active = computed(() => activeLink.value)
 
 const visualItems = computed(() => {
   const source = links.value.length ? links.value : []
@@ -179,7 +178,12 @@ const updateNearestLink = (event) => {
   })
 
   const baseIndex = Number(nearest?.dataset.baseIndex || 0)
-  activeLink.value = source[baseIndex] || source[0]
+  const next = source[baseIndex] || null
+
+  if (next) {
+    activeLink.value = next
+    showInfo.value = true
+  }
 }
 
 const stopInertia = () => {
@@ -223,9 +227,9 @@ const handlePointerDown = (event) => {
 }
 
 const handlePointerMove = (event) => {
-  updateNearestLink(event)
-
   if (!isDragging) return
+
+  updateNearestLink(event)
 
   const now = performance.now()
   const elapsed = Math.max(16, now - lastTime)
@@ -236,6 +240,7 @@ const handlePointerMove = (event) => {
 
   if (Math.hypot(dx, dy) > 7) {
     suppressClick = true
+    hasDragged.value = true
     showDragHint.value = false
   }
 
@@ -276,12 +281,33 @@ const handleIconClick = (event) => {
   event.stopPropagation()
 }
 
+const showFaceHint = () => {
+  if (hasDragged.value) return
+  showDragHint.value = true
+}
+
+const hideFaceHint = () => {
+  showDragHint.value = false
+  showInfo.value = false
+  activeLink.value = null
+}
+
+const showIconInfo = (item) => {
+  activeLink.value = item
+  showInfo.value = true
+}
+
+const hideIconInfo = () => {
+  if (isDragging) return
+  showInfo.value = false
+  activeLink.value = null
+}
+
 onMounted(async () => {
   await nextTick()
 
   if (!root.value) return
 
-  activeLink.value = links.value[0]
   measure()
   await nextTick()
   render()
@@ -310,40 +336,55 @@ onBeforeUnmount(() => {
     @pointercancel="handlePointerUp"
     @pointerleave="handlePointerUp"
   >
-    <div ref="stage" class="watch-stage" aria-label="Draggable related links">
-      <a
-        v-for="entry in visualItems"
-        :key="entry.key"
-        class="watch-icon"
-        :href="entry.item.href"
-        target="_blank"
-        rel="noreferrer"
-        :data-base-index="entry.baseIndex"
-        :data-copy-x="entry.copyX"
-        :data-copy-y="entry.copyY"
-        :data-col="entry.col"
-        :data-row="entry.row"
-        :aria-label="entry.item.title"
-        :style="{ '--watch-color': entry.color }"
-        draggable="false"
-        @pointerenter="activeLink = entry.item"
-        @focus="activeLink = entry.item"
-        @click="handleIconClick"
-        @dragstart.prevent
+    <div class="watch-shell">
+      <aside class="watch-rail" aria-hidden="true">
+        <span>{{ title }}</span>
+      </aside>
+
+      <div
+        class="watch-face"
+        :class="{ 'is-showing-info': showInfo }"
+        @pointerenter="showFaceHint"
+        @pointerleave="hideFaceHint"
       >
-        <span>{{ entry.item.icon }}</span>
-      </a>
-    </div>
+        <div ref="stage" class="watch-stage" aria-label="Draggable related links">
+          <a
+            v-for="entry in visualItems"
+            :key="entry.key"
+            class="watch-icon"
+            :href="entry.item.href"
+            target="_blank"
+            rel="noreferrer"
+            :data-base-index="entry.baseIndex"
+            :data-copy-x="entry.copyX"
+            :data-copy-y="entry.copyY"
+            :data-col="entry.col"
+            :data-row="entry.row"
+            :aria-label="entry.item.title"
+            :style="{ '--watch-color': entry.color }"
+            draggable="false"
+            @pointerenter="showIconInfo(entry.item)"
+            @pointerleave="hideIconInfo"
+            @focus="showIconInfo(entry.item)"
+            @blur="hideIconInfo"
+            @click="handleIconClick"
+            @dragstart.prevent
+          >
+            <span>{{ entry.item.icon }}</span>
+          </a>
+        </div>
 
-    <div v-if="showDragHint" class="watch-drag-hint" aria-hidden="true">
-      <span class="watch-drag-grip"></span>
-      <span>拖动</span>
-    </div>
+        <div v-if="showDragHint" class="watch-drag-hint" aria-hidden="true">
+          <span class="watch-drag-grip"></span>
+          <span>拖动</span>
+        </div>
 
-    <div class="watch-info" aria-live="polite">
-      <span>{{ title }}</span>
-      <h3>{{ active?.title }}</h3>
-      <p>{{ active?.description }}</p>
+        <div v-if="showInfo && active" class="watch-info" aria-live="polite">
+          <span>{{ title }}</span>
+          <h3>{{ active?.title }}</h3>
+          <p>{{ active?.description }}</p>
+        </div>
+      </div>
     </div>
   </article>
 </template>
@@ -354,10 +395,8 @@ onBeforeUnmount(() => {
   width: clamp(360px, 32vw, 600px);
   height: 480px;
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: 22px;
+  display: block;
+  padding: 0;
   border: 0;
   border-radius: 20px;
   background: color-mix(in srgb, var(--card-bg), transparent 2%);
@@ -382,7 +421,7 @@ onBeforeUnmount(() => {
   touch-action: none;
 }
 
-.watch-card::after {
+.watch-face::after {
   content: '';
   position: absolute;
   left: 0;
@@ -397,10 +436,61 @@ onBeforeUnmount(() => {
     color-mix(in srgb, var(--card-bg), transparent 42%) 56%,
     color-mix(in srgb, var(--card-bg), transparent 8%)
   );
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+
+.watch-face.is-showing-info::after {
+  opacity: 1;
 }
 
 .watch-card.is-dragging {
   cursor: grabbing;
+}
+
+.watch-shell {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr);
+  overflow: hidden;
+  border-radius: inherit;
+  background: inherit;
+}
+
+.watch-rail {
+  position: relative;
+  z-index: 2003;
+  display: grid;
+  place-items: center;
+  border-right: 0;
+  background: transparent;
+}
+
+.watch-rail::after {
+  content: '';
+  position: absolute;
+  top: 18px;
+  right: 0;
+  bottom: 18px;
+  width: 1px;
+  background: color-mix(in srgb, var(--page-fg), transparent 90%);
+}
+
+.watch-rail span {
+  writing-mode: vertical-rl;
+  color: color-mix(in srgb, var(--accent), #ffffff 18%);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.watch-face {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: 0;
 }
 
 .watch-stage {
@@ -541,7 +631,16 @@ onBeforeUnmount(() => {
     inset: 4px;
   }
 
-  .watch-card::after {
+  .watch-shell {
+    grid-template-columns: 54px minmax(0, 1fr);
+  }
+
+  .watch-rail span {
+    font-size: 10px;
+    letter-spacing: 0.14em;
+  }
+
+  .watch-face::after {
     height: 48%;
   }
 

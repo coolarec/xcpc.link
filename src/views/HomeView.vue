@@ -318,7 +318,7 @@ onBeforeUnmount(() => {
           accent="#ff9f0a"
         />
         <WatchFaceLinkCard
-          title="Structure links"
+          title="有价值的"
           description="Data-structure references arranged as a draggable watch face."
           accent="#ff9f0a"
         >
