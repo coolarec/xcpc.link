@@ -85,8 +85,12 @@ const visualItems = computed(() => {
 const clamp = (min, max, value) => Math.min(max, Math.max(min, value))
 const wrap = (value, cycle) => ((value % cycle) + cycle) % cycle
 
+const maxIconScale = 1.5
+const minIconGap = 8
+
 let stepX = 78
 let stepY = 68
+let iconSizePx = 54
 let offsetX = 0
 let offsetY = 0
 let startX = 0
@@ -117,12 +121,14 @@ const normalizeOffsets = () => {
 const measure = () => {
   const width = stage.value?.clientWidth || root.value?.clientWidth || 600
   const height = stage.value?.clientHeight || root.value?.clientHeight || 480
-  const iconSize = clamp(40, 54, width / 8.8)
+  iconSizePx = clamp(40, 54, width / 8.8)
+  const safeDiameter = iconSizePx * maxIconScale + minIconGap
 
-  stepX = iconSize * 1.42
-  stepY = iconSize * 1.22
-  columnCount.value = Math.max(6, Math.ceil(width / stepX) + 2)
-  rowCount.value = Math.max(7, Math.ceil(height / stepY) + 2)
+  stepX = safeDiameter
+  stepY = safeDiameter * 0.9
+  columnCount.value = Math.max(5, Math.ceil(width / stepX) + 4)
+  rowCount.value = Math.max(6, Math.ceil(height / stepY) + 4)
+  root.value?.style.setProperty('--watch-icon-size', `${iconSizePx.toFixed(2)}px`)
 }
 
 const render = () => {
@@ -143,7 +149,7 @@ const render = () => {
     const x = col * stepX + rowOffset + copyX * cycles.width - offsetX - cycles.width / 2
     const y = row * stepY + copyY * cycles.height - offsetY - cycles.height / 2
     const distance = Math.hypot(x, y)
-    const scale = clamp(0.46, 1.3, 1.3 - distance / (stepX * 4.4))
+    const scale = clamp(0.46, maxIconScale, maxIconScale - distance / (stepX * 4.4))
     const opacity = clamp(0.18, 0.92, 1.02 - distance / (stepX * 6.2))
 
     node.style.setProperty('--watch-x', x.toFixed(2))
@@ -540,7 +546,7 @@ onBeforeUnmount(() => {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 54px;
+  width: var(--watch-icon-size, 54px);
   aspect-ratio: 1;
   display: grid;
   place-items: center;
