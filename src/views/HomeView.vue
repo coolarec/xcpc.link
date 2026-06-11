@@ -8,7 +8,6 @@ import GalleryLinkCard from '../components/GalleryLinkCard.vue'
 import HeroDock from '../components/HeroDock.vue'
 import HeroTiltCards from '../components/HeroTiltCards.vue'
 import HorizontalGallery from '../components/HorizontalGallery.vue'
-import LoadingOverlay from '../components/LoadingOverlay.vue'
 import MotionFooter from '../components/MotionFooter.vue'
 import WatchFaceLink from '../components/WatchFaceLink.vue'
 import WatchFaceLinkCard from '../components/WatchFaceLinkCard.vue'
@@ -20,8 +19,6 @@ const tiltSection = ref(null)
 const gallerySection = ref(null)
 const modeToggle = ref(null)
 const isDayMode = ref(false)
-const isLoading = ref(true)
-const isLoaderMounted = ref(true)
 const isHeroMotionActive = ref(false)
 
 const dockItems = [
@@ -31,7 +28,7 @@ const dockItems = [
 ]
 
 let context
-let loaderTimer = 0
+let removePreloaderListener
 
 const toggleTheme = () => {
   isDayMode.value = !isDayMode.value
@@ -65,13 +62,8 @@ const scrollToGallery = (index) => {
   })
 }
 
-const hideLoader = () => {
+const startHeroMotion = () => {
   isHeroMotionActive.value = true
-  isLoading.value = false
-}
-
-const finishLoader = () => {
-  isLoaderMounted.value = false
 }
 
 onMounted(async () => {
@@ -167,23 +159,27 @@ onMounted(async () => {
     return () => media.revert()
   }, root)
 
-  loaderTimer = window.setTimeout(hideLoader, 1550)
+  const preloader = document.getElementById('app-preloader')
+
+  if (preloader && !preloader.classList.contains('is-hidden')) {
+    const handlePreloaderHidden = () => startHeroMotion()
+    window.addEventListener('app-preloader:hidden', handlePreloaderHidden, { once: true })
+    removePreloaderListener = () => {
+      window.removeEventListener('app-preloader:hidden', handlePreloaderHidden)
+    }
+  } else {
+    requestAnimationFrame(startHeroMotion)
+  }
 })
 
 onBeforeUnmount(() => {
-  window.clearTimeout(loaderTimer)
+  removePreloaderListener?.()
   context?.revert()
 })
 </script>
 
 <template>
   <main ref="pageRoot" class="motion-page theme-scope" :class="{ 'is-day': isDayMode }">
-    <LoadingOverlay
-      v-if="isLoaderMounted"
-      :active="isLoading"
-      @hidden="finishLoader"
-    />
-
     <section ref="tiltSection" class="tilt-section" aria-label="Cursor-driven perspective tilt">
       <AlgorithmBackground />
       <button
@@ -284,7 +280,7 @@ onBeforeUnmount(() => {
         eyebrow="String lab"
         title="算竞高手"
         accent="#34c759"
-        direction="left"
+        reverse
       >
         <GalleryLinkCard
           avatar="K"
@@ -437,7 +433,7 @@ onBeforeUnmount(() => {
         eyebrow="For"
         title="出题人"
         accent="#ff9f0a"
-        direction="left"
+        reverse
       >
       <GalleryLinkCard
           avatar="F"

@@ -23,6 +23,10 @@ const props = defineProps({
     default: 'left',
     validator: (value) => ['left', 'right'].includes(value),
   },
+  reverse: {
+    type: Boolean,
+    default: false,
+  },
   scrollDistanceRatio: {
     type: Number,
     default: 0.58,
@@ -33,6 +37,8 @@ const root = ref(null)
 const wrapper = ref(null)
 const strip = ref(null)
 let motionMedia
+
+const isReversed = () => props.reverse || props.direction === 'right'
 
 onMounted(async () => {
   await nextTick()
@@ -55,10 +61,16 @@ onMounted(async () => {
 
       const getScrollDistance = () => horizontalScrollLength * 1.05
       const cards = () => gsap.utils.toArray(strip.value.children)
+      const getStartX = () => (isReversed() ? -horizontalScrollLength : 0)
+      const getEndX = () => (isReversed() ? 0 : -horizontalScrollLength)
 
       refresh()
 
-      const tween = gsap.to(strip.value, {
+      gsap.set(strip.value, { x: getStartX })
+
+      const tween = gsap.fromTo(strip.value, {
+        x: getStartX,
+      }, {
         scrollTrigger: {
           scrub: true,
           trigger: root.value,
@@ -67,7 +79,7 @@ onMounted(async () => {
           end: () => `+=${getScrollDistance()}`,
           invalidateOnRefresh: true,
         },
-        x: () => (props.direction === 'left' ? -horizontalScrollLength : horizontalScrollLength),
+        x: getEndX,
         ease: 'none',
       })
 
@@ -126,7 +138,12 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <section ref="root" class="horizontal-gallery" :style="{ '--accent': accent }">
+  <section
+    ref="root"
+    class="horizontal-gallery"
+    :class="{ 'is-reversed': isReversed() }"
+    :style="{ '--accent': accent }"
+  >
     <div class="gallery-heading">
       <p>{{ eyebrow }}</p>
       <h2>{{ title }}</h2>
@@ -158,6 +175,11 @@ onBeforeUnmount(() => {
 .gallery-heading {
   width: min(860px, 100%);
   padding: 0 6px;
+}
+
+.horizontal-gallery.is-reversed .gallery-heading {
+  justify-self: end;
+  text-align: right;
 }
 
 .gallery-heading p {
@@ -198,6 +220,10 @@ onBeforeUnmount(() => {
   gap: 50px;
 }
 
+.horizontal-gallery.is-reversed .horiz-gallery-strip {
+  flex-direction: row-reverse;
+}
+
 .horiz-gallery-strip :deep(.gallery-card) {
   flex: 0 0 var(--gallery-card-width);
   width: var(--gallery-card-width);
@@ -224,16 +250,17 @@ onBeforeUnmount(() => {
     font-size: clamp(42px, 13vw, 58px);
   }
 
-  .horiz-gallery-wrapper,
-  .horiz-gallery-strip {
-    display: grid;
+  .horiz-gallery-wrapper {
+    display: block;
     width: 100%;
     min-width: 0;
     transform: none !important;
   }
 
   .horiz-gallery-strip {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
     gap: 50px;
   }
 
