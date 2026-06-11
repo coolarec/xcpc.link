@@ -8,6 +8,7 @@ import GalleryLinkCard from '../components/GalleryLinkCard.vue'
 import HeroDock from '../components/HeroDock.vue'
 import HeroTiltCards from '../components/HeroTiltCards.vue'
 import HorizontalGallery from '../components/HorizontalGallery.vue'
+import LoadingOverlay from '../components/LoadingOverlay.vue'
 import MotionFooter from '../components/MotionFooter.vue'
 import WatchFaceLink from '../components/WatchFaceLink.vue'
 import WatchFaceLinkCard from '../components/WatchFaceLinkCard.vue'
@@ -19,6 +20,9 @@ const tiltSection = ref(null)
 const gallerySection = ref(null)
 const modeToggle = ref(null)
 const isDayMode = ref(false)
+const isLoading = ref(true)
+const isLoaderMounted = ref(true)
+const isHeroMotionActive = ref(false)
 
 const dockItems = [
   { label: 'Graph', glyph: 'G' },
@@ -27,6 +31,7 @@ const dockItems = [
 ]
 
 let context
+let loaderTimer = 0
 
 const toggleTheme = () => {
   isDayMode.value = !isDayMode.value
@@ -58,6 +63,15 @@ const scrollToGallery = (index) => {
     },
     ease: 'power3.inOut',
   })
+}
+
+const hideLoader = () => {
+  isHeroMotionActive.value = true
+  isLoading.value = false
+}
+
+const finishLoader = () => {
+  isLoaderMounted.value = false
 }
 
 onMounted(async () => {
@@ -152,15 +166,24 @@ onMounted(async () => {
 
     return () => media.revert()
   }, root)
+
+  loaderTimer = window.setTimeout(hideLoader, 1550)
 })
 
 onBeforeUnmount(() => {
+  window.clearTimeout(loaderTimer)
   context?.revert()
 })
 </script>
 
 <template>
   <main ref="pageRoot" class="motion-page theme-scope" :class="{ 'is-day': isDayMode }">
+    <LoadingOverlay
+      v-if="isLoaderMounted"
+      :active="isLoading"
+      @hidden="finishLoader"
+    />
+
     <section ref="tiltSection" class="tilt-section" aria-label="Cursor-driven perspective tilt">
       <AlgorithmBackground />
       <button
@@ -175,7 +198,7 @@ onBeforeUnmount(() => {
         <span class="mode-icon mode-icon-moon" aria-hidden="true"></span>
       </button>
       <p class="demo-label">XCPC.LINK</p>
-      <HeroTiltCards />
+      <HeroTiltCards :motion-active="isHeroMotionActive" />
       <HeroDock :items="dockItems" @select="scrollToGallery" />
     </section>
 

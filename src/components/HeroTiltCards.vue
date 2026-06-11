@@ -1,6 +1,13 @@
 <script setup>
-import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { gsap } from 'gsap'
+
+const props = defineProps({
+  motionActive: {
+    type: Boolean,
+    default: true,
+  },
+})
 
 const root = ref(null)
 const core = ref(null)
@@ -127,20 +134,29 @@ const setupMotion = (isSmall) => {
       })
     } else {
       resetTilt()
+      gsap.set('.tilt-panel', { autoAlpha: 1, z: 0, y: 0 })
     }
 
     if (!disableMotion) {
-      gsap.from('.tilt-panel', {
-        autoAlpha: 0,
-        z: -180,
-        y: 44,
-        duration: 0.9,
-        ease: 'power3.out',
-        stagger: {
-          amount: 0.42,
-          from: 'center',
+      gsap.fromTo(
+        '.tilt-panel',
+        {
+          autoAlpha: 0,
+          z: -180,
+          y: 44,
         },
-      })
+        {
+          autoAlpha: 1,
+          z: 0,
+          y: 0,
+          duration: 0.9,
+          ease: 'power3.out',
+          stagger: {
+            amount: 0.42,
+            from: 'center',
+          },
+        },
+      )
     }
 
     if (!disableMotion) {
@@ -174,15 +190,33 @@ const setupMotion = (isSmall) => {
   }
 }
 
-onMounted(async () => {
+const startMotion = async () => {
   await nextTick()
 
-  if (!root.value) return
+  if (!root.value || motionMedia || !props.motionActive) return
 
   motionMedia = gsap.matchMedia()
   motionMedia.add('(max-width: 760px)', () => setupMotion(true))
   motionMedia.add('(min-width: 761px)', () => setupMotion(false))
+}
+
+onMounted(() => {
+  startMotion()
 })
+
+watch(
+  () => props.motionActive,
+  (active) => {
+    if (active) {
+      startMotion()
+      return
+    }
+
+    motionMedia?.revert()
+    motionMedia = undefined
+  },
+  { flush: 'post' },
+)
 
 onBeforeUnmount(() => {
   motionMedia?.revert()
@@ -299,6 +333,8 @@ onBeforeUnmount(() => {
   height: 112px;
   display: grid;
   place-items: center;
+  opacity: 0;
+  visibility: hidden;
   color: var(--panel-fg);
   font-family: "Sora", sans-serif;
   font-size: 44px;
