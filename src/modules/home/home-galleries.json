@@ -1,0 +1,226 @@
+[
+  {
+    "eyebrow": "Graph toolkit",
+    "title": "初学者",
+    "accent": "#007aff",
+    "direction": "left",
+    "cards": [
+      {
+        "avatarUrl": "https://ui-avatars.com/api/?name=Dijkstra&background=007aff&color=ffffff&bold=true&format=svg",
+        "websiteUrl": "https://cp-algorithms.com/graph/dijkstra.html",
+        "websiteTitle": "Dijkstra",
+        "websiteDescription": "Priority queue relaxation for non-negative weighted graphs."
+      },
+      {
+        "avatarUrl": "https://ui-avatars.com/api/?name=Dinic&background=007aff&color=ffffff&bold=true&format=svg",
+        "websiteUrl": "https://cp-algorithms.com/graph/dinic.html",
+        "websiteTitle": "Dinic",
+        "websiteDescription": "Level graph plus blocking flow for maximum-flow routines."
+      },
+      {
+        "avatarUrl": "https://ui-avatars.com/api/?name=Tarjan&background=007aff&color=ffffff&bold=true&format=svg",
+        "websiteUrl": "https://cp-algorithms.com/graph/bridge-searching.html",
+        "websiteTitle": "Tarjan",
+        "websiteDescription": "Low-link structure for SCC, bridges, and articulation points."
+      }
+    ],
+    "watch": {
+      "title": "Graph links",
+      "description": "Quick graph references arranged as a draggable watch face.",
+      "links": [
+        {
+          "avatarUrl": "https://ui-avatars.com/api/?name=Dijkstra%20Notes&background=007aff&color=ffffff&bold=true&format=svg",
+          "websiteUrl": "https://cp-algorithms.com/graph/dijkstra.html",
+          "websiteTitle": "Dijkstra Notes",
+          "websiteDescription": "Priority-queue relaxation templates and edge-case reminders."
+        },
+        {
+          "avatarUrl": "https://ui-avatars.com/api/?name=Flow%20Models&background=007aff&color=ffffff&bold=true&format=svg",
+          "websiteUrl": "https://cp-algorithms.com/graph/dinic.html",
+          "websiteTitle": "Flow Models",
+          "websiteDescription": "Max-flow reductions, level graphs, and blocking-flow patterns."
+        },
+        {
+          "avatarUrl": "https://ui-avatars.com/api/?name=Tarjan%20Index&background=007aff&color=ffffff&bold=true&format=svg",
+          "websiteUrl": "https://cp-algorithms.com/graph/bridge-searching.html",
+          "websiteTitle": "Tarjan Index",
+          "websiteDescription": "Low-link recipes for SCC, bridges, and articulation points."
+        },
+        {
+          "avatarUrl": "https://ui-avatars.com/api/?name=LCA%20Jumps&background=007aff&color=ffffff&bold=true&format=svg",
+          "websiteUrl": "https://cp-algorithms.com/graph/lca_binary_lifting.html",
+          "websiteTitle": "LCA Jumps",
+          "websiteDescription": "Binary lifting and Euler tour references for tree queries."
+        },
+        {
+          "avatarUrl": "https://ui-avatars.com/api/?name=Matching&background=007aff&color=ffffff&bold=true&format=svg",
+          "websiteUrl": "https://cp-algorithms.com/graph/kuhn_maximum_bipartite_matching.html",
+          "websiteTitle": "Matching",
+          "websiteDescription": "Bipartite matching and alternating-path review material."
+        },
+        {
+          "avatarUrl": "https://ui-avatars.com/api/?name=Shortest%20Path%20Set&background=007aff&color=ffffff&bold=true&format=svg",
+          "websiteUrl": "https://cp-algorithms.com/graph/01_bfs.html",
+          "websiteTitle": "Shortest Path Set",
+          "websiteDescription": "A compact jump point for shortest-path variants."
+        }
+      ]
+    }
+  },
+  {
+    "eyebrow": "String lab",
+    "title": "算竞高手",
+    "accent": "#34c759",
+    "reverse": true,
+    "cards": [
+      {
+        "avatarUrl": "https://ui-avatars.com/api/?name=KMP&background=34c759&color=ffffff&bold=true&format=svg",
+        "websiteUrl": "https://cp-algorithms.com/string/prefix-function.html",
+        "websiteTitle": "KMP",
+        "websiteDescription": "Prefix-function matching with linear scanning guarantees."
+      },
+      {
+        "avatarUrl": "https://ui-avatars.com/api/?name=Suffix%20Array&background=34c759&color=ffffff&bold=true&format=svg",
+        "websiteUrl": "https://cp-algorithms.com/string/suffix-array.html",
+        "websiteTitle": "Suffix Array",
+        "websiteDescription": "Sorted suffix indices for substring ordering and LCP queries."
+      },
+      {
+        "avatarUrl": "https://ui-avatars.com/api/?name=Manacher&background=34c759&color=ffffff&bold=true&format=svg",
+        "websiteUrl": "https://cp-algorithms.com/string/manacher.html",
+        "websiteTitle": "Manacher",
+        "websiteDescription": "Palindrome radii expansion in linear time."
+      }
+    ],
+    "watch": {
+      "title": "String links",
+      "description": "Pattern matching references arranged as a draggable watch face.",
+      "links": [
+        {
+          "avatarUrl": "https://ui-avatars.com/api/?name=KMP%20Prefix&background=34c759&color=ffffff&bold=true&format=svg",
+          "websiteUrl": "https://cp-algorithms.com/string/prefix-function.html",
+          "websiteTitle": "KMP Prefix",
+          "websiteDescription": "Prefix function derivation, implementation, and matching notes."
+        },
+        {
+          "avatarUrl": "https://ui-avatars.com/api/?name=Z%20Function&background=34c759&color=ffffff&bold=true&format=svg",
+          "websiteUrl": "https://cp-algorithms.com/string/z-function.html",
+          "websiteTitle": "Z Function",
+          "websiteDescription": "Linear Z-array construction and substring matching patterns."
+        },
+        {
+          "avatarUrl": "https://ui-avatars.com/api/?name=Suffix%20Array&background=34c759&color=ffffff&bold=true&format=svg",
+          "websiteUrl": "https://cp-algorithms.com/string/suffix-array.html",
+          "websiteTitle": "Suffix Array",
+          "websiteDescription": "Sorted suffixes, LCP, and substring ordering reference."
+        },
+        {
+          "avatarUrl": "https://ui-avatars.com/api/?name=Aho-Corasick&background=34c759&color=ffffff&bold=true&format=svg",
+          "websiteUrl": "https://cp-algorithms.com/string/aho_corasick.html",
+          "websiteTitle": "Aho-Corasick",
+          "websiteDescription": "Trie failure links for multi-pattern matching workflows."
+        },
+        {
+          "avatarUrl": "https://ui-avatars.com/api/?name=Manacher&background=34c759&color=ffffff&bold=true&format=svg",
+          "websiteUrl": "https://cp-algorithms.com/string/manacher.html",
+          "websiteTitle": "Manacher",
+          "websiteDescription": "Palindrome radii with linear expansion boundaries."
+        },
+        {
+          "avatarUrl": "https://ui-avatars.com/api/?name=Hashing&background=34c759&color=ffffff&bold=true&format=svg",
+          "websiteUrl": "https://cp-algorithms.com/string/string-hashing.html",
+          "websiteTitle": "Hashing",
+          "websiteDescription": "Rolling hash setup, collision tradeoffs, and substring checks."
+        }
+      ]
+    }
+  },
+  {
+    "eyebrow": "For",
+    "title": "学生教练",
+    "accent": "#ff9f0a",
+    "direction": "left",
+    "cards": [
+      {
+        "avatarUrl": "https://ui-avatars.com/api/?name=Segment%20Tree&background=ff9f0a&color=ffffff&bold=true&format=svg",
+        "websiteUrl": "https://cp-algorithms.com/data_structures/segment_tree.html",
+        "websiteTitle": "Segment Tree",
+        "websiteDescription": "Range aggregation and lazy propagation for mutable arrays."
+      },
+      {
+        "avatarUrl": "https://ui-avatars.com/api/?name=Fenwick&background=ff9f0a&color=ffffff&bold=true&format=svg",
+        "websiteUrl": "https://cp-algorithms.com/data_structures/fenwick.html",
+        "websiteTitle": "Fenwick",
+        "websiteDescription": "Compact prefix sums with logarithmic updates."
+      },
+      {
+        "avatarUrl": "https://ui-avatars.com/api/?name=Treap&background=ff9f0a&color=ffffff&bold=true&format=svg",
+        "websiteUrl": "https://cp-algorithms.com/data_structures/treap.html",
+        "websiteTitle": "Treap",
+        "websiteDescription": "Randomized balanced binary search tree with split and merge."
+      }
+    ],
+    "watch": {
+      "title": "有价值的",
+      "description": "Data-structure references arranged as a draggable watch face.",
+      "links": [
+        {
+          "avatarUrl": "https://ui-avatars.com/api/?name=Segment%20Tree&background=ff9f0a&color=ffffff&bold=true&format=svg",
+          "websiteUrl": "https://cp-algorithms.com/data_structures/segment_tree.html",
+          "websiteTitle": "Segment Tree",
+          "websiteDescription": "Range queries, lazy propagation, and merge patterns."
+        },
+        {
+          "avatarUrl": "https://ui-avatars.com/api/?name=Fenwick%20Tree&background=ff9f0a&color=ffffff&bold=true&format=svg",
+          "websiteUrl": "https://cp-algorithms.com/data_structures/fenwick.html",
+          "websiteTitle": "Fenwick Tree",
+          "websiteDescription": "Prefix sums, binary indexed tree tricks, and order statistics."
+        },
+        {
+          "avatarUrl": "https://ui-avatars.com/api/?name=Treap&background=ff9f0a&color=ffffff&bold=true&format=svg",
+          "websiteUrl": "https://cp-algorithms.com/data_structures/treap.html",
+          "websiteTitle": "Treap",
+          "websiteDescription": "Split, merge, implicit keys, and randomized balancing."
+        },
+        {
+          "avatarUrl": "https://ui-avatars.com/api/?name=Heavy-Light&background=ff9f0a&color=ffffff&bold=true&format=svg",
+          "websiteUrl": "https://cp-algorithms.com/graph/hld.html",
+          "websiteTitle": "Heavy-Light",
+          "websiteDescription": "Path decomposition for tree range-query pipelines."
+        },
+        {
+          "avatarUrl": "https://ui-avatars.com/api/?name=DSU&background=ff9f0a&color=ffffff&bold=true&format=svg",
+          "websiteUrl": "https://cp-algorithms.com/data_structures/disjoint_set_union.html",
+          "websiteTitle": "DSU",
+          "websiteDescription": "Union-find patterns, rollback ideas, and component tracking."
+        },
+        {
+          "avatarUrl": "https://ui-avatars.com/api/?name=Sparse%20Table&background=ff9f0a&color=ffffff&bold=true&format=svg",
+          "websiteUrl": "https://cp-algorithms.com/data_structures/sparse-table.html",
+          "websiteTitle": "Sparse Table",
+          "websiteDescription": "Static range minimum queries and idempotent operations."
+        }
+      ]
+    }
+  },
+  {
+    "eyebrow": "For",
+    "title": "出题人",
+    "accent": "#ff9f0a",
+    "reverse": true,
+    "cards": [
+      {
+        "avatarUrl": "https://ui-avatars.com/api/?name=Fenwick&background=ff9f0a&color=ffffff&bold=true&format=svg",
+        "websiteUrl": "https://cp-algorithms.com/data_structures/fenwick.html",
+        "websiteTitle": "Fenwick",
+        "websiteDescription": "Compact prefix sums with logarithmic updates."
+      },
+      {
+        "avatarUrl": "https://ui-avatars.com/api/?name=Treap&background=ff9f0a&color=ffffff&bold=true&format=svg",
+        "websiteUrl": "https://cp-algorithms.com/data_structures/treap.html",
+        "websiteTitle": "Treap",
+        "websiteDescription": "Randomized balanced binary search tree with split and merge."
+      }
+    ]
+  }
+]
