@@ -9,6 +9,7 @@ import HeroDock from '../components/HeroDock.vue'
 import HeroTiltCards from '../components/HeroTiltCards.vue'
 import HorizontalGallery from '../components/HorizontalGallery.vue'
 import WatchFaceLink from '../components/WatchFaceLink.vue'
+import { fetchHomeGalleries } from '../api/galleries'
 
 gsap.registerPlugin(ScrollToPlugin, ScrollTrigger)
 
@@ -30,6 +31,7 @@ const gallerySection = ref(null)
 const modeToggle = ref(null)
 const isDayMode = ref(false)
 const isHeroMotionActive = ref(false)
+const galleries = ref([])
 
 const dockItems = [
   { label: 'Graph', glyph: 'G' },
@@ -86,6 +88,7 @@ const notifyPreloaderReady = () => {
 }
 
 onMounted(async () => {
+  galleries.value = await fetchHomeGalleries()
   await nextTick()
 
   const root = pageRoot.value
@@ -224,259 +227,41 @@ onBeforeUnmount(() => {
 
     <section ref="gallerySection" class="gallery-section" aria-label="Horizontal algorithm galleries">
       <HorizontalGallery
-        eyebrow="Graph toolkit"
-        title="初学者"
-        accent="#007aff"
-        direction="left"
+        v-for="gallery in galleries"
+        :key="gallery.title"
+        :eyebrow="gallery.eyebrow"
+        :title="gallery.title"
+        :accent="gallery.accent"
+        :direction="gallery.direction"
+        :reverse="gallery.reverse"
       >
         <GalleryLinkCard
-          avatar="D"
-          title="Dijkstra"
-          description="Priority queue relaxation for non-negative weighted graphs."
-          href="https://cp-algorithms.com/graph/dijkstra.html"
-          :tags="['graph', 'heap', 'single-source']"
-          :index="0"
-          accent="#007aff"
+          v-for="(card, cardIndex) in gallery.cards"
+          :key="`${gallery.title}-${card.title}`"
+          :avatar="card.avatar"
+          :title="card.title"
+          :description="card.description"
+          :href="card.href"
+          :tags="card.tags"
+          :index="cardIndex"
+          :accent="gallery.accent"
         />
-        <GalleryLinkCard
-          avatar="F"
-          title="Dinic"
-          description="Level graph plus blocking flow for maximum-flow routines."
-          href="https://cp-algorithms.com/graph/dinic.html"
-          :tags="['flow', 'bfs', 'dfs']"
-          :index="1"
-          accent="#007aff"
-        />
-        <GalleryLinkCard
-          avatar="T"
-          title="Tarjan"
-          description="Low-link structure for SCC, bridges, and articulation points."
-          href="https://cp-algorithms.com/graph/bridge-searching.html"
-          :tags="['lowlink', 'scc', 'dfs']"
-          :index="2"
-          accent="#007aff"
-        />
-        <WatchFaceLinkCard
-          title="Graph links"
-          description="Quick graph references arranged as a draggable watch face."
-          accent="#007aff"
-        >
-          <WatchFaceLink
-            icon="D"
-            title="Dijkstra Notes"
-            description="Priority-queue relaxation templates and edge-case reminders."
-            href="https://cp-algorithms.com/graph/dijkstra.html"
-          />
-          <WatchFaceLink
-            icon="F"
-            title="Flow Models"
-            description="Max-flow reductions, level graphs, and blocking-flow patterns."
-            href="https://cp-algorithms.com/graph/dinic.html"
-          />
-          <WatchFaceLink
-            icon="T"
-            title="Tarjan Index"
-            description="Low-link recipes for SCC, bridges, and articulation points."
-            href="https://cp-algorithms.com/graph/bridge-searching.html"
-          />
-          <WatchFaceLink
-            icon="L"
-            title="LCA Jumps"
-            description="Binary lifting and Euler tour references for tree queries."
-            href="https://cp-algorithms.com/graph/lca_binary_lifting.html"
-          />
-          <WatchFaceLink
-            icon="M"
-            title="Matching"
-            description="Bipartite matching and alternating-path review material."
-            href="https://cp-algorithms.com/graph/kuhn_maximum_bipartite_matching.html"
-          />
-          <WatchFaceLink
-            icon="S"
-            title="Shortest Path Set"
-            description="A compact jump point for shortest-path variants."
-            href="https://cp-algorithms.com/graph/01_bfs.html"
-          />
-        </WatchFaceLinkCard>
-      </HorizontalGallery>
 
-      <HorizontalGallery
-        eyebrow="String lab"
-        title="算竞高手"
-        accent="#34c759"
-        reverse
-      >
-        <GalleryLinkCard
-          avatar="K"
-          title="KMP"
-          description="Prefix-function matching with linear scanning guarantees."
-          href="https://cp-algorithms.com/string/prefix-function.html"
-          :tags="['string', 'prefix', 'linear']"
-          :index="0"
-          accent="#34c759"
-        />
-        <GalleryLinkCard
-          avatar="S"
-          title="Suffix Array"
-          description="Sorted suffix indices for substring ordering and LCP queries."
-          href="https://cp-algorithms.com/string/suffix-array.html"
-          :tags="['suffix', 'lcp', 'sort']"
-          :index="1"
-          accent="#34c759"
-        />
-        <GalleryLinkCard
-          avatar="M"
-          title="Manacher"
-          description="Palindrome radii expansion in linear time."
-          href="https://cp-algorithms.com/string/manacher.html"
-          :tags="['palindrome', 'radius', 'linear']"
-          :index="2"
-          accent="#34c759"
-        />
         <WatchFaceLinkCard
-          title="String links"
-          description="Pattern matching references arranged as a draggable watch face."
-          accent="#34c759"
+          v-if="gallery.watch?.links?.length"
+          :title="gallery.watch.title"
+          :description="gallery.watch.description"
+          :accent="gallery.accent"
         >
           <WatchFaceLink
-            icon="K"
-            title="KMP Prefix"
-            description="Prefix function derivation, implementation, and matching notes."
-            href="https://cp-algorithms.com/string/prefix-function.html"
-          />
-          <WatchFaceLink
-            icon="Z"
-            title="Z Function"
-            description="Linear Z-array construction and substring matching patterns."
-            href="https://cp-algorithms.com/string/z-function.html"
-          />
-          <WatchFaceLink
-            icon="S"
-            title="Suffix Array"
-            description="Sorted suffixes, LCP, and substring ordering reference."
-            href="https://cp-algorithms.com/string/suffix-array.html"
-          />
-          <WatchFaceLink
-            icon="A"
-            title="Aho-Corasick"
-            description="Trie failure links for multi-pattern matching workflows."
-            href="https://cp-algorithms.com/string/aho_corasick.html"
-          />
-          <WatchFaceLink
-            icon="M"
-            title="Manacher"
-            description="Palindrome radii with linear expansion boundaries."
-            href="https://cp-algorithms.com/string/manacher.html"
-          />
-          <WatchFaceLink
-            icon="H"
-            title="Hashing"
-            description="Rolling hash setup, collision tradeoffs, and substring checks."
-            href="https://cp-algorithms.com/string/string-hashing.html"
+            v-for="link in gallery.watch.links"
+            :key="`${gallery.title}-${link.title}`"
+            :icon="link.icon"
+            :title="link.title"
+            :description="link.description"
+            :href="link.href"
           />
         </WatchFaceLinkCard>
-      </HorizontalGallery>
-
-      <HorizontalGallery
-        eyebrow="For"
-        title="学生教练"
-        accent="#ff9f0a"
-        direction="left"
-      >
-        <GalleryLinkCard
-          avatar="S"
-          title="Segment Tree"
-          description="Range aggregation and lazy propagation for mutable arrays."
-          href="https://cp-algorithms.com/data_structures/segment_tree.html"
-          :tags="['range', 'lazy', 'merge']"
-          :index="0"
-          accent="#ff9f0a"
-        />
-        <GalleryLinkCard
-          avatar="F"
-          title="Fenwick"
-          description="Compact prefix sums with logarithmic updates."
-          href="https://cp-algorithms.com/data_structures/fenwick.html"
-          :tags="['bit', 'prefix', 'log']"
-          :index="1"
-          accent="#ff9f0a"
-        />
-        <GalleryLinkCard
-          avatar="T"
-          title="Treap"
-          description="Randomized balanced binary search tree with split and merge."
-          href="https://cp-algorithms.com/data_structures/treap.html"
-          :tags="['bst', 'random', 'merge']"
-          :index="2"
-          accent="#ff9f0a"
-        />
-        <WatchFaceLinkCard
-          title="有价值的"
-          description="Data-structure references arranged as a draggable watch face."
-          accent="#ff9f0a"
-        >
-          <WatchFaceLink
-            icon="S"
-            title="Segment Tree"
-            description="Range queries, lazy propagation, and merge patterns."
-            href="https://cp-algorithms.com/data_structures/segment_tree.html"
-          />
-          <WatchFaceLink
-            icon="F"
-            title="Fenwick Tree"
-            description="Prefix sums, binary indexed tree tricks, and order statistics."
-            href="https://cp-algorithms.com/data_structures/fenwick.html"
-          />
-          <WatchFaceLink
-            icon="T"
-            title="Treap"
-            description="Split, merge, implicit keys, and randomized balancing."
-            href="https://cp-algorithms.com/data_structures/treap.html"
-          />
-          <WatchFaceLink
-            icon="H"
-            title="Heavy-Light"
-            description="Path decomposition for tree range-query pipelines."
-            href="https://cp-algorithms.com/graph/hld.html"
-          />
-          <WatchFaceLink
-            icon="D"
-            title="DSU"
-            description="Union-find patterns, rollback ideas, and component tracking."
-            href="https://cp-algorithms.com/data_structures/disjoint_set_union.html"
-          />
-          <WatchFaceLink
-            icon="Q"
-            title="Sparse Table"
-            description="Static range minimum queries and idempotent operations."
-            href="https://cp-algorithms.com/data_structures/sparse-table.html"
-          />
-        </WatchFaceLinkCard>
-      </HorizontalGallery>
-        <HorizontalGallery
-        eyebrow="For"
-        title="出题人"
-        accent="#ff9f0a"
-        reverse
-      >
-      <GalleryLinkCard
-          avatar="F"
-          title="Fenwick"
-          description="Compact prefix sums with logarithmic updates."
-          href="https://cp-algorithms.com/data_structures/fenwick.html"
-          :tags="['bit', 'prefix', 'log']"
-          :index="1"
-          accent="#ff9f0a"
-        />
-        <GalleryLinkCard
-          avatar="T"
-          title="Treap"
-          description="Randomized balanced binary search tree with split and merge."
-          href="https://cp-algorithms.com/data_structures/treap.html"
-          :tags="['bst', 'random', 'merge']"
-          :index="2"
-          accent="#ff9f0a"
-        />
       </HorizontalGallery>
     </section>
 

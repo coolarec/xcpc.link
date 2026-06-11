@@ -22,10 +22,9 @@ const props = defineProps({
 
 const root = ref(null)
 const stage = ref(null)
-const activeLink = ref(null)
-const showInfo = ref(false)
-const showDragHint = ref(false)
-const hasDragged = ref(false)
+const tooltip = ref(null)
+const tooltipTitle = ref(null)
+const tooltipDescription = ref(null)
 const columnCount = ref(8)
 const rowCount = ref(8)
 const copyOffsets = ref([-1, 0, 1])
@@ -52,8 +51,6 @@ const slotLinks = computed(() => {
 })
 
 const links = computed(() => (slotLinks.value.length ? slotLinks.value : props.links))
-
-const active = computed(() => activeLink.value)
 
 const visualItems = computed(() => {
   const source = links.value.length ? links.value : []
@@ -108,7 +105,7 @@ let suppressClick = false
 let renderFrame = 0
 let inertiaFrame = 0
 let resizeObserver
-let activeIconIndex = null
+let hasDragged = false
 
 const isMobileWatch = () =>
   window.matchMedia('(max-width: 720px), (pointer: coarse), (prefers-reduced-motion: reduce)').matches
@@ -235,8 +232,8 @@ const handlePointerMove = (event) => {
 
   if (Math.hypot(dx, dy) > 7) {
     suppressClick = true
-    hasDragged.value = true
-    showDragHint.value = false
+    hasDragged = true
+    root.value?.classList.remove('is-showing-drag-hint')
   }
 
   offsetX = startOffsetX - dx
@@ -282,57 +279,35 @@ const handleIconClick = (event) => {
   event.stopPropagation()
 }
 
-const getVisibleIconTarget = (target) => {
-  const icon = target?.closest?.('.watch-icon')
+const showTooltip = (event, item) => {
+  if (isDragging || isMobileWatch()) return
 
-  if (!icon || !stage.value?.contains(icon)) return null
+  const target = event.currentTarget
+  const rect = target.getBoundingClientRect()
+  const tooltipNode = tooltip.value
 
-  const opacity = Number.parseFloat(icon.style.opacity || '0')
+  if (!tooltipNode) return
 
-  return opacity > 0.2 ? icon : null
+  if (tooltipTitle.value) tooltipTitle.value.textContent = item.title
+  if (tooltipDescription.value) tooltipDescription.value.textContent = item.description
+
+  tooltipNode.style.left = `${rect.left + rect.width / 2}px`
+  tooltipNode.style.top = `${rect.top - 12}px`
+  tooltipNode.classList.add('is-visible')
+}
+
+const hideTooltip = () => {
+  tooltip.value?.classList.remove('is-visible')
 }
 
 const showFaceHint = () => {
-  if (hasDragged.value) return
-  showDragHint.value = true
+  if (hasDragged) return
+  root.value?.classList.add('is-showing-drag-hint')
 }
 
 const hideFaceHint = () => {
-  showDragHint.value = false
-  hideIconInfo()
-}
-
-const showIconInfo = (item, index = null) => {
-  if (activeIconIndex === index && activeLink.value === item && showInfo.value) return
-
-  activeIconIndex = index
-  activeLink.value = item
-  showInfo.value = true
-}
-
-const updateIconInfo = (event) => {
-  if (isDragging) return
-
-  const icon = getVisibleIconTarget(event.target)
-
-  if (!icon) {
-    hideIconInfo()
-    return
-  }
-
-  const index = Number(icon.dataset.baseIndex || 0)
-  const item = links.value[index]
-
-  if (item) showIconInfo(item, index)
-}
-
-const hideIconInfo = () => {
-  if (isDragging) return
-  if (activeIconIndex === null && !showInfo.value && !activeLink.value) return
-
-  activeIconIndex = null
-  showInfo.value = false
-  activeLink.value = null
+  root.value?.classList.remove('is-showing-drag-hint')
+  hideTooltip()
 }
 
 onMounted(async () => {
@@ -380,7 +355,6 @@ onBeforeUnmount(() => {
 
       <div
         class="watch-face"
-        :class="{ 'is-showing-info': showInfo }"
         @pointerenter="showFaceHint"
         @pointerleave="hideFaceHint"
       >
@@ -388,7 +362,6 @@ onBeforeUnmount(() => {
           ref="stage"
           class="watch-stage"
           aria-label="Draggable related links"
-          @pointermove="updateIconInfo"
         >
           <a
             v-for="entry in visualItems"
@@ -405,8 +378,10 @@ onBeforeUnmount(() => {
             :aria-label="entry.item.title"
             :style="{ '--watch-color': entry.color }"
             draggable="false"
-            @focus="showIconInfo(entry.item, entry.baseIndex)"
-            @blur="hideIconInfo"
+            @pointerenter="showTooltip($event, entry.item)"
+            @pointerleave="hideTooltip"
+            @focus="showTooltip($event, entry.item)"
+            @blur="hideTooltip"
             @click="handleIconClick"
             @dragstart.prevent
           >
@@ -414,18 +389,19 @@ onBeforeUnmount(() => {
           </a>
         </div>
 
-        <div v-if="showDragHint" class="watch-drag-hint" aria-hidden="true">
+        <div class="watch-drag-hint" aria-hidden="true">
           <span class="watch-drag-grip"></span>
           <span>拖动</span>
         </div>
-
-        <div v-show="showInfo && active" class="watch-info" aria-live="polite">
-          <span>{{ title }}</span>
-          <h3>{{ active?.title }}</h3>
-          <p>{{ active?.description }}</p>
-        </div>
       </div>
     </div>
+
+    <Teleport to="body">
+      <div ref="tooltip" class="watch-floating-tooltip" aria-hidden="true">
+        <strong ref="tooltipTitle"></strong>
+        <span ref="tooltipDescription"></span>
+      </div>
+    </Teleport>
   </article>
 </template>
 
@@ -460,29 +436,6 @@ onBeforeUnmount(() => {
   cursor: grab;
   user-select: none;
   touch-action: none;
-}
-
-.watch-face::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 1500;
-  height: 42%;
-  pointer-events: none;
-  background: linear-gradient(
-    180deg,
-    transparent,
-    color-mix(in srgb, var(--card-bg), transparent 42%) 56%,
-    color-mix(in srgb, var(--card-bg), transparent 8%)
-  );
-  opacity: 0;
-  transition: opacity 0.18s ease;
-}
-
-.watch-face.is-showing-info::after {
-  opacity: 1;
 }
 
 .watch-card.is-dragging {
@@ -562,6 +515,19 @@ onBeforeUnmount(() => {
   font-weight: 800;
   pointer-events: none;
   backdrop-filter: blur(14px);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease,
+    visibility 0.18s ease;
+}
+
+.watch-card.is-showing-drag-hint .watch-drag-hint {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
 }
 
 .watch-drag-grip {
@@ -597,6 +563,13 @@ onBeforeUnmount(() => {
   will-change: transform, opacity;
 }
 
+.watch-icon span {
+  font-family: "Sora", sans-serif;
+  font-size: 23px;
+  font-weight: 800;
+  line-height: 1;
+}
+
 .watch-card:not(.is-dragging) .watch-icon:hover,
 .watch-card:not(.is-dragging) .watch-icon:focus-visible {
   box-shadow:
@@ -605,52 +578,74 @@ onBeforeUnmount(() => {
     0 18px 44px color-mix(in srgb, var(--watch-color), transparent 68%);
 }
 
-.watch-icon span {
-  font-family: "Sora", sans-serif;
-  font-size: 23px;
-  font-weight: 800;
-  line-height: 1;
-}
-
-.watch-info {
-  position: absolute;
-  left: 22px;
-  right: 22px;
-  bottom: 22px;
-  z-index: 2001;
-  min-height: 102px;
+:global(.watch-floating-tooltip) {
+  position: fixed;
+  z-index: 9999;
+  width: 176px;
   display: grid;
-  align-content: end;
+  gap: 5px;
+  padding: 9px 10px;
+  border-radius: 12px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 44%),
+    color-mix(in srgb, var(--card-bg, #111827), transparent 2%);
+  color: var(--page-fg, #f5f5f7);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 0 0 1px color-mix(in srgb, var(--page-fg, #f5f5f7), transparent 88%),
+    0 1px 8px rgba(0, 0, 0, 0.08),
+    0 14px 34px rgba(0, 0, 0, 0.3);
   pointer-events: none;
-  text-shadow:
-    0 2px 16px var(--card-bg),
-    0 1px 2px var(--card-bg);
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, calc(-100% + 8px));
+  transition:
+    opacity 0.16s ease,
+    transform 0.16s ease,
+    visibility 0.16s ease;
+  font-family: "DM Sans", system-ui, sans-serif;
+  backdrop-filter: blur(18px) saturate(1.2);
 }
 
-.watch-info span {
-  color: color-mix(in srgb, var(--accent), #ffffff 18%);
+:global(.watch-floating-tooltip::after) {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -5px;
+  width: 10px;
+  height: 10px;
+  border-right: 1px solid color-mix(in srgb, var(--page-fg, #f5f5f7), transparent 88%);
+  border-bottom: 1px solid color-mix(in srgb, var(--page-fg, #f5f5f7), transparent 88%);
+  background: color-mix(in srgb, var(--card-bg, #111827), transparent 2%);
+  transform: translateX(-50%) rotate(45deg);
+}
+
+:global(.watch-floating-tooltip.is-visible) {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, -100%);
+}
+
+:global(.watch-floating-tooltip strong) {
+  overflow: hidden;
+  color: var(--page-fg, #f5f5f7);
+  font-family: "Sora", system-ui, sans-serif;
   font-size: 12px;
   font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.watch-info h3 {
-  margin: 4px 0 8px;
-  color: var(--page-fg);
-  font-family: "Sora", sans-serif;
-  font-size: clamp(34px, 4.4vw, 58px);
-  font-weight: 800;
-  line-height: 0.94;
-  letter-spacing: -0.03em;
-}
-
-.watch-info p {
-  max-width: 390px;
-  margin: 0;
-  color: var(--muted-fg);
-  font-size: 15px;
-  line-height: 1.55;
+:global(.watch-floating-tooltip span) {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--muted-fg, #a1a1aa);
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.3;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 @media (max-width: 720px) {
@@ -679,10 +674,6 @@ onBeforeUnmount(() => {
     letter-spacing: 0.12em;
   }
 
-  .watch-face::after {
-    height: 48%;
-  }
-
   .watch-drag-hint {
     backdrop-filter: none;
   }
@@ -697,19 +688,6 @@ onBeforeUnmount(() => {
     box-shadow: inset 0 1px 0 color-mix(in srgb, #ffffff, transparent 76%);
   }
 
-  .watch-info h3 {
-    font-size: clamp(26px, 8.6vw, 38px);
-    line-height: 0.98;
-  }
-
-  .watch-info p {
-    display: -webkit-box;
-    overflow: hidden;
-    font-size: 13px;
-    line-height: 1.45;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-  }
 }
 
 @media (max-width: 420px) {
@@ -721,15 +699,5 @@ onBeforeUnmount(() => {
     grid-template-columns: 38px minmax(0, 1fr);
   }
 
-  .watch-info {
-    left: 16px;
-    right: 16px;
-    bottom: 16px;
-    min-height: 86px;
-  }
-
-  .watch-info h3 {
-    font-size: clamp(24px, 8vw, 32px);
-  }
 }
 </style>

@@ -1,0 +1,237 @@
+[
+  {
+    "eyebrow": "Graph toolkit",
+    "title": "初学者",
+    "accent": "#007aff",
+    "direction": "left",
+    "cards": [
+      {
+        "avatar": "D",
+        "title": "Dijkstra",
+        "description": "Priority queue relaxation for non-negative weighted graphs.",
+        "href": "https://cp-algorithms.com/graph/dijkstra.html",
+        "tags": ["graph", "heap", "single-source"]
+      },
+      {
+        "avatar": "F",
+        "title": "Dinic",
+        "description": "Level graph plus blocking flow for maximum-flow routines.",
+        "href": "https://cp-algorithms.com/graph/dinic.html",
+        "tags": ["flow", "bfs", "dfs"]
+      },
+      {
+        "avatar": "T",
+        "title": "Tarjan",
+        "description": "Low-link structure for SCC, bridges, and articulation points.",
+        "href": "https://cp-algorithms.com/graph/bridge-searching.html",
+        "tags": ["lowlink", "scc", "dfs"]
+      }
+    ],
+    "watch": {
+      "title": "Graph links",
+      "description": "Quick graph references arranged as a draggable watch face.",
+      "links": [
+        {
+          "icon": "D",
+          "title": "Dijkstra Notes",
+          "description": "Priority-queue relaxation templates and edge-case reminders.",
+          "href": "https://cp-algorithms.com/graph/dijkstra.html"
+        },
+        {
+          "icon": "F",
+          "title": "Flow Models",
+          "description": "Max-flow reductions, level graphs, and blocking-flow patterns.",
+          "href": "https://cp-algorithms.com/graph/dinic.html"
+        },
+        {
+          "icon": "T",
+          "title": "Tarjan Index",
+          "description": "Low-link recipes for SCC, bridges, and articulation points.",
+          "href": "https://cp-algorithms.com/graph/bridge-searching.html"
+        },
+        {
+          "icon": "L",
+          "title": "LCA Jumps",
+          "description": "Binary lifting and Euler tour references for tree queries.",
+          "href": "https://cp-algorithms.com/graph/lca_binary_lifting.html"
+        },
+        {
+          "icon": "M",
+          "title": "Matching",
+          "description": "Bipartite matching and alternating-path review material.",
+          "href": "https://cp-algorithms.com/graph/kuhn_maximum_bipartite_matching.html"
+        },
+        {
+          "icon": "S",
+          "title": "Shortest Path Set",
+          "description": "A compact jump point for shortest-path variants.",
+          "href": "https://cp-algorithms.com/graph/01_bfs.html"
+        }
+      ]
+    }
+  },
+  {
+    "eyebrow": "String lab",
+    "title": "算竞高手",
+    "accent": "#34c759",
+    "reverse": true,
+    "cards": [
+      {
+        "avatar": "K",
+        "title": "KMP",
+        "description": "Prefix-function matching with linear scanning guarantees.",
+        "href": "https://cp-algorithms.com/string/prefix-function.html",
+        "tags": ["string", "prefix", "linear"]
+      },
+      {
+        "avatar": "S",
+        "title": "Suffix Array",
+        "description": "Sorted suffix indices for substring ordering and LCP queries.",
+        "href": "https://cp-algorithms.com/string/suffix-array.html",
+        "tags": ["suffix", "lcp", "sort"]
+      },
+      {
+        "avatar": "M",
+        "title": "Manacher",
+        "description": "Palindrome radii expansion in linear time.",
+        "href": "https://cp-algorithms.com/string/manacher.html",
+        "tags": ["palindrome", "radius", "linear"]
+      }
+    ],
+    "watch": {
+      "title": "String links",
+      "description": "Pattern matching references arranged as a draggable watch face.",
+      "links": [
+        {
+          "icon": "K",
+          "title": "KMP Prefix",
+          "description": "Prefix function derivation, implementation, and matching notes.",
+          "href": "https://cp-algorithms.com/string/prefix-function.html"
+        },
+        {
+          "icon": "Z",
+          "title": "Z Function",
+          "description": "Linear Z-array construction and substring matching patterns.",
+          "href": "https://cp-algorithms.com/string/z-function.html"
+        },
+        {
+          "icon": "S",
+          "title": "Suffix Array",
+          "description": "Sorted suffixes, LCP, and substring ordering reference.",
+          "href": "https://cp-algorithms.com/string/suffix-array.html"
+        },
+        {
+          "icon": "A",
+          "title": "Aho-Corasick",
+          "description": "Trie failure links for multi-pattern matching workflows.",
+          "href": "https://cp-algorithms.com/string/aho_corasick.html"
+        },
+        {
+          "icon": "M",
+          "title": "Manacher",
+          "description": "Palindrome radii with linear expansion boundaries.",
+          "href": "https://cp-algorithms.com/string/manacher.html"
+        },
+        {
+          "icon": "H",
+          "title": "Hashing",
+          "description": "Rolling hash setup, collision tradeoffs, and substring checks.",
+          "href": "https://cp-algorithms.com/string/string-hashing.html"
+        }
+      ]
+    }
+  },
+  {
+    "eyebrow": "For",
+    "title": "学生教练",
+    "accent": "#ff9f0a",
+    "direction": "left",
+    "cards": [
+      {
+        "avatar": "S",
+        "title": "Segment Tree",
+        "description": "Range aggregation and lazy propagation for mutable arrays.",
+        "href": "https://cp-algorithms.com/data_structures/segment_tree.html",
+        "tags": ["range", "lazy", "merge"]
+      },
+      {
+        "avatar": "F",
+        "title": "Fenwick",
+        "description": "Compact prefix sums with logarithmic updates.",
+        "href": "https://cp-algorithms.com/data_structures/fenwick.html",
+        "tags": ["bit", "prefix", "log"]
+      },
+      {
+        "avatar": "T",
+        "title": "Treap",
+        "description": "Randomized balanced binary search tree with split and merge.",
+        "href": "https://cp-algorithms.com/data_structures/treap.html",
+        "tags": ["bst", "random", "merge"]
+      }
+    ],
+    "watch": {
+      "title": "有价值的",
+      "description": "Data-structure references arranged as a draggable watch face.",
+      "links": [
+        {
+          "icon": "S",
+          "title": "Segment Tree",
+          "description": "Range queries, lazy propagation, and merge patterns.",
+          "href": "https://cp-algorithms.com/data_structures/segment_tree.html"
+        },
+        {
+          "icon": "F",
+          "title": "Fenwick Tree",
+          "description": "Prefix sums, binary indexed tree tricks, and order statistics.",
+          "href": "https://cp-algorithms.com/data_structures/fenwick.html"
+        },
+        {
+          "icon": "T",
+          "title": "Treap",
+          "description": "Split, merge, implicit keys, and randomized balancing.",
+          "href": "https://cp-algorithms.com/data_structures/treap.html"
+        },
+        {
+          "icon": "H",
+          "title": "Heavy-Light",
+          "description": "Path decomposition for tree range-query pipelines.",
+          "href": "https://cp-algorithms.com/graph/hld.html"
+        },
+        {
+          "icon": "D",
+          "title": "DSU",
+          "description": "Union-find patterns, rollback ideas, and component tracking.",
+          "href": "https://cp-algorithms.com/data_structures/disjoint_set_union.html"
+        },
+        {
+          "icon": "Q",
+          "title": "Sparse Table",
+          "description": "Static range minimum queries and idempotent operations.",
+          "href": "https://cp-algorithms.com/data_structures/sparse-table.html"
+        }
+      ]
+    }
+  },
+  {
+    "eyebrow": "For",
+    "title": "出题人",
+    "accent": "#ff9f0a",
+    "reverse": true,
+    "cards": [
+      {
+        "avatar": "F",
+        "title": "Fenwick",
+        "description": "Compact prefix sums with logarithmic updates.",
+        "href": "https://cp-algorithms.com/data_structures/fenwick.html",
+        "tags": ["bit", "prefix", "log"]
+      },
+      {
+        "avatar": "T",
+        "title": "Treap",
+        "description": "Randomized balanced binary search tree with split and merge.",
+        "href": "https://cp-algorithms.com/data_structures/treap.html",
+        "tags": ["bst", "random", "merge"]
+      }
+    ]
+  }
+]

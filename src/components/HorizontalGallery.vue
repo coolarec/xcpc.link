@@ -299,6 +299,15 @@ onBeforeUnmount(() => {
     gap: 28px;
   }
 
+  .horizontal-gallery.is-reversed .horiz-gallery-strip {
+    flex-direction: column;
+  }
+
+  .horizontal-gallery.is-reversed .gallery-heading {
+    justify-self: start;
+    text-align: left;
+  }
+
   .horiz-gallery-strip :deep(.gallery-card) {
     flex-basis: auto;
     width: 100%;
