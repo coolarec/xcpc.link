@@ -237,7 +237,8 @@ onBeforeUnmount(() => {
     --gallery-card-width: 100%;
     --gallery-card-height: clamp(300px, 76svh, 330px);
     min-height: auto;
-    padding: 52px 14px;
+    overflow: visible;
+    padding: 52px 20px;
     gap: 24px;
   }
 

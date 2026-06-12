@@ -75,8 +75,8 @@ const visualItems = computed(() => {
 const clamp = (min: number, max: number, value: number): number => Math.min(max, Math.max(min, value))
 const wrap = (value: number, cycle: number): number => ((value % cycle) + cycle) % cycle
 
-const maxIconScale = 1.78
-const minIconGap = 8
+const maxIconScale = 2.15
+const minIconGap = 2
 
 let stepX = 78
 let stepY = 68
@@ -139,10 +139,15 @@ const measure = () => {
   const safeDiameter = iconSizePx * maxIconScale + (isMobileCached ? 6 : minIconGap)
 
   stepX = safeDiameter
-  stepY = safeDiameter * (isMobileCached ? 0.96 : 0.9)
+  stepY = safeDiameter * (Math.sqrt(3) / 2)
   
-  columnCount.value = isMobileCached ? Math.max(7, Math.ceil(width / stepX) + 2) : Math.max(9, Math.ceil(width / stepX) + 2)
-  rowCount.value = isMobileCached ? Math.max(7, Math.ceil(height / stepY) + 2) : Math.max(9, Math.ceil(height / stepY) + 2)
+  let cols = isMobileCached ? Math.max(8, Math.ceil(width / stepX) + 2) : Math.max(10, Math.ceil(width / stepX) + 2)
+  if (cols % 2 !== 0) cols++
+  columnCount.value = cols
+
+  let rows = isMobileCached ? Math.max(8, Math.ceil(height / stepY) + 2) : Math.max(10, Math.ceil(height / stepY) + 2)
+  if (rows % 2 !== 0) rows++
+  rowCount.value = rows
   
   root.value?.style.setProperty('--watch-icon-size', `${iconSizePx.toFixed(2)}px`)
 }
@@ -172,18 +177,24 @@ const render = () => {
     const y = wrap(rawY + cycles.height / 2, cycles.height) - cycles.height / 2
     const distance = Math.hypot(x, y)
     
+    const normalizedDist = distance / (stepX * 2.2)
+    const distortion = 1 + Math.pow(normalizedDist, 2) * 0.18
+    const renderX = x * distortion
+    const renderY = y * distortion
+
+    const bellCurve = Math.exp(-Math.pow(distance / (stepX * 2.3), 2))
     const scale = isMobileCached
-      ? clamp(0.5, 1.3, 1.3 - distance / (stepX * 3.8))
-      : clamp(0.4, maxIconScale, maxIconScale - distance / (stepX * 3.1))
+      ? clamp(0.1, 1.6, 1.6 * bellCurve)
+      : clamp(0.1, maxIconScale, maxIconScale * bellCurve)
     
     const opacityNum = isMobileCached
-      ? clamp(0, 0.9, 1.1 - distance / (stepX * 3.2))
-      : clamp(0, 0.92, 1.15 - distance / (stepX * 3.5))
+      ? clamp(0, 0.9, 1.1 - distance / (stepX * 3.4))
+      : clamp(0, 0.92, 1.15 - distance / (stepX * 3.8))
 
     const opacityStr = opacityNum.toFixed(3)
     const zIndexStr = `${100 + Math.round(scale * 100)}`
 
-    node.style.transform = `translate(${x.toFixed(2)}px, ${y.toFixed(2)}px) translate(-50%, -50%) scale(${scale.toFixed(3)})`
+    node.style.transform = `translate(${renderX.toFixed(2)}px, ${renderY.toFixed(2)}px) translate(-50%, -50%) scale(${scale.toFixed(3)})`
     
     if (node.style.opacity !== opacityStr) {
       node.style.opacity = opacityStr
@@ -588,13 +599,12 @@ onBeforeUnmount(() => {
   place-items: center;
   border-radius: 999px;
   overflow: hidden;
-  background:
-    radial-gradient(circle at 34% 24%, rgba(255, 255, 255, 0.46), transparent 31%),
-    linear-gradient(145deg, color-mix(in srgb, var(--watch-color), #ffffff 10%), color-mix(in srgb, var(--watch-color), #000000 18%));
-  color: color-mix(in srgb, #ffffff, var(--accent) 8%);
+  background: #ffffff;
+  color: var(--page-bg);
   box-shadow:
-    inset 0 1px 0 color-mix(in srgb, #ffffff, transparent 72%),
-    inset 0 -10px 18px rgba(0, 0, 0, 0.16);
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -10px 18px rgba(0, 0, 0, 0.12),
+    0 4px 12px rgba(0, 0, 0, 0.08);
   opacity: 0;
   text-decoration: none;
   user-select: none;
@@ -609,7 +619,7 @@ onBeforeUnmount(() => {
   inset: 0;
   display: grid;
   place-items: center;
-  color: color-mix(in srgb, #ffffff, var(--accent) 8%);
+  color: var(--page-bg);
   font-family: "Sora", sans-serif;
   font-size: 23px;
   font-weight: 800;
@@ -619,11 +629,6 @@ onBeforeUnmount(() => {
 
 .watch-icon[data-avatar-loaded='true']::before {
   opacity: 0;
-}
-
-.watch-icon[data-avatar-loaded='true'] {
-  background: transparent;
-  box-shadow: none;
 }
 
 .watch-icon-image {
@@ -644,9 +649,9 @@ onBeforeUnmount(() => {
 .watch-card:not(.is-dragging) .watch-icon:not([data-avatar-loaded='true']):hover,
 .watch-card:not(.is-dragging) .watch-icon:not([data-avatar-loaded='true']):focus-visible {
   box-shadow:
-    inset 0 1px 0 color-mix(in srgb, #ffffff, transparent 56%),
-    inset 0 -10px 18px rgba(0, 0, 0, 0.16),
-    0 18px 44px color-mix(in srgb, var(--watch-color), transparent 68%);
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -10px 18px rgba(0, 0, 0, 0.08),
+    0 18px 44px rgba(255, 255, 255, 0.4);
 }
 
 :global(.watch-floating-tooltip) {
@@ -752,7 +757,10 @@ onBeforeUnmount(() => {
   }
 
   .watch-icon {
-    box-shadow: inset 0 1px 0 color-mix(in srgb, #ffffff, transparent 76%);
+    box-shadow: 
+      inset 0 1px 0 rgba(255, 255, 255, 0.8),
+      inset 0 -6px 12px rgba(0, 0, 0, 0.08),
+      0 2px 8px rgba(0, 0, 0, 0.06);
     will-change: transform;
   }
 
@@ -768,7 +776,10 @@ onBeforeUnmount(() => {
 
   .watch-icon:hover,
   .watch-icon:focus-visible {
-    box-shadow: inset 0 1px 0 color-mix(in srgb, #ffffff, transparent 76%);
+    box-shadow: 
+      inset 0 1px 0 rgba(255, 255, 255, 0.9),
+      inset 0 -6px 12px rgba(0, 0, 0, 0.04),
+      0 8px 24px rgba(255, 255, 255, 0.3);
   }
 
 }
