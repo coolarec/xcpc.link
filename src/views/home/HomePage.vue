@@ -237,6 +237,7 @@ onBeforeUnmount(() => {
         :accent="gallery.accent"
         :direction="gallery.direction"
         :reverse="gallery.reverse"
+        :links="[...gallery.cards, ...(gallery.watch?.links || [])]"
       >
         <GalleryLinkCard
           v-for="(card, cardIndex) in gallery.cards"
