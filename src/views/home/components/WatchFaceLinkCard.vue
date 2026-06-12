@@ -395,15 +395,6 @@ onBeforeUnmount(() => {
     <div class="card-ambient-glow"></div>
     <div class="card-watermark" aria-hidden="true">{{ title.charAt(0) }}</div>
 
-    <div class="card-header" aria-hidden="true">
-      <div class="link-avatar-shell">
-        <svg class="watch-app-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="5" y="2" width="14" height="20" rx="4" ry="4"/>
-          <path d="M12 18h.01"/>
-        </svg>
-      </div>
-    </div>
-
     <div
       ref="stage"
       class="watch-stage"
@@ -470,7 +461,7 @@ onBeforeUnmount(() => {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-end;
   padding: 36px 32px;
   border: 0;
   border-radius: 32px;
@@ -523,31 +514,6 @@ onBeforeUnmount(() => {
   z-index: 0;
   user-select: none;
   transform: rotate(-4deg);
-}
-
-.card-header {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  width: 100%;
-  pointer-events: none;
-}
-
-.link-avatar-shell {
-  width: 72px;
-  aspect-ratio: 1;
-  display: grid;
-  place-items: center;
-  border-radius: 20px;
-  overflow: hidden;
-  background:
-    radial-gradient(circle at 34% 24%, rgba(255, 255, 255, 0.15), transparent 31%),
-    color-mix(in srgb, var(--accent), var(--panel-bg) 70%);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
-  position: relative;
-  color: color-mix(in srgb, #ffffff, var(--accent) 8%);
 }
 
 .link-content,
@@ -802,15 +768,6 @@ onBeforeUnmount(() => {
     right: -5%;
   }
 
-  .link-avatar-shell {
-    width: 60px;
-    border-radius: 16px;
-  }
-
-  .link-avatar-shell::before {
-    font-size: 24px;
-  }
-
   .link-content {
     max-width: 100%;
   }
@@ -862,15 +819,6 @@ onBeforeUnmount(() => {
     height: clamp(290px, 72svh, 315px);
     padding: 24px 20px;
     border-radius: 24px;
-  }
-
-  .link-avatar-shell {
-    width: 52px;
-    border-radius: 14px;
-  }
-
-  .link-avatar-shell::before {
-    font-size: 20px;
   }
 
   .gallery-card h3 {

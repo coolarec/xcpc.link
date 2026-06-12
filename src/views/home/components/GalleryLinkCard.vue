@@ -140,11 +140,11 @@ const handleAvatarLoad = (event: Event): void => {
 }
 
 .link-avatar-shell {
-  width: 72px;
+  width: 88px;
   aspect-ratio: 1;
   display: grid;
   place-items: center;
-  border-radius: 20px;
+  border-radius: 24px;
   overflow: hidden;
   background:
     radial-gradient(circle at 34% 24%, rgba(255, 255, 255, 0.15), transparent 31%),
@@ -161,7 +161,7 @@ const handleAvatarLoad = (event: Event): void => {
   place-items: center;
   color: color-mix(in srgb, #ffffff, var(--accent) 8%);
   font-family: "Sora", sans-serif;
-  font-size: 28px;
+  font-size: 34px;
   font-weight: 800;
 }
 
@@ -179,7 +179,7 @@ const handleAvatarLoad = (event: Event): void => {
   height: 100%;
   opacity: 0;
   object-fit: cover;
-  border-radius: 20px;
+  border-radius: 24px;
   transition: opacity 0.3s ease;
 }
 
@@ -264,16 +264,16 @@ const handleAvatarLoad = (event: Event): void => {
   }
 
   .link-avatar-shell {
-    width: 60px;
-    border-radius: 16px;
+    width: 72px;
+    border-radius: 20px;
   }
 
   .link-avatar-shell::before {
-    font-size: 24px;
+    font-size: 28px;
   }
 
   .link-avatar {
-    border-radius: 16px;
+    border-radius: 20px;
   }
 
   .action-btn {
@@ -310,16 +310,16 @@ const handleAvatarLoad = (event: Event): void => {
   }
 
   .link-avatar-shell {
-    width: 52px;
-    border-radius: 14px;
+    width: 64px;
+    border-radius: 18px;
   }
 
   .link-avatar-shell::before {
-    font-size: 20px;
+    font-size: 24px;
   }
 
   .link-avatar {
-    border-radius: 14px;
+    border-radius: 18px;
   }
 
   .action-btn {
