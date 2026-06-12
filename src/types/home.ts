@@ -3,7 +3,6 @@ export interface SiteLink {
   websiteUrl: string
   websiteTitle: string
   websiteDescription: string
-  tags?: string[]
 }
 
 export interface BackgroundWord {

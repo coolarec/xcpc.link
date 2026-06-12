@@ -16,10 +16,10 @@
   overflow: hidden;
   display: grid;
   align-content: end;
-  gap: 18px;
+  gap: 6px;
   padding: 22px;
   border: 0;
-  border-radius: 20px;
+  border-radius: 18px;
   background: color-mix(in srgb, var(--card-bg), transparent 2%);
   color: var(--page-fg);
   box-shadow: var(--gallery-card-shadow);
@@ -34,7 +34,7 @@
 .placeholder-orb {
   width: 88px;
   aspect-ratio: 1;
-  border-radius: 24px;
+  border-radius: 999px;
 }
 
 .placeholder-line {

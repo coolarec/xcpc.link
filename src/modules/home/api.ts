@@ -24,13 +24,11 @@ const createSiteLink = ({
   websiteUrl,
   websiteTitle,
   websiteDescription,
-  tags = [],
 }: SiteLink): SiteLink => ({
   avatarUrl,
   websiteUrl,
   websiteTitle,
   websiteDescription,
-  tags,
 })
 
 const normalizeGallery = (gallery: HomeGallerySectionSource): HomeGallerySection => ({

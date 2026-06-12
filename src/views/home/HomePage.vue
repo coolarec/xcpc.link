@@ -8,7 +8,6 @@ import GalleryCardPlaceholder from './components/GalleryCardPlaceholder.vue'
 import HeroDock from './components/HeroDock.vue'
 import HeroTiltCards from './components/HeroTiltCards.vue'
 import HorizontalGallery from './components/HorizontalGallery.vue'
-import WatchFaceLink from './components/WatchFaceLink.vue'
 import { fetchHeroDockItems, fetchHomeGalleries } from '../../modules/home/api'
 import type { AsyncVueModule, HeroDockItem, HomeGallerySection } from '../../types/home'
 
@@ -243,8 +242,6 @@ onBeforeUnmount(() => {
           :website-url="card.websiteUrl"
           :website-title="card.websiteTitle"
           :website-description="card.websiteDescription"
-          :tags="card.tags"
-          :index="cardIndex"
           :accent="gallery.accent"
         />
 
@@ -252,17 +249,9 @@ onBeforeUnmount(() => {
           v-if="gallery.watch?.links?.length"
           :title="gallery.watch.title"
           :description="gallery.watch.description"
+          :links="gallery.watch.links"
           :accent="gallery.accent"
-        >
-          <WatchFaceLink
-            v-for="link in gallery.watch.links"
-            :key="`${gallery.title}-${link.websiteTitle}`"
-            :avatar-url="link.avatarUrl"
-            :website-url="link.websiteUrl"
-            :website-title="link.websiteTitle"
-            :website-description="link.websiteDescription"
-          />
-        </WatchFaceLinkCard>
+        />
       </HorizontalGallery>
     </section>
 

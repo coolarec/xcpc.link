@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, useSlots, type VNode, type VNodeArrayChildren } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, useSlots, watch, type VNode, type VNodeArrayChildren } from 'vue'
 import type { SiteLink } from '../../../types/home'
 
 const props = withDefaults(defineProps<{
@@ -33,13 +33,13 @@ const flattenNodes = (nodes: VNodeArrayChildren): VNode[] =>
     return [node]
   })
 
-const slotLinks = computed(() => {
+const slotLinks = computed<SiteLink[]>(() => {
   const nodes = flattenNodes(slots.default?.() || [])
 
   return nodes
     .map((node) => (node.props || {}) as Partial<SiteLink>)
     .filter((nodeProps) => nodeProps.websiteUrl && nodeProps.websiteTitle)
-    .map((nodeProps) => ({
+    .map((nodeProps): SiteLink => ({
       avatarUrl: nodeProps.avatarUrl as string,
       websiteUrl: nodeProps.websiteUrl as string,
       websiteTitle: nodeProps.websiteTitle as string,
@@ -59,7 +59,8 @@ const visualItems = computed(() => {
     copyOffsets.value.flatMap((copyX) =>
       Array.from({ length: rowCount.value }).flatMap((_, row) =>
         Array.from({ length: columnCount.value }).map((__, col) => {
-          const baseIndex = (row * columnCount.value + col) % source.length
+          const axialQ = col - Math.floor(row / 2)
+          const baseIndex = wrap(axialQ + row * 2, source.length)
           const item = source[baseIndex]
 
           return {
@@ -81,7 +82,7 @@ const visualItems = computed(() => {
 const clamp = (min: number, max: number, value: number): number => Math.min(max, Math.max(min, value))
 const wrap = (value: number, cycle: number): number => ((value % cycle) + cycle) % cycle
 
-const maxIconScale = 1.5
+const maxIconScale = 1.78
 const minIconGap = 8
 
 let stepX = 78
@@ -105,6 +106,20 @@ let renderFrame = 0
 let inertiaFrame = 0
 let resizeObserver: ResizeObserver | undefined
 let hasDragged = false
+
+const handleAvatarError = (event: Event): void => {
+  const target = event.currentTarget as HTMLImageElement | null
+  if (!target) return
+  delete target.parentElement?.dataset.avatarLoaded
+  target.hidden = true
+}
+
+const handleAvatarLoad = (event: Event): void => {
+  const target = event.currentTarget as HTMLImageElement | null
+  if (!target) return
+  target.dataset.loaded = 'true'
+  if (target.parentElement) target.parentElement.dataset.avatarLoaded = 'true'
+}
 
 const isMobileWatch = () =>
   window.matchMedia('(max-width: 720px), (pointer: coarse), (prefers-reduced-motion: reduce)').matches
@@ -132,7 +147,7 @@ const measure = () => {
   stepY = safeDiameter * (mobile ? 0.96 : 0.9)
   columnCount.value = mobile ? Math.max(4, Math.ceil(width / stepX) + 2) : Math.max(7, Math.ceil(width / stepX) + 6)
   rowCount.value = mobile ? Math.max(4, Math.ceil(height / stepY) + 2) : Math.max(8, Math.ceil(height / stepY) + 6)
-  copyOffsets.value = [0]
+  copyOffsets.value = [-1, 0, 1]
   root.value?.style.setProperty('--watch-icon-size', `${iconSizePx.toFixed(2)}px`)
 }
 
@@ -146,10 +161,11 @@ const render = () => {
 
   normalizeOffsets()
 
-  const cycles = getCycles()
   const icons: HTMLElement[] = cachedIcons.length
     ? cachedIcons
     : [...root.value.querySelectorAll<HTMLElement>('.watch-icon')]
+  const mobile = isMobileWatch()
+  const cycles = getCycles()
 
   icons.forEach((node) => {
     const baseIndex = Number(node.dataset.baseIndex || 0)
@@ -162,17 +178,17 @@ const render = () => {
     const rawY = row * stepY + copyY * cycles.height - offsetY - cycles.height / 2
     const x = wrap(rawX + cycles.width / 2, cycles.width) - cycles.width / 2
     const y = wrap(rawY + cycles.height / 2, cycles.height) - cycles.height / 2
-    const mobile = isMobileWatch()
     const distance = Math.hypot(x, y)
     const scale = mobile
-      ? clamp(0.64, 1.16, 1.16 - distance / (stepX * 5))
-      : clamp(0.46, maxIconScale, maxIconScale - distance / (stepX * 4.4))
+      ? clamp(0.76, 1.3, 1.3 - distance / (stepX * 4.2))
+      : clamp(0.54, maxIconScale, maxIconScale - distance / (stepX * 3.35))
     const opacity = mobile
       ? clamp(0.34, 0.9, 1 - distance / (stepX * 5.6))
       : clamp(0.18, 0.92, 1.02 - distance / (stepX * 6.2))
 
     node.style.transform = `translate(${x.toFixed(2)}px, ${y.toFixed(2)}px) translate(-50%, -50%) scale(${scale.toFixed(3)})`
     node.style.opacity = opacity.toFixed(3)
+    node.style.zIndex = `${100 + Math.round(scale * 100)}`
   })
 }
 
@@ -332,6 +348,17 @@ onMounted(async () => {
   resizeObserver.observe(root.value)
 })
 
+watch(
+  links,
+  async () => {
+    measure()
+    await nextTick()
+    refreshIconCache()
+    scheduleRender()
+  },
+  { deep: true },
+)
+
 onBeforeUnmount(() => {
   if (renderFrame) cancelAnimationFrame(renderFrame)
   stopInertia()
@@ -377,6 +404,7 @@ onBeforeUnmount(() => {
             :data-copy-y="entry.copyY"
             :data-col="entry.col"
             :data-row="entry.row"
+            :data-fallback="entry.item.websiteTitle.charAt(0)"
             :aria-label="entry.item.websiteTitle"
             :style="{ '--watch-color': entry.color }"
             draggable="false"
@@ -388,10 +416,13 @@ onBeforeUnmount(() => {
             @dragstart.prevent
           >
             <img
+              v-if="entry.item.avatarUrl"
               class="watch-icon-image"
               :src="entry.item.avatarUrl"
               :alt="`${entry.item.websiteTitle} avatar`"
               draggable="false"
+              @load="handleAvatarLoad"
+              @error="handleAvatarError"
             >
           </a>
         </div>
@@ -422,7 +453,7 @@ onBeforeUnmount(() => {
   display: block;
   padding: 0;
   border: 0;
-  border-radius: 20px;
+  border-radius: 18px;
   background: color-mix(in srgb, var(--card-bg), transparent 2%);
   color: var(--page-fg);
   box-shadow: var(--gallery-card-shadow);
@@ -491,17 +522,17 @@ onBeforeUnmount(() => {
   position: relative;
   min-width: 0;
   overflow: hidden;
-  border-radius: 0;
+  border-radius: inherit;
 }
 
 .watch-stage {
   position: absolute;
-  inset: 6px;
+  inset: 8px;
   z-index: 1;
   overflow: hidden;
-  border-radius: inherit;
+  border-radius: 14px;
   background: transparent;
-  box-shadow: none;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--page-fg), transparent 90%);
 }
 
 .watch-drag-hint {
@@ -555,6 +586,7 @@ onBeforeUnmount(() => {
   display: grid;
   place-items: center;
   border-radius: 999px;
+  overflow: hidden;
   background:
     radial-gradient(circle at 34% 24%, rgba(255, 255, 255, 0.46), transparent 31%),
     linear-gradient(145deg, color-mix(in srgb, var(--watch-color), #ffffff 10%), color-mix(in srgb, var(--watch-color), #000000 18%));
@@ -570,17 +602,46 @@ onBeforeUnmount(() => {
   will-change: transform, opacity;
 }
 
+.watch-icon::before {
+  content: attr(data-fallback);
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: color-mix(in srgb, #ffffff, var(--accent) 8%);
+  font-family: "Sora", sans-serif;
+  font-size: 23px;
+  font-weight: 800;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.watch-icon[data-avatar-loaded='true']::before {
+  opacity: 0;
+}
+
+.watch-icon[data-avatar-loaded='true'] {
+  background: transparent;
+  box-shadow: none;
+}
+
 .watch-icon-image {
   width: 100%;
   height: 100%;
   display: block;
-  border-radius: inherit;
+  border-radius: 999px;
+  opacity: 0;
   object-fit: cover;
   pointer-events: none;
+  transition: opacity 0.2s ease;
 }
 
-.watch-card:not(.is-dragging) .watch-icon:hover,
-.watch-card:not(.is-dragging) .watch-icon:focus-visible {
+.watch-icon-image[data-loaded='true'] {
+  opacity: 1;
+}
+
+.watch-card:not(.is-dragging) .watch-icon:not([data-avatar-loaded='true']):hover,
+.watch-card:not(.is-dragging) .watch-icon:not([data-avatar-loaded='true']):focus-visible {
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, #ffffff, transparent 56%),
     inset 0 -10px 18px rgba(0, 0, 0, 0.16),
@@ -672,7 +733,8 @@ onBeforeUnmount(() => {
   }
 
   .watch-stage {
-    inset: 4px;
+    inset: 6px;
+    border-radius: 12px;
   }
 
   .watch-shell {
@@ -691,6 +753,16 @@ onBeforeUnmount(() => {
   .watch-icon {
     box-shadow: inset 0 1px 0 color-mix(in srgb, #ffffff, transparent 76%);
     will-change: transform;
+  }
+
+  .watch-icon[data-avatar-loaded='true'],
+  .watch-icon[data-avatar-loaded='true']:hover,
+  .watch-icon[data-avatar-loaded='true']:focus-visible {
+    box-shadow: none;
+  }
+
+  .watch-icon::before {
+    font-size: 18px;
   }
 
   .watch-icon:hover,

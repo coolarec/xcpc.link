@@ -2,14 +2,26 @@
 import type { SiteLink } from '../../../types/home'
 
 interface GalleryLinkCardProps extends SiteLink {
-  index: number
   accent?: string
 }
 
 withDefaults(defineProps<GalleryLinkCardProps>(), {
-  tags: () => [],
   accent: '#007aff',
 })
+
+const handleAvatarError = (event: Event): void => {
+  const target = event.currentTarget as HTMLImageElement | null
+  if (!target) return
+  delete target.parentElement?.dataset.avatarLoaded
+  target.hidden = true
+}
+
+const handleAvatarLoad = (event: Event): void => {
+  const target = event.currentTarget as HTMLImageElement | null
+  if (!target) return
+  target.dataset.loaded = 'true'
+  if (target.parentElement) target.parentElement.dataset.avatarLoaded = 'true'
+}
 </script>
 
 <template>
@@ -20,18 +32,21 @@ withDefaults(defineProps<GalleryLinkCardProps>(), {
     rel="noreferrer"
     :style="{ '--accent': accent }"
   >
-    <span class="gallery-index">{{ String(index + 1).padStart(2, '0') }}</span>
-    <img class="link-avatar" :src="avatarUrl" :alt="`${websiteTitle} avatar`" draggable="false">
+    <div class="link-avatar-shell" :data-fallback="websiteTitle.charAt(0)">
+      <img
+        v-if="avatarUrl"
+        class="link-avatar"
+        :src="avatarUrl"
+        :alt="`${websiteTitle} avatar`"
+        draggable="false"
+        @load="handleAvatarLoad"
+        @error="handleAvatarError"
+      >
+    </div>
     <div class="link-content">
-      <span class="link-kicker">Website</span>
       <h3>{{ websiteTitle }}</h3>
       <p>{{ websiteDescription }}</p>
-      <span class="link-url">{{ websiteUrl }}</span>
     </div>
-    <div v-if="tags.length" class="gallery-tags" aria-label="tags">
-      <span v-for="tag in tags" :key="tag">{{ tag }}</span>
-    </div>
-    <span class="link-action" aria-hidden="true">Open</span>
   </a>
 </template>
 
@@ -43,11 +58,11 @@ withDefaults(defineProps<GalleryLinkCardProps>(), {
   height: 480px;
   overflow: hidden;
   display: grid;
-  grid-template-rows: auto 1fr auto;
-  gap: 22px;
-  padding: 22px;
+  align-content: end;
+  gap: 6px;
+  padding: var(--link-card-padding, 20px 22px);
   border: 0;
-  border-radius: 20px;
+  border-radius: 18px;
   background: color-mix(in srgb, var(--card-bg), transparent 2%);
   color: var(--page-fg);
   box-shadow: var(--gallery-card-shadow);
@@ -67,27 +82,11 @@ withDefaults(defineProps<GalleryLinkCardProps>(), {
   top: 0;
   left: 0;
   right: 0;
-  height: 4px;
+  height: 5px;
   background: var(--accent);
 }
 
-.gallery-index {
-  position: relative;
-  z-index: 2;
-  width: fit-content;
-  min-height: 34px;
-  display: inline-flex;
-  align-items: center;
-  padding: 0 12px;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--page-fg), transparent 92%);
-  color: var(--muted-fg);
-  font-size: 12px;
-  font-family: "Sora", sans-serif;
-  font-weight: 700;
-}
-
-.link-avatar {
+.link-avatar-shell {
   position: absolute;
   top: 22px;
   right: 22px;
@@ -96,19 +95,53 @@ withDefaults(defineProps<GalleryLinkCardProps>(), {
   aspect-ratio: 1;
   display: grid;
   place-items: center;
-  border-radius: 20px;
-  background: color-mix(in srgb, var(--accent), var(--panel-bg) 70%);
-  object-fit: cover;
+  border-radius: 999px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 34% 24%, rgba(255, 255, 255, 0.34), transparent 31%),
+    color-mix(in srgb, var(--accent), var(--panel-bg) 70%);
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, #ffffff, transparent 72%),
     inset 0 0 0 1px var(--soft-line);
 }
 
+.link-avatar-shell::before {
+  content: attr(data-fallback);
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: color-mix(in srgb, #ffffff, var(--accent) 8%);
+  font-family: "Sora", sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.link-avatar-shell[data-avatar-loaded='true']::before {
+  opacity: 0;
+}
+
+.link-avatar-shell[data-avatar-loaded='true'] {
+  background: transparent;
+  box-shadow: none;
+}
+
+.link-avatar {
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  object-fit: cover;
+  border-radius: 999px;
+  transition: opacity 0.2s ease;
+}
+
+.link-avatar[data-loaded='true'] {
+  opacity: 1;
+}
+
 .link-content,
 .gallery-card h3,
-.gallery-card p,
-.gallery-tags,
-.link-action {
+.gallery-card p {
   position: relative;
   z-index: 1;
 }
@@ -119,82 +152,27 @@ withDefaults(defineProps<GalleryLinkCardProps>(), {
   min-width: 0;
 }
 
-.link-kicker {
-  display: block;
-  margin-bottom: 12px;
-  color: color-mix(in srgb, var(--accent), #ffffff 14%);
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
 .gallery-card h3 {
   margin: 0;
   font-family: "Sora", sans-serif;
   font-weight: 800;
-  font-size: clamp(40px, 5vw, 72px);
-  line-height: 0.92;
-  letter-spacing: -0.03em;
+  font-size: var(--link-title-size, 30px);
+  line-height: 1.02;
+  letter-spacing: 0;
 }
 
 .gallery-card p {
   max-width: 390px;
-  margin: 20px 0 0;
+  margin: 14px 0 0;
   overflow-wrap: anywhere;
   color: var(--muted-fg);
-  font-size: 17px;
-  line-height: 1.5;
-}
-
-.link-url {
-  display: block;
-  max-width: 100%;
-  margin-top: 12px;
+  display: -webkit-box;
   overflow: hidden;
-  color: color-mix(in srgb, var(--accent), #ffffff 8%);
-  font-size: 12px;
-  font-weight: 800;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.gallery-tags {
-  display: flex;
-  flex-wrap: wrap;
-  align-self: end;
-  gap: 0;
-  padding-right: 82px;
-}
-
-.gallery-tags span {
-  min-height: 26px;
-  display: inline-flex;
-  align-items: center;
-  padding: 3px 9px;
-  margin: 2px 2px 2px 0;
-  border: 0;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--page-fg), transparent 92%);
-  color: var(--muted-fg);
-  font-size: 11px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.link-action {
-  position: absolute;
-  right: 22px;
-  bottom: 22px;
-  min-height: 30px;
-  display: inline-flex;
-  align-items: center;
-  padding: 0 10px;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--accent), transparent 84%);
-  color: color-mix(in srgb, var(--accent), #ffffff 18%);
-  font-size: 12px;
-  font-weight: 800;
+  font-size: var(--link-description-size, 15px);
+  line-height: 1.45;
+  line-clamp: var(--link-description-lines, 3);
+  -webkit-line-clamp: var(--link-description-lines, 3);
+  -webkit-box-orient: vertical;
 }
 
 @media (max-width: 720px) {
@@ -207,17 +185,13 @@ withDefaults(defineProps<GalleryLinkCardProps>(), {
     border-radius: 18px;
   }
 
-  .gallery-index {
-    min-height: 28px;
-    padding: 0 10px;
-    font-size: 11px;
-  }
-
-  .link-avatar {
+  .link-avatar-shell {
     top: 16px;
     right: 16px;
     width: 50px;
-    border-radius: 16px;
+  }
+
+  .link-avatar-shell::before {
     font-size: 19px;
   }
 
@@ -225,46 +199,18 @@ withDefaults(defineProps<GalleryLinkCardProps>(), {
     max-width: calc(100% - 4px);
   }
 
-  .link-kicker {
-    margin-bottom: 8px;
-    font-size: 11px;
-  }
-
   .gallery-card h3 {
-    font-size: clamp(28px, 9vw, 40px);
+    font-size: 30px;
     line-height: 0.96;
   }
 
   .gallery-card p {
-    display: -webkit-box;
     margin-top: 12px;
-    overflow: hidden;
     font-size: 13px;
     line-height: 1.45;
     line-clamp: 3;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
-  }
-
-  .link-url {
-    margin-top: 8px;
-    font-size: 11px;
-  }
-
-  .gallery-tags {
-    min-width: 0;
-    padding-right: 0;
-    overflow: hidden;
-  }
-
-  .gallery-tags span {
-    min-height: 22px;
-    padding: 2px 8px;
-    font-size: 10px;
-  }
-
-  .link-action {
-    display: none;
   }
 }
 
@@ -274,23 +220,21 @@ withDefaults(defineProps<GalleryLinkCardProps>(), {
     padding: 14px;
   }
 
-  .link-avatar {
+  .link-avatar-shell {
     width: 46px;
-    border-radius: 14px;
+  }
+
+  .link-avatar-shell::before {
     font-size: 18px;
   }
 
   .gallery-card h3 {
-    font-size: clamp(26px, 8.4vw, 34px);
+    font-size: 26px;
   }
 
   .gallery-card p {
     line-clamp: 2;
     -webkit-line-clamp: 2;
-  }
-
-  .gallery-tags span:nth-child(n + 4) {
-    display: none;
   }
 }
 </style>
