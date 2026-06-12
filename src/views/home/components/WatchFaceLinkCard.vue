@@ -241,7 +241,6 @@ const handlePointerDown = (event: PointerEvent) => {
   stopInertia()
   isDragging = true
   suppressClick = false
-  isUIHidden.value = true
   if (uiTimer) {
     window.clearTimeout(uiTimer)
     uiTimer = 0
@@ -273,6 +272,7 @@ const handlePointerMove = (event: PointerEvent) => {
   if (Math.hypot(dx, dy) > 7) {
     suppressClick = true
     hasDragged = true
+    isUIHidden.value = true
   }
 
   offsetX = startOffsetX - dx
@@ -295,9 +295,7 @@ const handlePointerUp = (event: PointerEvent) => {
 
   if (uiTimer) window.clearTimeout(uiTimer)
   uiTimer = window.setTimeout(() => {
-    if (!root.value?.matches(':hover')) {
-      isUIHidden.value = false
-    }
+    isUIHidden.value = false
   }, 1200)
 
   if (Math.hypot(velocityX, velocityY) > 0.018) {
@@ -347,21 +345,8 @@ const hideTooltip = () => {
   tooltip.value?.classList.remove('is-visible')
 }
 
-const showFaceHint = () => {
-  isUIHidden.value = true
-  if (uiTimer) {
-    window.clearTimeout(uiTimer)
-    uiTimer = 0
-  }
-}
-
 const hideFaceHint = () => {
   hideTooltip()
-  if (uiTimer) {
-    window.clearTimeout(uiTimer)
-    uiTimer = 0
-  }
-  isUIHidden.value = false
 }
 
 onMounted(async () => {
@@ -413,7 +398,6 @@ onBeforeUnmount(() => {
     @pointerup="handlePointerUp"
     @pointercancel="handlePointerUp"
     @pointerleave="(e) => { handlePointerUp(e); hideFaceHint(); }"
-    @pointerenter="showFaceHint"
   >
     <div class="card-watermark" aria-hidden="true">{{ title.charAt(0) }}</div>
 
@@ -517,7 +501,8 @@ onBeforeUnmount(() => {
   z-index: 0;
   user-select: none;
   transform: rotate(-4deg);
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  visibility: visible;
+  transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
 }
 
 .link-content {
@@ -531,7 +516,8 @@ onBeforeUnmount(() => {
   padding-bottom: 36px;
   background: linear-gradient(to bottom, transparent, var(--card-bg) 40%);
   pointer-events: none;
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  visibility: visible;
+  transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
 }
 
 .gallery-card h3,
@@ -585,7 +571,7 @@ onBeforeUnmount(() => {
 
 .watch-drag-hint {
   position: absolute;
-  top: 36px;
+  top: 32px;
   right: 32px;
   z-index: 2;
   min-height: 30px;
@@ -606,12 +592,26 @@ onBeforeUnmount(() => {
   transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
 }
 
+@media (hover: hover) {
+  .watch-card:hover .link-content,
+  .watch-card:hover .card-watermark {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(12px);
+  }
+}
+
 .watch-card.is-ui-hidden .link-content,
-.watch-card.is-ui-hidden .card-watermark,
-.watch-card.is-ui-hidden .watch-drag-hint {
+.watch-card.is-ui-hidden .card-watermark {
   opacity: 0;
   visibility: hidden;
   transform: translateY(12px);
+}
+
+.watch-card.is-ui-hidden .watch-drag-hint {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-12px);
 }
 
 .watch-drag-grip {
@@ -793,7 +793,7 @@ onBeforeUnmount(() => {
   }
 
   .watch-drag-hint {
-    top: 28px;
+    top: 24px;
     right: 24px;
     backdrop-filter: none;
   }
@@ -840,7 +840,7 @@ onBeforeUnmount(() => {
   }
 
   .watch-drag-hint {
-    top: 24px;
+    top: 20px;
     right: 20px;
   }
 }
