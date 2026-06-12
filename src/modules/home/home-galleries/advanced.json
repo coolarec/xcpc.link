@@ -24,44 +24,128 @@
     }
   ],
   "watch": {
-    "title": "String links",
-    "description": "Pattern matching references arranged as a draggable watch face.",
+    "title": "OJ Platforms",
+    "description": "常用竞赛平台与题库入口，集中放在这一组里。",
     "links": [
       {
-        "avatarUrl": "https://dmoj.ca/favicon.ico",
-        "websiteUrl": "https://dmoj.ca/",
-        "websiteTitle": "DMOJ",
-        "websiteDescription": "题源丰富，适合补训练盲区，也方便自定义刷题列表。"
+        "avatarUrl": "https://codeforces.org/s/0/favicon-32x32.png",
+        "websiteUrl": "https://codeforces.com/",
+        "websiteTitle": "Codeforces",
+        "websiteDescription": "高频比赛平台，题库更新快，适合日常训练和打比赛。"
       },
       {
         "avatarUrl": "https://vjudge.net/static/favicon.ico",
         "websiteUrl": "https://vjudge.net/",
-        "websiteTitle": "Virtual Judge",
-        "websiteDescription": "把多个 OJ 题源聚到一起，组队训练时很好用。"
+        "websiteTitle": "VJ 镜像",
+        "websiteDescription": "聚合多站题源，组题和补题时很方便。"
       },
       {
-        "avatarUrl": "https://loj.ac/favicon.ico",
-        "websiteUrl": "https://loj.ac/",
-        "websiteTitle": "LibreOJ",
-        "websiteDescription": "有不少高质量题和专题内容，适合做进阶训练。"
+        "avatarUrl": "https://img.atcoder.jp/assets/favicon.png",
+        "websiteUrl": "https://atcoder.jp/",
+        "websiteTitle": "Atcoder",
+        "websiteDescription": "题面质量高，难度梯度平滑，适合稳步进阶。"
       },
       {
-        "avatarUrl": "https://oi-wiki.org/favicon.ico",
-        "websiteUrl": "https://oi-wiki.org/string/",
-        "websiteTitle": "OI Wiki 字符串",
-        "websiteDescription": "字符串专题整理得很系统，方便连着查多个算法。"
+        "avatarUrl": "https://www.jisuanke.com/static/favicon.ico",
+        "websiteUrl": "https://www.jisuanke.com/",
+        "websiteTitle": "计蒜客",
+        "websiteDescription": "国内老牌训练站点，适合专题练习和课程配套。"
       },
       {
-        "avatarUrl": "https://usaco.guide/favicon.ico",
-        "websiteUrl": "https://usaco.guide/gold/string-hashing",
-        "websiteTitle": "USACO Guide 字符串",
-        "websiteDescription": "把概念、例题和练习串在一起，适合刷一整块专题。"
+        "avatarUrl": "https://www.codechef.com/favicon.ico",
+        "websiteUrl": "https://www.codechef.com/",
+        "websiteTitle": "Codechef",
+        "websiteDescription": "比赛体系完整，适合补不同风格的题目。"
+      },
+      {
+        "avatarUrl": "https://www.spoj.com/favicon.ico",
+        "websiteUrl": "https://www.spoj.com/",
+        "websiteTitle": "SPOJ",
+        "websiteDescription": "经典老题很多，适合翻历史题单做扩展训练。"
+      },
+      {
+        "avatarUrl": "https://hydro.ac/p/favicon.ico",
+        "websiteUrl": "https://hydro.ac/",
+        "websiteTitle": "Hydro",
+        "websiteDescription": "支持多类题库与比赛管理，适合自建训练环境。"
+      },
+      {
+        "avatarUrl": "https://pintia.cn/favicon.ico",
+        "websiteUrl": "https://pintia.cn/",
+        "websiteTitle": "PTA",
+        "websiteDescription": "程序设计类课程和题库入口，校内外训练都常见。"
       },
       {
         "avatarUrl": "https://www.acwing.com/favicon.ico",
-        "websiteUrl": "https://www.acwing.com/activity/",
-        "websiteTitle": "AcWing 活动",
-        "websiteDescription": "专题课和活动训练配合题库，复盘一个主题很省心。"
+        "websiteUrl": "https://www.acwing.com/",
+        "websiteTitle": "Acwing",
+        "websiteDescription": "课程、题库、比赛结合紧，适合系统刷题。"
+      },
+      {
+        "avatarUrl": "https://ac.nowcoder.com/favicon.ico",
+        "websiteUrl": "https://ac.nowcoder.com/",
+        "websiteTitle": "牛客竞赛",
+        "websiteDescription": "国内竞赛和训练营很多，组队赛前热身很顺手。"
+      },
+      {
+        "avatarUrl": "https://acm.hdu.edu.cn/favicon.ico",
+        "websiteUrl": "https://acm.hdu.edu.cn/",
+        "websiteTitle": "HDUOJ",
+        "websiteDescription": "经典国内 OJ，老题资源丰富。"
+      },
+      {
+        "avatarUrl": "https://vjudge.net/static/favicon.ico",
+        "websiteUrl": "https://loj.ac/",
+        "websiteTitle": "LOJ",
+        "websiteDescription": "LibreOJ 的高质量题库，适合进阶专题训练。"
+      },
+      {
+        "avatarUrl": "https://uoj.ac/favicon.ico",
+        "websiteUrl": "https://uoj.ac/",
+        "websiteTitle": "UOJ",
+        "websiteDescription": "不少高质量和高区分度题目都能在这里找到。"
+      },
+      {
+        "avatarUrl": "https://universalcup.org/favicon.ico",
+        "websiteUrl": "https://universalcup.org/",
+        "websiteTitle": "Universal Cup",
+        "websiteDescription": "高水平区域赛风格比赛，适合强度拉满的训练。"
+      },
+      {
+        "avatarUrl": "https://vjudge.net/static/favicon.ico",
+        "websiteUrl": "https://vjudge.net/",
+        "websiteTitle": "VJ",
+        "websiteDescription": "统一管理多站题目与比赛，打包训练很省事。"
+      },
+      {
+        "avatarUrl": "https://www.luogu.com.cn/favicon.ico",
+        "websiteUrl": "https://www.luogu.com.cn/",
+        "websiteTitle": "洛谷",
+        "websiteDescription": "国内常用题库与比赛平台，适合日常刷题。"
+      },
+      {
+        "avatarUrl": "https://leetcode.cn/favicon.ico",
+        "websiteUrl": "https://leetcode.cn/",
+        "websiteTitle": "力扣",
+        "websiteDescription": "题库大、讨论多，适合补基础和常见套路。"
+      },
+      {
+        "avatarUrl": "https://avatar.codeforces.com/1?size=small",
+        "websiteUrl": "https://www.luogu.com.cn/problem/list?tag=题目来源-代码源",
+        "websiteTitle": "代码源",
+        "websiteDescription": "国内题源平台，适合补不同出题风格。"
+      },
+      {
+        "avatarUrl": "https://avatar.codeforces.com/2?size=small",
+        "websiteUrl": "https://www.xjoi.com/oj",
+        "websiteTitle": "OMC",
+        "websiteDescription": "补充型题源入口，方便横向收集不同平台题目。"
+      },
+      {
+        "avatarUrl": "https://open.kattis.com/favicon",
+        "websiteUrl": "https://open.kattis.com/",
+        "websiteTitle": "Kattis",
+        "websiteDescription": "北欧风格题库，很多区域赛真题都能找到。"
       }
     ]
   }

@@ -138,8 +138,8 @@ const measure = () => {
   const height = stage.value?.clientHeight || root.value?.clientHeight || 480
   isMobileCached = isMobileWatch()
 
-  iconSizePx = isMobileCached ? clamp(34, 42, width / 6.6) : clamp(40, 54, width / 8.8)
-  const safeDiameter = iconSizePx * maxIconScale + (isMobileCached ? 6 : minIconGap)
+  iconSizePx = isMobileCached ? clamp(36, 46, width / 6.2) : clamp(40, 54, width / 8.8)
+  const safeDiameter = iconSizePx * maxIconScale + (isMobileCached ? 2 : minIconGap)
 
   stepX = safeDiameter
   stepY = safeDiameter * (Math.sqrt(3) / 2)
@@ -187,7 +187,7 @@ const render = () => {
 
     const bellCurve = Math.exp(-Math.pow(distance / (stepX * 2.3), 2))
     const scale = isMobileCached
-      ? clamp(0.1, 1.6, 1.6 * bellCurve)
+      ? clamp(0.1, 2.05, 2.05 * bellCurve)
       : clamp(0.1, maxIconScale, maxIconScale * bellCurve)
     
     const opacityNum = isMobileCached
