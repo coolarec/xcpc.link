@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { gsap } from 'gsap'
 import type { HeroDockItem } from '../../../types/home'
 
-defineProps<{
+const props = defineProps<{
   items: HeroDockItem[]
 }>()
 
@@ -15,11 +15,18 @@ const dock = ref<HTMLDivElement | null>(null)
 let context: gsap.Context | undefined
 let removeListeners: (() => void) | undefined
 
-onMounted(async () => {
-  await nextTick()
+const teardownDock = () => {
+  removeListeners?.()
+  removeListeners = undefined
+  context?.revert()
+  context = undefined
+}
 
+const setupDock = () => {
   const dockElement = dock.value
   if (!dockElement) return
+
+  teardownDock()
 
   context = gsap.context(() => {
     const icons = gsap.utils.toArray<HTMLElement>('.hero-dock-item')
@@ -104,12 +111,28 @@ onMounted(async () => {
       dockElement.removeEventListener('pointerleave', resetDock)
     }
   }, dockElement)
+}
+
+onMounted(async () => {
+  await nextTick()
+  if (props.items.length) setupDock()
 })
 
-onBeforeUnmount(() => {
-  removeListeners?.()
-  context?.revert()
-})
+watch(
+  () => props.items,
+  async (items) => {
+    if (!items.length) {
+      teardownDock()
+      return
+    }
+
+    await nextTick()
+    setupDock()
+  },
+  { deep: true },
+)
+
+onBeforeUnmount(teardownDock)
 </script>
 
 <template>

@@ -9,6 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource/dm-sans": "^5.2.8",
+    "@fontsource/sora": "^5.2.8",
     "@lucide/vue": "^1.17.0",
     "gsap": "^3.15.0",
     "pinia": "^3.0.3",
