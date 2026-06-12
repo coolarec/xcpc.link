@@ -19,7 +19,6 @@ const tooltipTitle = ref<HTMLElement | null>(null)
 const tooltipDescription = ref<HTMLElement | null>(null)
 const columnCount = ref(8)
 const rowCount = ref(8)
-const copyOffsets = ref([-1, 0, 1])
 const slots = useSlots()
 
 const flattenNodes = (nodes: VNodeArrayChildren): VNode[] =>
@@ -55,27 +54,21 @@ const visualItems = computed(() => {
 
   if (!source.length) return []
 
-  return copyOffsets.value.flatMap((copyY) =>
-    copyOffsets.value.flatMap((copyX) =>
-      Array.from({ length: rowCount.value }).flatMap((_, row) =>
-        Array.from({ length: columnCount.value }).map((__, col) => {
-          const axialQ = col - Math.floor(row / 2)
-          const baseIndex = wrap(axialQ + row * 2, source.length)
-          const item = source[baseIndex]
+  return Array.from({ length: rowCount.value }).flatMap((_, row) =>
+    Array.from({ length: columnCount.value }).map((__, col) => {
+      const axialQ = col - Math.floor(row / 2)
+      const baseIndex = wrap(axialQ + row * 2, source.length)
+      const item = source[baseIndex]
 
-          return {
-            item,
-            key: `${item.websiteTitle}-${copyX}-${copyY}-${row}-${col}`,
-            baseIndex,
-            copyX,
-            copyY,
-            col,
-            row,
-            color: palette[baseIndex % palette.length],
-          }
-        }),
-      ),
-    ),
+      return {
+        item,
+        key: `${item.websiteTitle}-${row}-${col}`,
+        baseIndex,
+        col,
+        row,
+        color: palette[baseIndex % palette.length],
+      }
+    }),
   )
 })
 
@@ -135,19 +128,22 @@ const normalizeOffsets = () => {
   offsetY = wrap(offsetY, cycles.height)
 }
 
+let isMobileCached = false
+
 const measure = () => {
   const width = stage.value?.clientWidth || root.value?.clientWidth || 600
   const height = stage.value?.clientHeight || root.value?.clientHeight || 480
-  const mobile = isMobileWatch()
+  isMobileCached = isMobileWatch()
 
-  iconSizePx = mobile ? clamp(34, 42, width / 6.6) : clamp(40, 54, width / 8.8)
-  const safeDiameter = iconSizePx * maxIconScale + (mobile ? 6 : minIconGap)
+  iconSizePx = isMobileCached ? clamp(34, 42, width / 6.6) : clamp(40, 54, width / 8.8)
+  const safeDiameter = iconSizePx * maxIconScale + (isMobileCached ? 6 : minIconGap)
 
   stepX = safeDiameter
-  stepY = safeDiameter * (mobile ? 0.96 : 0.9)
-  columnCount.value = mobile ? Math.max(4, Math.ceil(width / stepX) + 2) : Math.max(7, Math.ceil(width / stepX) + 6)
-  rowCount.value = mobile ? Math.max(4, Math.ceil(height / stepY) + 2) : Math.max(8, Math.ceil(height / stepY) + 6)
-  copyOffsets.value = [-1, 0, 1]
+  stepY = safeDiameter * (isMobileCached ? 0.96 : 0.9)
+  
+  columnCount.value = isMobileCached ? Math.max(7, Math.ceil(width / stepX) + 2) : Math.max(9, Math.ceil(width / stepX) + 2)
+  rowCount.value = isMobileCached ? Math.max(7, Math.ceil(height / stepY) + 2) : Math.max(9, Math.ceil(height / stepY) + 2)
+  
   root.value?.style.setProperty('--watch-icon-size', `${iconSizePx.toFixed(2)}px`)
 }
 
@@ -164,31 +160,38 @@ const render = () => {
   const icons: HTMLElement[] = cachedIcons.length
     ? cachedIcons
     : [...root.value.querySelectorAll<HTMLElement>('.watch-icon')]
-  const mobile = isMobileWatch()
   const cycles = getCycles()
 
   icons.forEach((node) => {
-    const baseIndex = Number(node.dataset.baseIndex || 0)
-    const copyX = Number(node.dataset.copyX || 0)
-    const copyY = Number(node.dataset.copyY || 0)
     const col = Number(node.dataset.col || 0)
     const row = Number(node.dataset.row || 0)
     const rowOffset = row % 2 ? stepX * 0.5 : 0
-    const rawX = col * stepX + rowOffset + copyX * cycles.width - offsetX - cycles.width / 2
-    const rawY = row * stepY + copyY * cycles.height - offsetY - cycles.height / 2
+    const rawX = col * stepX + rowOffset - offsetX - cycles.width / 2
+    const rawY = row * stepY - offsetY - cycles.height / 2
     const x = wrap(rawX + cycles.width / 2, cycles.width) - cycles.width / 2
     const y = wrap(rawY + cycles.height / 2, cycles.height) - cycles.height / 2
     const distance = Math.hypot(x, y)
-    const scale = mobile
-      ? clamp(0.76, 1.3, 1.3 - distance / (stepX * 4.2))
-      : clamp(0.54, maxIconScale, maxIconScale - distance / (stepX * 3.35))
-    const opacity = mobile
-      ? clamp(0.34, 0.9, 1 - distance / (stepX * 5.6))
-      : clamp(0.18, 0.92, 1.02 - distance / (stepX * 6.2))
+    
+    const scale = isMobileCached
+      ? clamp(0.5, 1.3, 1.3 - distance / (stepX * 3.8))
+      : clamp(0.4, maxIconScale, maxIconScale - distance / (stepX * 3.1))
+    
+    const opacityNum = isMobileCached
+      ? clamp(0, 0.9, 1.1 - distance / (stepX * 3.2))
+      : clamp(0, 0.92, 1.15 - distance / (stepX * 3.5))
 
-    node.style.transform = `translate(${x.toFixed(2)}px, ${y.toFixed(2)}px) translate(-50%, -50%) scale(${scale.toFixed(3)})`
-    node.style.opacity = opacity.toFixed(3)
-    node.style.zIndex = `${100 + Math.round(scale * 100)}`
+    const opacityStr = opacityNum.toFixed(3)
+    const zIndexStr = `${100 + Math.round(scale * 100)}`
+
+    node.style.transform = `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0) translate(-50%, -50%) scale(${scale.toFixed(3)})`
+    
+    if (node.style.opacity !== opacityStr) {
+      node.style.opacity = opacityStr
+    }
+    
+    if (node.style.zIndex !== zIndexStr) {
+      node.style.zIndex = zIndexStr
+    }
   })
 }
 
@@ -400,8 +403,6 @@ onBeforeUnmount(() => {
             target="_blank"
             rel="noreferrer"
             :data-base-index="entry.baseIndex"
-            :data-copy-x="entry.copyX"
-            :data-copy-y="entry.copyY"
             :data-col="entry.col"
             :data-row="entry.row"
             :data-fallback="entry.item.websiteTitle.charAt(0)"
