@@ -183,7 +183,7 @@ const render = () => {
     const opacityStr = opacityNum.toFixed(3)
     const zIndexStr = `${100 + Math.round(scale * 100)}`
 
-    node.style.transform = `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0) translate(-50%, -50%) scale(${scale.toFixed(3)})`
+    node.style.transform = `translate(${x.toFixed(2)}px, ${y.toFixed(2)}px) translate(-50%, -50%) scale(${scale.toFixed(3)})`
     
     if (node.style.opacity !== opacityStr) {
       node.style.opacity = opacityStr
