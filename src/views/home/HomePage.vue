@@ -13,6 +13,11 @@ import type { AsyncVueModule, HeroDockItem, HomeGallerySection } from '../../typ
 
 gsap.registerPlugin(ScrollToPlugin, ScrollTrigger)
 
+ScrollTrigger.config({
+  ignoreMobileResize: true,
+  autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load',
+})
+
 const asyncCardOptions = (loader: () => Promise<AsyncVueModule<Component>>) => ({
   loader,
   loadingComponent: GalleryCardPlaceholder,
@@ -59,7 +64,7 @@ const scrollToGallery = (index: number): void => {
   const section = gallerySection.value
   if (!section) return
 
-  const galleries = section.querySelectorAll<HTMLElement>('.horizontal-gallery')
+  const galleries = section.querySelectorAll<HTMLElement>('.horizontal-gallery-pin-wrapper')
   const target = galleries.item(index)
 
   if (!target) return
@@ -179,8 +184,6 @@ onMounted(async () => {
     if (window.innerWidth <= 760) {
       window.scrollTo(0, 0)
     }
-
-    ScrollTrigger.refresh()
 
     return () => media.revert()
   }, root)

@@ -24,9 +24,6 @@ const root = ref<HTMLElement | null>(null)
 const wrapper = ref<HTMLDivElement | null>(null)
 const strip = ref<HTMLDivElement | null>(null)
 let motionMedia: gsap.MatchMedia | undefined
-let resizeObserver: ResizeObserver | undefined
-let mutationObserver: MutationObserver | undefined
-let refreshFrame = 0
 
 const isReversed = () => props.reverse || props.direction === 'right'
 
@@ -43,14 +40,13 @@ onMounted(async () => {
   motionMedia.add('(min-width: 721px)', () => {
     let removeRefreshListener: (() => void) | undefined
     let tween: gsap.core.Tween | undefined
+    let lastWrapperWidth = 0
 
     const context = gsap.context(() => {
-      let pinWrapWidth = 0
       let horizontalScrollLength = 0
 
       const refresh = () => {
-        pinWrapWidth = stripElement.scrollWidth
-        horizontalScrollLength = Math.max(0, pinWrapWidth - wrapperElement.clientWidth)
+        horizontalScrollLength = Math.max(0, stripElement.scrollWidth - wrapperElement.clientWidth)
       }
 
       const getScrollDistance = () => horizontalScrollLength * 1.05
@@ -59,14 +55,15 @@ onMounted(async () => {
       const getEndX = () => (isReversed() ? 0 : -horizontalScrollLength)
 
       refresh()
+      lastWrapperWidth = wrapperElement.clientWidth
 
-      gsap.set(stripElement, { x: getStartX })
+      gsap.set(stripElement, { x: getStartX, force3D: true })
 
       tween = gsap.fromTo(stripElement, {
         x: getStartX,
       }, {
         scrollTrigger: {
-          scrub: true,
+          scrub: 1,
           trigger: rootElement,
           pin: rootElement,
           start: 'top top',
@@ -74,6 +71,7 @@ onMounted(async () => {
           invalidateOnRefresh: true,
         },
         x: getEndX,
+        force3D: true,
         ease: 'none',
       })
 
@@ -94,34 +92,9 @@ onMounted(async () => {
 
       ScrollTrigger.addEventListener('refreshInit', refresh)
       removeRefreshListener = () => ScrollTrigger.removeEventListener('refreshInit', refresh)
-
-      const scheduleRefresh = () => {
-        if (refreshFrame) return
-        refreshFrame = requestAnimationFrame(() => {
-          refreshFrame = 0
-          refresh()
-          gsap.set(stripElement, { x: getStartX })
-          tween?.invalidate()
-          tween?.scrollTrigger?.refresh()
-        })
-      }
-
-      resizeObserver = new ResizeObserver(scheduleRefresh)
-      resizeObserver.observe(wrapperElement)
-      resizeObserver.observe(stripElement)
-
-      mutationObserver = new MutationObserver(scheduleRefresh)
-      mutationObserver.observe(stripElement, { childList: true, subtree: true })
-
-      requestAnimationFrame(() => {
-        tween?.scrollTrigger?.refresh()
-      })
     }, rootElement)
 
     return () => {
-      if (refreshFrame) cancelAnimationFrame(refreshFrame)
-      resizeObserver?.disconnect()
-      mutationObserver?.disconnect()
       removeRefreshListener?.()
       context.revert()
     }
@@ -145,8 +118,6 @@ onMounted(async () => {
           },
         })
       }
-
-      requestAnimationFrame(() => ScrollTrigger.refresh())
     }, rootElement)
 
     return () => context.revert()
@@ -154,41 +125,42 @@ onMounted(async () => {
 })
 
 onBeforeUnmount(() => {
-  if (refreshFrame) cancelAnimationFrame(refreshFrame)
-  resizeObserver?.disconnect()
-  mutationObserver?.disconnect()
   motionMedia?.revert()
 })
 </script>
 
 <template>
-  <section
-    ref="root"
-    class="horizontal-gallery"
-    :class="{ 'is-reversed': isReversed() }"
-    :style="{ '--accent': accent }"
-  >
-    <div class="gallery-heading">
-      <p>{{ eyebrow }}</p>
-      <h2>{{ title }}</h2>
-    </div>
+  <section ref="root" class="horizontal-gallery-pin-wrapper">
+    <div
+      class="horizontal-gallery"
+      :class="{ 'is-reversed': isReversed() }"
+      :style="{ '--accent': accent }"
+    >
+      <div class="gallery-heading">
+        <p>{{ eyebrow }}</p>
+        <h2>{{ title }}</h2>
+      </div>
 
-    <div ref="wrapper" class="horiz-gallery-wrapper">
-      <div ref="strip" class="horiz-gallery-strip">
-        <slot />
+      <div ref="wrapper" class="horiz-gallery-wrapper">
+        <div ref="strip" class="horiz-gallery-strip">
+          <slot />
+        </div>
       </div>
     </div>
   </section>
 </template>
 
 <style scoped>
+.horizontal-gallery-pin-wrapper {
+  width: 100%;
+  position: relative;
+}
+
 .horizontal-gallery {
   --gallery-card-width: clamp(360px, 32vw, 600px);
   --gallery-card-height: 480px;
   position: relative;
   min-height: 100svh;
-  contain: layout paint style;
-  contain-intrinsic-size: 100svh;
   overflow: hidden;
   display: grid;
   align-content: center;
@@ -265,7 +237,6 @@ onBeforeUnmount(() => {
     --gallery-card-width: 100%;
     --gallery-card-height: clamp(300px, 76svh, 330px);
     min-height: auto;
-    contain-intrinsic-size: auto 1560px;
     padding: 52px 14px;
     gap: 24px;
   }
