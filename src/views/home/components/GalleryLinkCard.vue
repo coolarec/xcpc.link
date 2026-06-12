@@ -81,9 +81,7 @@ const handleAvatarLoad = (event: Event): void => {
   border-radius: 32px;
   background: color-mix(in srgb, var(--card-bg), transparent 2%);
   color: var(--page-fg);
-  box-shadow: 
-    inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    0 12px 32px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.04);
   text-decoration: none;
   transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s ease;
   transform: translateZ(0);
@@ -92,7 +90,6 @@ const handleAvatarLoad = (event: Event): void => {
 .gallery-card:hover {
   transform: translateY(-6px) scale(1.015);
   box-shadow: 
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
     0 24px 48px rgba(0, 0, 0, 0.08),
     0 8px 16px rgba(0, 0, 0, 0.04);
   background: color-mix(in srgb, var(--card-bg), var(--page-fg) 2%);
@@ -150,11 +147,9 @@ const handleAvatarLoad = (event: Event): void => {
   border-radius: 20px;
   overflow: hidden;
   background:
-    radial-gradient(circle at 34% 24%, rgba(255, 255, 255, 0.34), transparent 31%),
+    radial-gradient(circle at 34% 24%, rgba(255, 255, 255, 0.15), transparent 31%),
     color-mix(in srgb, var(--accent), var(--panel-bg) 70%);
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, #ffffff, transparent 72%),
-    0 8px 24px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
   position: relative;
 }
 

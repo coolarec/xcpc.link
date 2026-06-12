@@ -389,61 +389,67 @@ onBeforeUnmount(() => {
     @pointermove.capture="handlePointerMove"
     @pointerup="handlePointerUp"
     @pointercancel="handlePointerUp"
-    @pointerleave="handlePointerUp"
+    @pointerleave="(e) => { handlePointerUp(e); hideFaceHint(); }"
+    @pointerenter="showFaceHint"
   >
-    <div class="watch-shell">
-      <aside class="watch-rail" aria-hidden="true">
-        <span>{{ title }}</span>
-      </aside>
+    <div class="card-ambient-glow"></div>
+    <div class="card-watermark" aria-hidden="true">{{ title.charAt(0) }}</div>
 
-      <div
-        class="watch-face"
-        @pointerenter="showFaceHint"
-        @pointerleave="hideFaceHint"
-      >
-        <div
-          ref="stage"
-          class="watch-stage"
-          aria-label="Draggable related links"
-        >
-          <a
-            v-for="entry in visualItems"
-            :key="entry.key"
-            class="watch-icon"
-            :href="entry.item.websiteUrl"
-            target="_blank"
-            rel="noreferrer"
-            :data-base-index="entry.baseIndex"
-            :data-col="entry.col"
-            :data-row="entry.row"
-            :data-fallback="entry.item.websiteTitle.charAt(0)"
-            :aria-label="entry.item.websiteTitle"
-            :style="{ '--watch-color': entry.color }"
-            draggable="false"
-            @pointerenter="showTooltip($event, entry.item)"
-            @pointerleave="hideTooltip"
-            @focus="showTooltip($event, entry.item)"
-            @blur="hideTooltip"
-            @click="handleIconClick"
-            @dragstart.prevent
-          >
-            <img
-              v-if="entry.item.avatarUrl"
-              class="watch-icon-image"
-              :src="entry.item.avatarUrl"
-              :alt="`${entry.item.websiteTitle} avatar`"
-              draggable="false"
-              @load="handleAvatarLoad"
-              @error="handleAvatarError"
-            >
-          </a>
-        </div>
-
-        <div class="watch-drag-hint" aria-hidden="true">
-          <span class="watch-drag-grip"></span>
-          <span>拖动</span>
-        </div>
+    <div class="card-header" aria-hidden="true">
+      <div class="link-avatar-shell">
+        <svg class="watch-app-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="5" y="2" width="14" height="20" rx="4" ry="4"/>
+          <path d="M12 18h.01"/>
+        </svg>
       </div>
+    </div>
+
+    <div
+      ref="stage"
+      class="watch-stage"
+      aria-label="Draggable related links"
+    >
+      <a
+        v-for="entry in visualItems"
+        :key="entry.key"
+        class="watch-icon"
+        :href="entry.item.websiteUrl"
+        target="_blank"
+        rel="noreferrer"
+        :data-base-index="entry.baseIndex"
+        :data-col="entry.col"
+        :data-row="entry.row"
+        :data-fallback="entry.item.websiteTitle.charAt(0)"
+        :aria-label="entry.item.websiteTitle"
+        :style="{ '--watch-color': entry.color }"
+        draggable="false"
+        @pointerenter="showTooltip($event, entry.item)"
+        @pointerleave="hideTooltip"
+        @focus="showTooltip($event, entry.item)"
+        @blur="hideTooltip"
+        @click="handleIconClick"
+        @dragstart.prevent
+      >
+        <img
+          v-if="entry.item.avatarUrl"
+          class="watch-icon-image"
+          :src="entry.item.avatarUrl"
+          :alt="`${entry.item.websiteTitle} avatar`"
+          draggable="false"
+          @load="handleAvatarLoad"
+          @error="handleAvatarError"
+        >
+      </a>
+    </div>
+
+    <div class="watch-drag-hint" :class="{ 'is-hidden': hideHint }" aria-hidden="true">
+      <span class="watch-drag-grip"></span>
+      <span>拖动</span>
+    </div>
+
+    <div class="link-content" aria-hidden="true">
+      <h3>{{ title }}</h3>
+      <p>{{ description }}</p>
     </div>
 
     <Teleport to="body">
@@ -462,24 +468,123 @@ onBeforeUnmount(() => {
   width: clamp(360px, 32vw, 600px);
   height: 480px;
   overflow: hidden;
-  display: block;
-  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 36px 32px;
   border: 0;
-  border-radius: 18px;
+  border-radius: 32px;
   background: color-mix(in srgb, var(--card-bg), transparent 2%);
   color: var(--page-fg);
-  box-shadow: var(--gallery-card-shadow);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.04);
+  text-decoration: none;
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s ease;
+  transform: translateZ(0);
 }
 
-.gallery-card::before {
-  content: '';
+.gallery-card:hover {
+  transform: translateY(-6px) scale(1.015);
+  box-shadow: 
+    0 24px 48px rgba(0, 0, 0, 0.08),
+    0 8px 16px rgba(0, 0, 0, 0.04);
+  background: color-mix(in srgb, var(--card-bg), var(--page-fg) 2%);
+}
+
+.card-ambient-glow {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 3;
-  height: 4px;
+  top: -20%;
+  right: -20%;
+  width: 70%;
+  aspect-ratio: 1;
   background: var(--accent);
+  filter: blur(80px);
+  opacity: 0.12;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  transition: opacity 0.4s ease;
+}
+
+.gallery-card:hover .card-ambient-glow {
+  opacity: 0.18;
+}
+
+.card-watermark {
+  position: absolute;
+  bottom: -4%;
+  right: -4%;
+  font-size: 280px;
+  font-family: "Sora", sans-serif;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--accent);
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 0;
+  user-select: none;
+  transform: rotate(-4deg);
+}
+
+.card-header {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  pointer-events: none;
+}
+
+.link-avatar-shell {
+  width: 72px;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 20px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 34% 24%, rgba(255, 255, 255, 0.15), transparent 31%),
+    color-mix(in srgb, var(--accent), var(--panel-bg) 70%);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  position: relative;
+  color: color-mix(in srgb, #ffffff, var(--accent) 8%);
+}
+
+.link-content,
+.gallery-card h3,
+.gallery-card p {
+  position: relative;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.link-content {
+  align-self: flex-start;
+  max-width: 90%;
+  min-width: 0;
+}
+
+.gallery-card h3 {
+  margin: 0;
+  font-family: "Sora", sans-serif;
+  font-weight: 800;
+  font-size: var(--link-title-size, 34px);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+.gallery-card p {
+  margin: 16px 0 0;
+  overflow-wrap: anywhere;
+  color: var(--muted-fg);
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: var(--link-description-size, 16px);
+  line-height: 1.5;
+  font-weight: 400;
+  line-clamp: var(--link-description-lines, 3);
+  -webkit-line-clamp: var(--link-description-lines, 3);
+  -webkit-box-orient: vertical;
 }
 
 .watch-card {
@@ -492,66 +597,20 @@ onBeforeUnmount(() => {
   cursor: grabbing;
 }
 
-.watch-shell {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  grid-template-columns: 76px minmax(0, 1fr);
-  overflow: hidden;
-  border-radius: inherit;
-  background: inherit;
-}
-
-.watch-rail {
-  position: relative;
-  z-index: 2003;
-  display: grid;
-  place-items: center;
-  border-right: 0;
-  background: transparent;
-}
-
-.watch-rail::after {
-  content: '';
-  position: absolute;
-  top: 18px;
-  right: 0;
-  bottom: 18px;
-  width: 1px;
-  background: color-mix(in srgb, var(--page-fg), transparent 90%);
-}
-
-.watch-rail span {
-  writing-mode: vertical-rl;
-  color: color-mix(in srgb, var(--accent), #ffffff 18%);
-  font-size: 12px;
-  font-weight: 900;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-}
-
-.watch-face {
-  position: relative;
-  min-width: 0;
-  overflow: hidden;
-  border-radius: inherit;
-}
-
 .watch-stage {
   position: absolute;
-  inset: 8px;
+  inset: 0;
   z-index: 1;
   overflow: hidden;
-  border-radius: 14px;
+  border-radius: inherit;
   background: transparent;
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--page-fg), transparent 90%);
 }
 
 .watch-drag-hint {
   position: absolute;
-  top: 18px;
-  right: 18px;
-  z-index: 2002;
+  top: 36px;
+  right: 32px;
+  z-index: 2;
   min-height: 30px;
   display: inline-flex;
   align-items: center;
@@ -602,8 +661,7 @@ onBeforeUnmount(() => {
   background: #ffffff;
   color: var(--page-bg);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.8),
-    inset 0 -10px 18px rgba(0, 0, 0, 0.12),
+    inset 0 -4px 10px rgba(0, 0, 0, 0.04),
     0 4px 12px rgba(0, 0, 0, 0.08);
   opacity: 0;
   text-decoration: none;
@@ -649,9 +707,8 @@ onBeforeUnmount(() => {
 .watch-card:not(.is-dragging) .watch-icon:not([data-avatar-loaded='true']):hover,
 .watch-card:not(.is-dragging) .watch-icon:not([data-avatar-loaded='true']):focus-visible {
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.9),
-    inset 0 -10px 18px rgba(0, 0, 0, 0.08),
-    0 18px 44px rgba(255, 255, 255, 0.4);
+    inset 0 -4px 10px rgba(0, 0, 0, 0.04),
+    0 12px 24px rgba(0, 0, 0, 0.12);
 }
 
 :global(.watch-floating-tooltip) {
@@ -663,11 +720,11 @@ onBeforeUnmount(() => {
   padding: 9px 10px;
   border-radius: 12px;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 44%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 44%),
     color-mix(in srgb, var(--card-bg, #111827), transparent 2%);
   color: var(--page-fg, #f5f5f7);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
     inset 0 0 0 1px color-mix(in srgb, var(--page-fg, #f5f5f7), transparent 88%),
     0 1px 8px rgba(0, 0, 0, 0.08),
     0 14px 34px rgba(0, 0, 0, 0.3);
@@ -730,36 +787,54 @@ onBeforeUnmount(() => {
     width: 100%;
     max-width: 100%;
     height: clamp(300px, 76svh, 330px);
-    padding: 0;
-    border-radius: 18px;
+    padding: 28px 24px;
+    border-radius: 28px;
   }
 
-  .watch-card {
-    box-shadow: inset 0 0 0 1px var(--soft-line);
+  .card-ambient-glow {
+    width: 90%;
+    filter: blur(60px);
   }
 
-  .watch-stage {
-    inset: 6px;
-    border-radius: 12px;
+  .card-watermark {
+    font-size: 200px;
+    bottom: -5%;
+    right: -5%;
   }
 
-  .watch-shell {
-    grid-template-columns: 42px minmax(0, 1fr);
+  .link-avatar-shell {
+    width: 60px;
+    border-radius: 16px;
   }
 
-  .watch-rail span {
-    font-size: 9px;
-    letter-spacing: 0.12em;
+  .link-avatar-shell::before {
+    font-size: 24px;
+  }
+
+  .link-content {
+    max-width: 100%;
+  }
+
+  .gallery-card h3 {
+    font-size: 28px;
+  }
+
+  .gallery-card p {
+    margin-top: 12px;
+    font-size: 14px;
+    line-clamp: 3;
+    -webkit-line-clamp: 3;
   }
 
   .watch-drag-hint {
+    top: 28px;
+    right: 24px;
     backdrop-filter: none;
   }
 
   .watch-icon {
     box-shadow: 
-      inset 0 1px 0 rgba(255, 255, 255, 0.8),
-      inset 0 -6px 12px rgba(0, 0, 0, 0.08),
+      inset 0 -4px 8px rgba(0, 0, 0, 0.04),
       0 2px 8px rgba(0, 0, 0, 0.06);
     will-change: transform;
   }
@@ -777,21 +852,39 @@ onBeforeUnmount(() => {
   .watch-icon:hover,
   .watch-icon:focus-visible {
     box-shadow: 
-      inset 0 1px 0 rgba(255, 255, 255, 0.9),
-      inset 0 -6px 12px rgba(0, 0, 0, 0.04),
-      0 8px 24px rgba(255, 255, 255, 0.3);
+      inset 0 -4px 8px rgba(0, 0, 0, 0.04),
+      0 6px 16px rgba(0, 0, 0, 0.1);
   }
-
 }
 
 @media (max-width: 420px) {
   .gallery-card {
     height: clamp(290px, 72svh, 315px);
+    padding: 24px 20px;
+    border-radius: 24px;
   }
 
-  .watch-shell {
-    grid-template-columns: 38px minmax(0, 1fr);
+  .link-avatar-shell {
+    width: 52px;
+    border-radius: 14px;
   }
 
+  .link-avatar-shell::before {
+    font-size: 20px;
+  }
+
+  .gallery-card h3 {
+    font-size: 24px;
+  }
+
+  .gallery-card p {
+    line-clamp: 2;
+    -webkit-line-clamp: 2;
+  }
+
+  .watch-drag-hint {
+    top: 24px;
+    right: 20px;
+  }
 }
 </style>
