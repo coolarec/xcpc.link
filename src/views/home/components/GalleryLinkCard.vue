@@ -33,7 +33,6 @@ const handleAvatarLoad = (event: Event): void => {
     :style="{ '--accent': accent }"
   >
     <!-- Ambient background effects -->
-    <div class="card-ambient-glow"></div>
     <div class="card-watermark" aria-hidden="true">{{ websiteTitle.charAt(0) }}</div>
 
     <!-- Header area -->
@@ -95,25 +94,6 @@ const handleAvatarLoad = (event: Event): void => {
   background: color-mix(in srgb, var(--card-bg), var(--page-fg) 2%);
 }
 
-.card-ambient-glow {
-  position: absolute;
-  top: -20%;
-  right: -20%;
-  width: 70%;
-  aspect-ratio: 1;
-  background: var(--accent);
-  filter: blur(80px);
-  opacity: 0.12;
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 0;
-  transition: opacity 0.4s ease;
-}
-
-.gallery-card:hover .card-ambient-glow {
-  opacity: 0.18;
-}
-
 .card-watermark {
   position: absolute;
   bottom: -4%;
@@ -146,9 +126,7 @@ const handleAvatarLoad = (event: Event): void => {
   place-items: center;
   border-radius: 24px;
   overflow: hidden;
-  background:
-    radial-gradient(circle at 34% 24%, rgba(255, 255, 255, 0.15), transparent 31%),
-    color-mix(in srgb, var(--accent), var(--panel-bg) 70%);
+  background: color-mix(in srgb, var(--accent), var(--panel-bg) 70%);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
   position: relative;
 }

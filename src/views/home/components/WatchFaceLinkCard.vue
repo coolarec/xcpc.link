@@ -100,6 +100,9 @@ let inertiaFrame = 0
 let resizeObserver: ResizeObserver | undefined
 let hasDragged = false
 
+const isUIHidden = ref(false)
+let uiTimer = 0
+
 const handleAvatarError = (event: Event): void => {
   const target = event.currentTarget as HTMLImageElement | null
   if (!target) return
@@ -238,6 +241,12 @@ const handlePointerDown = (event: PointerEvent) => {
   stopInertia()
   isDragging = true
   suppressClick = false
+  isUIHidden.value = true
+  if (uiTimer) {
+    window.clearTimeout(uiTimer)
+    uiTimer = 0
+  }
+  
   startX = event.clientX
   startY = event.clientY
   startOffsetX = offsetX
@@ -264,7 +273,6 @@ const handlePointerMove = (event: PointerEvent) => {
   if (Math.hypot(dx, dy) > 7) {
     suppressClick = true
     hasDragged = true
-    root.value?.classList.remove('is-showing-drag-hint')
   }
 
   offsetX = startOffsetX - dx
@@ -284,6 +292,11 @@ const handlePointerUp = (event: PointerEvent) => {
   isDragging = false
   root.value?.classList.remove('is-dragging')
   root.value?.releasePointerCapture?.(event.pointerId)
+
+  if (uiTimer) window.clearTimeout(uiTimer)
+  uiTimer = window.setTimeout(() => {
+    isUIHidden.value = false
+  }, 1200)
 
   if (Math.hypot(velocityX, velocityY) > 0.018) {
     if (isMobileWatch()) {
@@ -332,13 +345,9 @@ const hideTooltip = () => {
   tooltip.value?.classList.remove('is-visible')
 }
 
-const showFaceHint = () => {
-  if (hasDragged) return
-  root.value?.classList.add('is-showing-drag-hint')
-}
+const showFaceHint = () => {}
 
 const hideFaceHint = () => {
-  root.value?.classList.remove('is-showing-drag-hint')
   hideTooltip()
 }
 
@@ -384,6 +393,7 @@ onBeforeUnmount(() => {
   <article
     ref="root"
     class="gallery-card watch-card"
+    :class="{ 'is-ui-hidden': isUIHidden }"
     :style="{ '--accent': accent }"
     @pointerdown="handlePointerDown"
     @pointermove.capture="handlePointerMove"
@@ -392,7 +402,6 @@ onBeforeUnmount(() => {
     @pointerleave="(e) => { handlePointerUp(e); hideFaceHint(); }"
     @pointerenter="showFaceHint"
   >
-    <div class="card-ambient-glow"></div>
     <div class="card-watermark" aria-hidden="true">{{ title.charAt(0) }}</div>
 
     <div
@@ -433,7 +442,7 @@ onBeforeUnmount(() => {
       </a>
     </div>
 
-    <div class="watch-drag-hint" :class="{ 'is-hidden': hideHint }" aria-hidden="true">
+    <div class="watch-drag-hint" aria-hidden="true">
       <span class="watch-drag-grip"></span>
       <span>拖动</span>
     </div>
@@ -481,25 +490,6 @@ onBeforeUnmount(() => {
   background: color-mix(in srgb, var(--card-bg), var(--page-fg) 2%);
 }
 
-.card-ambient-glow {
-  position: absolute;
-  top: -20%;
-  right: -20%;
-  width: 70%;
-  aspect-ratio: 1;
-  background: var(--accent);
-  filter: blur(80px);
-  opacity: 0.12;
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 0;
-  transition: opacity 0.4s ease;
-}
-
-.gallery-card:hover .card-ambient-glow {
-  opacity: 0.18;
-}
-
 .card-watermark {
   position: absolute;
   bottom: -4%;
@@ -514,20 +504,28 @@ onBeforeUnmount(() => {
   z-index: 0;
   user-select: none;
   transform: rotate(-4deg);
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-.link-content,
+.link-content {
+  position: relative;
+  z-index: 2;
+  align-self: stretch;
+  padding-top: 48px;
+  margin: 0 -32px -36px;
+  padding-left: 32px;
+  padding-right: 32px;
+  padding-bottom: 36px;
+  background: linear-gradient(to bottom, transparent, var(--card-bg) 40%);
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
 .gallery-card h3,
 .gallery-card p {
   position: relative;
   z-index: 2;
   pointer-events: none;
-}
-
-.link-content {
-  align-self: flex-start;
-  max-width: 90%;
-  min-width: 0;
 }
 
 .gallery-card h3 {
@@ -590,19 +588,17 @@ onBeforeUnmount(() => {
   font-weight: 800;
   pointer-events: none;
   backdrop-filter: blur(14px);
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-4px);
-  transition:
-    opacity 0.18s ease,
-    transform 0.18s ease,
-    visibility 0.18s ease;
-}
-
-.watch-card.is-showing-drag-hint .watch-drag-hint {
   opacity: 1;
   visibility: visible;
-  transform: translateY(0);
+  transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+}
+
+.watch-card.is-ui-hidden .link-content,
+.watch-card.is-ui-hidden .card-watermark,
+.watch-card.is-ui-hidden .watch-drag-hint {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px);
 }
 
 .watch-drag-grip {
