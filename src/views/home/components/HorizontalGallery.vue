@@ -35,6 +35,15 @@ const modalContentRef = ref<HTMLElement | null>(null)
 const gridItemsRef = ref<HTMLElement[]>([])
 const isMounted = ref(false)
 
+import { watch as vueWatch } from 'vue'
+vueWatch(showAllLinks, (val) => {
+  if (val) {
+    document.body.style.overflow = 'hidden'
+  } else {
+    document.body.style.overflow = ''
+  }
+})
+
 const toggleAllLinks = async () => {
   if (showAllLinks.value) {
     // Snappy iOS closing scale-down
@@ -220,6 +229,7 @@ onMounted(async () => {
 })
 
 onBeforeUnmount(() => {
+  document.body.style.overflow = ''
   motionMedia?.revert()
 })
 </script>
@@ -532,6 +542,43 @@ onBeforeUnmount(() => {
   color: var(--muted-fg) !important;
   line-height: 1.4;
   word-break: break-word;
+}
+
+@media (max-width: 720px) {
+  .links-grid-body {
+    padding: 16px 12px 32px;
+    gap: 20px;
+  }
+
+  .mac-group-box {
+    padding: 12px;
+    border-radius: 16px;
+  }
+
+  .modal-header {
+    padding: 20px 16px;
+  }
+
+  .header-titles h3 {
+    font-size: 20px;
+  }
+
+  .links-grid {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .grid-link-item {
+    padding: 10px;
+  }
+
+  .item-info h4 {
+    font-size: 14px;
+  }
+
+  .item-info p {
+    font-size: 12px;
+  }
 }
 
 .horizontal-gallery.is-reversed .gallery-heading {
