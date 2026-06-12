@@ -449,7 +449,7 @@ onBeforeUnmount(() => {
       <p>{{ description }}</p>
     </div>
 
-    <Teleport to="body">
+    <Teleport to=".theme-scope">
       <div ref="tooltip" class="watch-floating-tooltip" aria-hidden="true">
         <strong ref="tooltipTitle"></strong>
         <span ref="tooltipDescription"></span>

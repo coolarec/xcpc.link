@@ -33,15 +33,24 @@ const gridItemsRef = ref<HTMLElement[]>([])
 const toggleAllLinks = async () => {
   if (showAllLinks.value) {
     // Closing
-    if (modalRef.value) {
-      gsap.to(modalRef.value, { 
+    if (modalRef.value && modalContentRef.value) {
+      gsap.to(modalContentRef.value, { 
+        scale: 0.95, 
         opacity: 0, 
         duration: 0.3, 
-        ease: 'power2.in',
-        onComplete: () => {
-          showAllLinks.value = false
-        }
+        ease: 'power2.inOut',
+        overwrite: true
       })
+      gsap.to(modalRef.value.querySelector('.modal-backdrop'), { 
+        opacity: 0, 
+        duration: 0.3, 
+        ease: 'power2.inOut',
+        overwrite: true
+      })
+      
+      setTimeout(() => {
+        showAllLinks.value = false
+      }, 300)
     } else {
       showAllLinks.value = false
     }
@@ -53,6 +62,7 @@ const toggleAllLinks = async () => {
 
     if (modalRef.value && modalContentRef.value) {
       gsap.set(modalRef.value, { opacity: 1 })
+      gsap.set(modalContentRef.value, { borderRadius: 99 })
       
       Flip.from(btnState, {
         targets: modalContentRef.value,
@@ -66,9 +76,10 @@ const toggleAllLinks = async () => {
           )
         }
       })
+      gsap.to(modalContentRef.value, { borderRadius: 32, duration: 0.5, ease: 'power3.inOut' })
       
-      gsap.fromTo('.modal-backdrop', { opacity: 0 }, { opacity: 1, duration: 0.4 })
-      gsap.fromTo('.modal-header', { opacity: 0 }, { opacity: 1, duration: 0.4, delay: 0.2 })
+      gsap.fromTo(modalRef.value.querySelector('.modal-backdrop'), { opacity: 0 }, { opacity: 1, duration: 0.4 })
+      gsap.fromTo(modalRef.value.querySelector('.modal-header'), { opacity: 0 }, { opacity: 1, duration: 0.4, delay: 0.2 })
     }
   }
 }
@@ -211,7 +222,7 @@ onBeforeUnmount(() => {
       </div>
     </div>
 
-    <Teleport to="body">
+    <Teleport to=".theme-scope">
       <div v-if="showAllLinks" ref="modalRef" class="links-grid-overlay">
         <div class="modal-backdrop" @click="toggleAllLinks"></div>
         
@@ -319,16 +330,16 @@ onBeforeUnmount(() => {
 .modal-backdrop {
   position: absolute;
   inset: 0;
-  background: color-mix(in srgb, var(--page-bg), transparent 30%);
-  backdrop-filter: blur(32px) saturate(1.2);
-  -webkit-backdrop-filter: blur(32px) saturate(1.2);
+  background: color-mix(in srgb, var(--page-bg) 20%, rgba(0, 0, 0, 0.5));
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
 }
 
 .modal-content {
   position: relative;
   width: min(1200px, 100%);
   max-height: 90vh;
-  background: var(--card-bg);
+  background: var(--panel-bg);
   border-radius: 32px;
   box-shadow: 
     0 32px 84px rgba(0, 0, 0, 0.4),
@@ -336,7 +347,7 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--page-fg) 12%, transparent);
+  border: 1px solid var(--soft-line);
 }
 
 .modal-header {
@@ -344,8 +355,8 @@ onBeforeUnmount(() => {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  border-bottom: 1px solid color-mix(in srgb, var(--page-fg) 8%, transparent);
-  background: color-mix(in srgb, var(--card-bg) 80%, transparent);
+  border-bottom: 1px solid var(--soft-line);
+  background: color-mix(in srgb, var(--panel-bg) 80%, transparent);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   position: relative;
@@ -370,23 +381,33 @@ onBeforeUnmount(() => {
 }
 
 .close-modal {
-  background: color-mix(in srgb, var(--page-fg) 6%, transparent);
+  background: color-mix(in srgb, var(--page-fg) 10%, transparent);
   border: 0;
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  color: var(--muted-fg);
+  color: var(--page-fg);
   display: grid;
   place-items: center;
   cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--page-fg) 4%, transparent);
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  box-shadow: none;
+}
+
+.close-modal svg {
+  width: 18px;
+  height: 18px;
+  opacity: 0.8;
 }
 
 .close-modal:hover {
-  background: color-mix(in srgb, var(--page-fg) 12%, transparent);
-  color: var(--page-fg);
+  background: color-mix(in srgb, var(--page-fg) 18%, transparent);
   transform: scale(1.05);
+}
+
+.close-modal:active {
+  transform: scale(0.95);
+  background: color-mix(in srgb, var(--page-fg) 25%, transparent);
 }
 
 .links-grid {
@@ -403,16 +424,16 @@ onBeforeUnmount(() => {
   align-items: center;
   gap: 20px;
   padding: 20px;
-  background: color-mix(in srgb, var(--page-fg) 3%, transparent);
+  background: color-mix(in srgb, var(--page-fg) 4%, transparent);
   border-radius: 24px;
   text-decoration: none;
   transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-  border: 1px solid transparent;
+  border: 1px solid color-mix(in srgb, var(--page-fg) 4%, transparent);
 }
 
 .grid-link-item:hover {
-  background: color-mix(in srgb, var(--page-fg) 5%, transparent);
-  border-color: color-mix(in srgb, var(--page-fg) 10%, transparent);
+  background: color-mix(in srgb, var(--page-fg) 8%, transparent);
+  border-color: color-mix(in srgb, var(--page-fg) 12%, transparent);
   transform: scale(1.02);
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
 }
