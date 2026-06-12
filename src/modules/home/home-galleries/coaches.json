@@ -1,0 +1,68 @@
+{
+  "eyebrow": "For",
+  "title": "学生教练 & 出题人",
+  "accent": "#ff9f0a",
+  "direction": "left",
+  "cards": [
+    {
+      "avatarUrl": "https://codeforces.org/s/0/favicon-32x32.png",
+      "websiteUrl": "https://codeforces.com/edu/courses",
+      "websiteTitle": "Codeforces EDU",
+      "websiteDescription": "课程化训练入口，适合给学生安排成体系的阶段训练。"
+    },
+    {
+      "avatarUrl": "https://atcoder.jp/favicon.ico",
+      "websiteUrl": "https://kenkoooo.com/atcoder/",
+      "websiteTitle": "AtCoder Problems",
+      "websiteDescription": "按难度和标签筛题很方便，做训练计划时非常好用。"
+    },
+    {
+      "avatarUrl": "https://www.nowcoder.com/favicon.ico",
+      "websiteUrl": "https://ac.nowcoder.com/acm/contest/vip-index",
+      "websiteTitle": "牛客训练营",
+      "websiteDescription": "适合集中训练和赛前集训，组织学生一起刷更方便。"
+    }
+  ],
+  "watch": {
+    "title": "Coach links",
+    "description": "Training references arranged as a draggable watch face.",
+    "links": [
+      {
+        "avatarUrl": "https://www.luogu.com.cn/favicon.ico",
+        "websiteUrl": "https://www.luogu.com.cn/training/list",
+        "websiteTitle": "洛谷训练",
+        "websiteDescription": "训练单和难度层级都比较直观，适合布置周练。"
+      },
+      {
+        "avatarUrl": "https://cses.fi/favicon.ico",
+        "websiteUrl": "https://cses.fi/problemset/",
+        "websiteTitle": "CSES 题单",
+        "websiteDescription": "经典题集中，做小班统一训练很高效。"
+      },
+      {
+        "avatarUrl": "https://leetcode.cn/favicon.ico",
+        "websiteUrl": "https://leetcode.cn/problemset/",
+        "websiteTitle": "力扣题单",
+        "websiteDescription": "适合补基础、刷模板题，也方便学生课后自练。"
+      },
+      {
+        "avatarUrl": "",
+        "websiteUrl": "https://kotlinlang.org/docs/competitive-programming.html",
+        "websiteTitle": "Kotlin CP",
+        "websiteDescription": "没有现成头像时也会回退成首字母，适合测试展示兜底。"
+      },
+      {
+        "avatarUrl": "https://www.geeksforgeeks.org/favicon.ico",
+        "websiteUrl": "https://www.geeksforgeeks.org/competitive-programming-a-complete-guide/",
+        "websiteTitle": "GFG CP Guide",
+        "websiteDescription": "给学生补外围知识和题型综述时很方便。"
+      },
+      {
+        "avatarUrl": "https://www.acwing.com/favicon.ico",
+        "websiteUrl": "https://www.acwing.com/problem/",
+        "websiteTitle": "AcWing 题库",
+        "websiteDescription": "从基础到提高都能接得上，方便分层安排作业。"
+      }
+    ]
+  }
+}

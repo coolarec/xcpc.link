@@ -1,0 +1,68 @@
+{
+  "eyebrow": "String lab",
+  "title": "算竞高手",
+  "accent": "#34c759",
+  "reverse": true,
+  "cards": [
+    {
+      "avatarUrl": "https://cp-algorithms.com/favicon.ico",
+      "websiteUrl": "https://cp-algorithms.com/",
+      "websiteTitle": "cp-algorithms",
+      "websiteDescription": "经典竞赛算法手册，查题解思路、复杂度和实现细节非常高效。"
+    },
+    {
+      "avatarUrl": "https://www.geeksforgeeks.org/favicon.ico",
+      "websiteUrl": "https://www.geeksforgeeks.org/",
+      "websiteTitle": "GeeksforGeeks",
+      "websiteDescription": "覆盖面极广，适合横向查资料、补边角知识和看多种写法。"
+    },
+    {
+      "avatarUrl": "https://www.topcoder.com/favicon.ico",
+      "websiteUrl": "https://www.topcoder.com/",
+      "websiteTitle": "Topcoder",
+      "websiteDescription": "老牌竞技编程社区，历史题库和赛制资料都很有参考价值。"
+    }
+  ],
+  "watch": {
+    "title": "String links",
+    "description": "Pattern matching references arranged as a draggable watch face.",
+    "links": [
+      {
+        "avatarUrl": "https://dmoj.ca/favicon.ico",
+        "websiteUrl": "https://dmoj.ca/",
+        "websiteTitle": "DMOJ",
+        "websiteDescription": "题源丰富，适合补训练盲区，也方便自定义刷题列表。"
+      },
+      {
+        "avatarUrl": "https://vjudge.net/static/favicon.ico",
+        "websiteUrl": "https://vjudge.net/",
+        "websiteTitle": "Virtual Judge",
+        "websiteDescription": "把多个 OJ 题源聚到一起，组队训练时很好用。"
+      },
+      {
+        "avatarUrl": "https://loj.ac/favicon.ico",
+        "websiteUrl": "https://loj.ac/",
+        "websiteTitle": "LibreOJ",
+        "websiteDescription": "有不少高质量题和专题内容，适合做进阶训练。"
+      },
+      {
+        "avatarUrl": "https://oi-wiki.org/favicon.ico",
+        "websiteUrl": "https://oi-wiki.org/string/",
+        "websiteTitle": "OI Wiki 字符串",
+        "websiteDescription": "字符串专题整理得很系统，方便连着查多个算法。"
+      },
+      {
+        "avatarUrl": "https://usaco.guide/favicon.ico",
+        "websiteUrl": "https://usaco.guide/gold/string-hashing",
+        "websiteTitle": "USACO Guide 字符串",
+        "websiteDescription": "把概念、例题和练习串在一起，适合刷一整块专题。"
+      },
+      {
+        "avatarUrl": "https://www.acwing.com/favicon.ico",
+        "websiteUrl": "https://www.acwing.com/activity/",
+        "websiteTitle": "AcWing 活动",
+        "websiteDescription": "专题课和活动训练配合题库，复盘一个主题很省心。"
+      }
+    ]
+  }
+}

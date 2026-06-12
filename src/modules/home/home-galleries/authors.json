@@ -1,0 +1,50 @@
+{
+  "eyebrow": "For",
+  "title": "退役选手",
+  "accent": "#ff9f0a",
+  "reverse": true,
+  "cards": [
+    {
+      "avatarUrl": "https://www.luogu.com.cn/favicon.ico",
+      "websiteUrl": "https://www.luogu.com.cn/problem/list",
+      "websiteTitle": "洛谷题库",
+      "websiteDescription": "看题源分布、样例风格和数据组织时很方便做横向参考。"
+    },
+    {
+      "avatarUrl": "https://loj.ac/favicon.ico",
+      "websiteUrl": "https://loj.ac/problems",
+      "websiteTitle": "LibreOJ 题库",
+      "websiteDescription": "不少题的数据和交互设计值得参考，适合做出题调研。"
+    }
+  ],
+  "watch": {
+    "title": "Author links",
+    "description": "Author references arranged as a draggable watch face.",
+    "links": [
+      {
+        "avatarUrl": "https://codeforces.org/s/0/favicon-32x32.png",
+        "websiteUrl": "https://codeforces.com/problemset",
+        "websiteTitle": "Codeforces 题库",
+        "websiteDescription": "观察题目叙述和区分度设计时很有参考价值。"
+      },
+      {
+        "avatarUrl": "https://atcoder.jp/favicon.ico",
+        "websiteUrl": "https://atcoder.jp/contests/archive",
+        "websiteTitle": "AtCoder 比赛存档",
+        "websiteDescription": "题面风格稳定，适合参考整场比赛的难度节奏。"
+      },
+      {
+        "avatarUrl": "https://oi-wiki.org/favicon.ico",
+        "websiteUrl": "https://oi-wiki.org/tools/testlib/general/",
+        "websiteTitle": "OI Wiki 出题工具",
+        "websiteDescription": "查 testlib、数据生成和校验器时很顺手。"
+      },
+      {
+        "avatarUrl": "",
+        "websiteUrl": "https://polygon.codeforces.com/",
+        "websiteTitle": "Polygon",
+        "websiteDescription": "没有头像时会回退首字母，适合验证出题工具入口展示。"
+      }
+    ]
+  }
+}

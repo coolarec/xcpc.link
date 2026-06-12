@@ -1,4 +1,7 @@
-import homeGalleries from './home-galleries.json'
+import advancedGallery from './home-galleries/advanced.json'
+import authorsGallery from './home-galleries/authors.json'
+import beginnersGallery from './home-galleries/beginners.json'
+import coachesGallery from './home-galleries/coaches.json'
 import type { HeroDockItem, HomeGallerySection, HomeGallerySectionSource, SiteLink } from '../../types/home'
 
 const cloneGalleries = (galleries: HomeGallerySectionSource[]): HomeGallerySectionSource[] =>
@@ -108,7 +111,12 @@ export const fetchHomeGalleries = async (): Promise<HomeGallerySection[]> => {
     }
   }
 
-  return cloneGalleries(homeGalleries).map(normalizeGallery)
+  return cloneGalleries([
+    beginnersGallery,
+    advancedGallery,
+    coachesGallery,
+    authorsGallery,
+  ]).map(normalizeGallery)
 }
 
 export const fetchHeroDockItems = async (): Promise<HeroDockItem[]> => structuredClone(heroDockItems)
