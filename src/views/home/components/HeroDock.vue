@@ -49,11 +49,18 @@ const setupDock = () => {
       ease: 'power3.out',
     })
 
+    const iconTweens = icons.map(icon => ({
+      x: gsap.quickTo(icon, 'x', { duration: 0.28, ease: 'power3.out' }),
+      scaleX: gsap.quickTo(icon, 'scaleX', { duration: 0.28, ease: 'power3.out' }),
+      scaleY: gsap.quickTo(icon, 'scaleY', { duration: 0.28, ease: 'power3.out' })
+    }))
+
     gsap.set(icons, {
       transformOrigin: '50% 115%',
       scaleX: 1,
       scaleY: 1,
       x: 0,
+      force3D: true,
     })
 
     const updateDock = (event: PointerEvent) => {
@@ -66,7 +73,7 @@ const setupDock = () => {
       const pointer = event.clientX - offset
       let maxScale = 1
 
-      icons.forEach((icon, index) => {
+      icons.forEach((_, index) => {
         const distance = index * min + min / 2 - pointer
         let x = 0
         let scale = 1
@@ -81,25 +88,19 @@ const setupDock = () => {
 
         maxScale = Math.max(maxScale, scale)
 
-        gsap.to(icon, {
-          duration: 0.28,
-          x,
-          scaleX: scale,
-          scaleY: scale,
-          ease: 'power3.out',
-        })
+        iconTweens[index].x(x)
+        iconTweens[index].scaleX(scale)
+        iconTweens[index].scaleY(scale)
       })
 
       stretchTo(1 + (maxScale - 1) * 0.7)
     }
 
     const resetDock = () => {
-      gsap.to(icons, {
-        duration: 0.28,
-        x: 0,
-        scaleX: 1,
-        scaleY: 1,
-        ease: 'power3.out',
+      icons.forEach((_, index) => {
+        iconTweens[index].x(0)
+        iconTweens[index].scaleX(1)
+        iconTweens[index].scaleY(1)
       })
       stretchTo(1)
     }

@@ -168,7 +168,7 @@ onBeforeUnmount(() => {
   overflow: hidden;
   text-overflow: clip;
   white-space: nowrap;
-  will-change: contents;
+  will-change: opacity, transform;
 }
 
 .algorithm-word-1 {

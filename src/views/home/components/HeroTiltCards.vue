@@ -74,6 +74,14 @@ const setupMotion = (isSmall: boolean) => {
       duration: 0.25,
       ease: 'power3.out',
     })
+    const titleCastX = gsap.quickTo('.title-cast', 'x', {
+      duration: 0.24,
+      ease: 'power2.out',
+    })
+    const titleCastY = gsap.quickTo('.title-cast', 'y', {
+      duration: 0.24,
+      ease: 'power2.out',
+    })
     const titleXTo = title.value
       ? gsap.quickTo(title.value, 'x', { duration: 0.32, ease: 'power2.out' })
       : undefined
@@ -87,6 +95,8 @@ const setupMotion = (isSmall: boolean) => {
         ]
       : undefined
 
+    gsap.set('.title-cast', { force3D: true, z: 132, scale: 1.08 })
+
     const updatePointerMotion = () => {
       pointerFrame = 0
       if (!latestPointerEvent) return
@@ -98,10 +108,11 @@ const setupMotion = (isSmall: boolean) => {
       const castX = (0.5 - pointerX) * titleShift * 1.15
       const castY = (0.5 - pointerY) * titleShift * 0.72
 
-      section?.style.setProperty('--light-x', `${pointerX * 100}%`)
-      section?.style.setProperty('--light-y', `${pointerY * 100}%`)
-      rootElement.style.setProperty('--cast-x', `${castX}px`)
-      rootElement.style.setProperty('--cast-y', `${castY}px`)
+      section?.style.setProperty('--light-tx', `${(pointerX - 0.5) * 50}%`)
+      section?.style.setProperty('--light-ty', `${(pointerY - 0.44) * 50}%`)
+
+      titleCastX(castX)
+      titleCastY(castY)
 
       rotateX(gsap.utils.interpolate(rotationRange, -rotationRange, pointerY))
       rotateY(gsap.utils.interpolate(-rotationRange, rotationRange, pointerX))
@@ -133,10 +144,10 @@ const setupMotion = (isSmall: boolean) => {
       rotateY(0)
       coreX(0)
       coreY(0)
-      section?.style.setProperty('--light-x', '50%')
-      section?.style.setProperty('--light-y', '44%')
-      rootElement.style.setProperty('--cast-x', '0px')
-      rootElement.style.setProperty('--cast-y', '0px')
+      titleCastX(0)
+      titleCastY(0)
+      section?.style.setProperty('--light-tx', '0%')
+      section?.style.setProperty('--light-ty', '0%')
 
       if (title.value) {
         titleXTo?.(0)
@@ -278,8 +289,6 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .tilt-layer {
-  --cast-x: 0px;
-  --cast-y: 0px;
   position: relative;
   z-index: 1;
   width: min(80vw, 1080px);
@@ -301,10 +310,23 @@ onBeforeUnmount(() => {
   position: absolute;
   border: 0;
   border-radius: 18px;
-  background:
-    radial-gradient(circle at var(--light-x, 50%) var(--light-y, 44%), var(--panel-highlight), transparent 38%),
-    var(--panel-bg);
+  background: var(--panel-bg);
   box-shadow: var(--hero-card-shadow);
+  overflow: hidden;
+}
+
+.tilt-core::before,
+.tilt-panel::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at center, var(--panel-highlight), transparent 38%);
+  transform: translate3d(var(--light-tx, 0%), var(--light-ty, 0%), 0);
+  pointer-events: none;
+  z-index: 0;
 }
 
 .tilt-core {
@@ -320,6 +342,8 @@ onBeforeUnmount(() => {
 }
 
 .tilt-core span {
+  position: relative;
+  z-index: 1;
   color: var(--muted-fg);
   font-size: 13px;
   font-weight: 700;
@@ -328,6 +352,8 @@ onBeforeUnmount(() => {
 }
 
 .tilt-core strong {
+  position: relative;
+  z-index: 1;
   display: inline-block;
   transform-origin: center;
   color: var(--panel-fg);
@@ -357,8 +383,7 @@ onBeforeUnmount(() => {
   filter: blur(14px);
   opacity: var(--title-cast-opacity);
   mix-blend-mode: multiply;
-  transform: translate3d(var(--cast-x), var(--cast-y), 132px) scale(1.08);
-  transition: transform 0.24s ease, opacity 0.24s ease;
+  will-change: transform;
 }
 
 .tilt-panel {
@@ -376,6 +401,8 @@ onBeforeUnmount(() => {
 }
 
 .tilt-panel span {
+  position: relative;
+  z-index: 1;
   line-height: 1;
   text-align: center;
 }
