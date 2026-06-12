@@ -5,148 +5,426 @@
   "reverse": true,
   "cards": [
     {
-      "avatarUrl": "https://cp-algorithms.com/favicon.ico",
-      "websiteUrl": "https://cp-algorithms.com/",
-      "websiteTitle": "cp-algorithms",
-      "websiteDescription": "经典竞赛算法手册，查题解思路、复杂度和实现细节非常高效。"
+      "avatarUrl": "https://icpc.global/favicon.ico",
+      "websiteUrl": "https://icpc.global/regionals/upcoming",
+      "websiteTitle": "ICPC Upcoming",
+      "websiteDescription": "ICPC 各区域赛的近期赛程入口。"
     },
     {
-      "avatarUrl": "https://www.geeksforgeeks.org/favicon.ico",
-      "websiteUrl": "https://www.geeksforgeeks.org/",
-      "websiteTitle": "GeeksforGeeks",
-      "websiteDescription": "覆盖面极广，适合横向查资料、补边角知识和看多种写法。"
+      "avatarUrl": "https://ccpc.io/favicon.ico",
+      "websiteUrl": "https://ccpc.io/rules/369",
+      "websiteTitle": "CCPC Rules",
+      "websiteDescription": "CCPC 规则与相关说明入口。"
     },
     {
-      "avatarUrl": "https://www.topcoder.com/favicon.ico",
-      "websiteUrl": "https://www.topcoder.com/",
-      "websiteTitle": "Topcoder",
-      "websiteDescription": "老牌竞技编程社区，历史题库和赛制资料都很有参考价值。"
+      "avatarUrl": "https://ojhunt.com/favicon.ico",
+      "websiteUrl": "https://ojhunt.com/statistics",
+      "websiteTitle": "ojhunt",
+      "websiteDescription": "OJ 做题统计与排行工具。"
     }
   ],
-  "watch": {
-    "title": "OJ Platforms",
-    "description": "常用竞赛平台与题库入口，集中放在这一组里。",
-    "links": [
-      {
-        "avatarUrl": "https://codeforces.org/s/0/favicon-32x32.png",
-        "websiteUrl": "https://codeforces.com/",
-        "websiteTitle": "Codeforces",
-        "websiteDescription": "高频比赛平台，题库更新快，适合日常训练和打比赛。"
+  "watches": [
+    {
+      "title": "OJ 平台",
+      "description": "常用竞赛平台与题库入口，集中放在这一组里。",
+      "links": [
+        {
+          "avatarUrl": "https://codeforces.org/s/0/favicon-32x32.png",
+          "websiteUrl": "https://codeforces.com/",
+          "websiteTitle": "Codeforces",
+          "websiteDescription": "高频比赛平台，题库更新快，适合日常训练和打比赛。"
+        },
+        {
+          "avatarUrl": "https://vjudge.net/static/favicon.ico",
+          "websiteUrl": "https://vjudge.net/",
+          "websiteTitle": "VJ 镜像",
+          "websiteDescription": "聚合多站题源，组题和补题时很方便。"
+        },
+        {
+          "avatarUrl": "https://atcoder.jp/favicon.ico",
+          "websiteUrl": "https://atcoder.jp/",
+          "websiteTitle": "Atcoder",
+          "websiteDescription": "题面质量高，难度梯度平滑，适合稳步进阶。"
+        },
+        {
+          "avatarUrl": "https://res.jisuanke.com/v3/favicon.ico",
+          "websiteUrl": "https://www.jisuanke.com/",
+          "websiteTitle": "计蒜客",
+          "websiteDescription": "国内老牌训练站点，适合专题练习和课程配套。"
+        },
+        {
+          "avatarUrl": "https://www.codechef.com/favicon.ico",
+          "websiteUrl": "https://www.codechef.com/",
+          "websiteTitle": "Codechef",
+          "websiteDescription": "比赛体系完整，适合补不同风格的题目。"
+        },
+        {
+          "avatarUrl": "https://www.spoj.com/favicon.ico",
+          "websiteUrl": "https://www.spoj.com/",
+          "websiteTitle": "SPOJ",
+          "websiteDescription": "经典老题很多，适合翻历史题单做扩展训练。"
+        },
+        {
+          "avatarUrl": "https://hydro.ac/favicon.ico",
+          "websiteUrl": "https://hydro.ac/",
+          "websiteTitle": "Hydro",
+          "websiteDescription": "支持多类题库与比赛管理，适合自建训练环境。"
+        },
+        {
+          "avatarUrl": "https://static.pintia.cn/sparkling-daydream/icons/PTA-logo.svg",
+          "websiteUrl": "https://pintia.cn/",
+          "websiteTitle": "PTA",
+          "websiteDescription": "程序设计类课程和题库入口，校内外训练都常见。"
+        },
+        {
+          "avatarUrl": "https://www.acwing.com/favicon.ico",
+          "websiteUrl": "https://www.acwing.com/",
+          "websiteTitle": "Acwing",
+          "websiteDescription": "课程、题库、比赛结合紧，适合系统刷题。"
+        },
+        {
+          "avatarUrl": "https://ac.nowcoder.com/favicon.ico",
+          "websiteUrl": "https://ac.nowcoder.com/",
+          "websiteTitle": "牛客竞赛",
+          "websiteDescription": "国内竞赛和训练营很多，组队赛前热身很顺手。"
+        },
+        {
+          "avatarUrl": "https://acm.hdu.edu.cn/favicon.ico",
+          "websiteUrl": "https://acm.hdu.edu.cn/",
+          "websiteTitle": "HDUOJ",
+          "websiteDescription": "经典国内 OJ，老题资源丰富。"
+        },
+        {
+          "avatarUrl": "https://static.cdn.menci.xyz/libreoj-assets/favicon.ico",
+          "websiteUrl": "https://loj.ac/",
+          "websiteTitle": "LOJ",
+          "websiteDescription": "LibreOJ 的高质量题库，适合进阶专题训练。"
+        },
+        {
+          "avatarUrl": "https://uoj.ac/pictures/UOJ.ico",
+          "websiteUrl": "https://uoj.ac/",
+          "websiteTitle": "UOJ",
+          "websiteDescription": "不少高质量和高区分度题目都能在这里找到。"
+        },
+        {
+          "avatarUrl": "https://ucup.ac/assets/favicon.png",
+          "websiteUrl": "https://universalcup.org/",
+          "websiteTitle": "Universal Cup",
+          "websiteDescription": "高水平区域赛风格比赛，适合强度拉满的训练。"
+        },
+        {
+          "avatarUrl": "https://vjudge.net/static/favicon.ico",
+          "websiteUrl": "https://vjudge.net/",
+          "websiteTitle": "VJ",
+          "websiteDescription": "统一管理多站题目与比赛，打包训练很省事。"
+        },
+        {
+          "avatarUrl": "https://www.luogu.com.cn/favicon.ico",
+          "websiteUrl": "https://www.luogu.com.cn/",
+          "websiteTitle": "洛谷",
+          "websiteDescription": "国内常用题库与比赛平台，适合日常刷题。"
+        },
+        {
+          "avatarUrl": "https://leetcode.cn/favicon.ico",
+          "websiteUrl": "https://leetcode.cn/",
+          "websiteTitle": "力扣",
+          "websiteDescription": "题库大、讨论多，适合补基础和常见套路。"
+        },
+        {
+          "avatarUrl": "https://bs.daimayuan.top/favicon.ico",
+          "websiteUrl": "https://www.luogu.com.cn/problem/list?tag=题目来源-代码源",
+          "websiteTitle": "代码源",
+          "websiteDescription": "国内题源平台，适合补不同出题风格。"
+        },
+        {
+          "avatarUrl": "https://onlinemathcontest.com/favicon.ico",
+          "websiteUrl": "https://onlinemathcontest.com/",
+          "websiteTitle": "OMC",
+          "websiteDescription": "补充型题源入口，方便横向收集不同平台题目。"
+        },
+        {
+          "avatarUrl": "https://open.kattis.com/favicon",
+          "websiteUrl": "https://open.kattis.com/",
+          "websiteTitle": "Kattis",
+          "websiteDescription": "北欧风格题库，很多区域赛真题都能找到。"
+        }
+      ]
+    },
+    {
+      "title": "工具",
+      "description": "从 SDUT ACM 的算法竞赛工具箱里整理的常用工具入口。",
+      "links": [
+        {
+          "avatarUrl": "https://paste.then.ac/favicon.ico",
+          "websiteUrl": "https://paste.then.ac/",
+        "websiteTitle": "Paste then AC",
+        "websiteDescription": "适合算法竞赛的自由剪贴板。"
       },
       {
-        "avatarUrl": "https://vjudge.net/static/favicon.ico",
-        "websiteUrl": "https://vjudge.net/",
-        "websiteTitle": "VJ 镜像",
-        "websiteDescription": "聚合多站题源，组题和补题时很方便。"
+        "avatarUrl": "https://paste.ubuntu.com/favicon.ico",
+        "websiteUrl": "https://paste.ubuntu.com/",
+        "websiteTitle": "paste.ubuntu",
+        "websiteDescription": "简洁稳定的代码粘贴板。"
       },
       {
-        "avatarUrl": "https://img.atcoder.jp/assets/favicon.png",
-        "websiteUrl": "https://atcoder.jp/",
-        "websiteTitle": "Atcoder",
-        "websiteDescription": "题面质量高，难度梯度平滑，适合稳步进阶。"
-      },
-      {
-        "avatarUrl": "https://www.jisuanke.com/static/favicon.ico",
-        "websiteUrl": "https://www.jisuanke.com/",
-        "websiteTitle": "计蒜客",
-        "websiteDescription": "国内老牌训练站点，适合专题练习和课程配套。"
-      },
-      {
-        "avatarUrl": "https://www.codechef.com/favicon.ico",
-        "websiteUrl": "https://www.codechef.com/",
-        "websiteTitle": "Codechef",
-        "websiteDescription": "比赛体系完整，适合补不同风格的题目。"
-      },
-      {
-        "avatarUrl": "https://www.spoj.com/favicon.ico",
-        "websiteUrl": "https://www.spoj.com/",
-        "websiteTitle": "SPOJ",
-        "websiteDescription": "经典老题很多，适合翻历史题单做扩展训练。"
-      },
-      {
-        "avatarUrl": "https://hydro.ac/p/favicon.ico",
-        "websiteUrl": "https://hydro.ac/",
-        "websiteTitle": "Hydro",
-        "websiteDescription": "支持多类题库与比赛管理，适合自建训练环境。"
-      },
-      {
-        "avatarUrl": "https://pintia.cn/favicon.ico",
-        "websiteUrl": "https://pintia.cn/",
-        "websiteTitle": "PTA",
-        "websiteDescription": "程序设计类课程和题库入口，校内外训练都常见。"
-      },
-      {
-        "avatarUrl": "https://www.acwing.com/favicon.ico",
-        "websiteUrl": "https://www.acwing.com/",
-        "websiteTitle": "Acwing",
-        "websiteDescription": "课程、题库、比赛结合紧，适合系统刷题。"
-      },
-      {
-        "avatarUrl": "https://ac.nowcoder.com/favicon.ico",
-        "websiteUrl": "https://ac.nowcoder.com/",
-        "websiteTitle": "牛客竞赛",
-        "websiteDescription": "国内竞赛和训练营很多，组队赛前热身很顺手。"
-      },
-      {
-        "avatarUrl": "https://acm.hdu.edu.cn/favicon.ico",
-        "websiteUrl": "https://acm.hdu.edu.cn/",
-        "websiteTitle": "HDUOJ",
-        "websiteDescription": "经典国内 OJ，老题资源丰富。"
-      },
-      {
-        "avatarUrl": "https://vjudge.net/static/favicon.ico",
-        "websiteUrl": "https://loj.ac/",
-        "websiteTitle": "LOJ",
-        "websiteDescription": "LibreOJ 的高质量题库，适合进阶专题训练。"
-      },
-      {
-        "avatarUrl": "https://uoj.ac/favicon.ico",
-        "websiteUrl": "https://uoj.ac/",
-        "websiteTitle": "UOJ",
-        "websiteDescription": "不少高质量和高区分度题目都能在这里找到。"
-      },
-      {
-        "avatarUrl": "https://universalcup.org/favicon.ico",
-        "websiteUrl": "https://universalcup.org/",
-        "websiteTitle": "Universal Cup",
-        "websiteDescription": "高水平区域赛风格比赛，适合强度拉满的训练。"
-      },
-      {
-        "avatarUrl": "https://vjudge.net/static/favicon.ico",
-        "websiteUrl": "https://vjudge.net/",
-        "websiteTitle": "VJ",
-        "websiteDescription": "统一管理多站题目与比赛，打包训练很省事。"
+        "avatarUrl": "https://icons.duckduckgo.com/ip3/paste.nugine.xyz.ico",
+        "websiteUrl": "https://paste.nugine.xyz/",
+        "websiteTitle": "paste.nugine",
+        "websiteDescription": "轻量代码粘贴板。"
       },
       {
         "avatarUrl": "https://www.luogu.com.cn/favicon.ico",
-        "websiteUrl": "https://www.luogu.com.cn/",
-        "websiteTitle": "洛谷",
-        "websiteDescription": "国内常用题库与比赛平台，适合日常刷题。"
+        "websiteUrl": "https://www.luogu.com.cn/paste",
+        "websiteTitle": "paste.洛谷",
+        "websiteDescription": "洛谷自带的代码粘贴板。"
       },
       {
-        "avatarUrl": "https://leetcode.cn/favicon.ico",
-        "websiteUrl": "https://leetcode.cn/",
-        "websiteTitle": "力扣",
-        "websiteDescription": "题库大、讨论多，适合补基础和常见套路。"
+        "avatarUrl": "https://oeis.org/favicon.ico",
+        "websiteUrl": "http://oeis.org/",
+        "websiteTitle": "OEIS",
+        "websiteDescription": "经典数列查询工具。"
       },
       {
-        "avatarUrl": "https://avatar.codeforces.com/1?size=small",
-        "websiteUrl": "https://www.luogu.com.cn/problem/list?tag=题目来源-代码源",
-        "websiteTitle": "代码源",
-        "websiteDescription": "国内题源平台，适合补不同出题风格。"
+        "avatarUrl": "https://www.diffchecker.com/favicon.ico",
+        "websiteUrl": "https://www.diffchecker.com/",
+        "websiteTitle": "diffchecker",
+        "websiteDescription": "在线代码比对工具。"
       },
       {
-        "avatarUrl": "https://avatar.codeforces.com/2?size=small",
-        "websiteUrl": "https://www.xjoi.com/oj",
-        "websiteTitle": "OMC",
-        "websiteDescription": "补充型题源入口，方便横向收集不同平台题目。"
+        "avatarUrl": "https://static.deepl.com/img/favicon/favicon_32.png",
+        "websiteUrl": "https://www.deepl.com/translator",
+        "websiteTitle": "deepl",
+        "websiteDescription": "翻译工具。"
       },
       {
-        "avatarUrl": "https://open.kattis.com/favicon",
-        "websiteUrl": "https://open.kattis.com/",
-        "websiteTitle": "Kattis",
-        "websiteDescription": "北欧风格题库，很多区域赛真题都能找到。"
-      }
-    ]
-  }
+        "avatarUrl": "https://www.latexlive.com/favicon.ico",
+        "websiteUrl": "https://www.latexlive.com/",
+        "websiteTitle": "LaTeX Live",
+        "websiteDescription": "在线 LaTeX 公式工具。"
+      },
+      {
+        "avatarUrl": "https://www.texpage.com/favicon.ico",
+        "websiteUrl": "https://www.texpage.com/",
+        "websiteTitle": "texpage",
+        "websiteDescription": "在线 LaTeX 工具。"
+      },
+      {
+        "avatarUrl": "https://cn.overleaf.com/favicon.ico",
+        "websiteUrl": "https://cn.overleaf.com/",
+        "websiteTitle": "overleaf",
+        "websiteDescription": "协作式在线 LaTeX 编辑器。"
+      },
+      {
+        "avatarUrl": "https://csacademy.com/favicon.ico",
+        "websiteUrl": "https://csacademy.com/app/graph_editor/",
+        "websiteTitle": "graph editor",
+        "websiteDescription": "图论画图工具。"
+      },
+      {
+        "avatarUrl": "https://www.wolframalpha.com/images/favicon.ico",
+        "websiteUrl": "https://www.wolframalpha.com/",
+        "websiteTitle": "wolframalpha",
+        "websiteDescription": "强大的数学计算工具。"
+      },
+      {
+        "avatarUrl": "https://www.desmos.com/favicon.ico",
+        "websiteUrl": "https://www.desmos.com/calculator?lang=zh-CN",
+        "websiteTitle": "desmos",
+        "websiteDescription": "函数图像画图工具。"
+      },
+      {
+        "avatarUrl": "https://zh.numberempire.com/favicon.ico",
+        "websiteUrl": "https://zh.numberempire.com/",
+        "websiteTitle": "数字帝国",
+        "websiteDescription": "综合数学工具。"
+      },
+      {
+        "avatarUrl": "https://www.geogebra.org/favicon.ico",
+        "websiteUrl": "https://www.geogebra.org/geometry",
+        "websiteTitle": "geogebra 2D",
+        "websiteDescription": "2D 几何与函数图像工具。"
+      },
+      {
+        "avatarUrl": "https://www.geogebra.org/favicon.ico",
+        "websiteUrl": "https://www.geogebra.org/3d",
+        "websiteTitle": "geogebra 3D",
+        "websiteDescription": "3D 图形与几何工具。"
+      },
+      {
+        "avatarUrl": "https://approach0.xyz/favicon.ico",
+        "websiteUrl": "https://approach0.xyz/search/",
+        "websiteTitle": "Approach 0",
+        "websiteDescription": "LaTeX 数学结论搜索工具。"
+      },
+      {
+        "avatarUrl": "https://polygon.codeforces.com/favicon.ico",
+        "websiteUrl": "https://polygon.codeforces.com/",
+        "websiteTitle": "Polygon",
+        "websiteDescription": "规范化命题工具。"
+      },
+      {
+        "avatarUrl": "http://yuantiji.ac/favicon.ico",
+        "websiteUrl": "http://yuantiji.ac/zh/",
+        "websiteTitle": "原题机",
+        "websiteDescription": "原题查找工具。"
+      },
+      {
+        "avatarUrl": "https://icpc.global/favicon.ico",
+        "websiteUrl": "https://icpc.global/",
+        "websiteTitle": "ICPC",
+        "websiteDescription": "ICPC 国际官网。"
+      },
+      {
+        "avatarUrl": "http://icpc.pku.edu.cn/favicon.ico",
+        "websiteUrl": "http://icpc.pku.edu.cn/",
+        "websiteTitle": "ICPC.pku",
+        "websiteDescription": "ICPC 中国官网。"
+      },
+      {
+        "avatarUrl": "https://xcpcio.com/favicon.ico",
+        "websiteUrl": "https://xcpcio.com/",
+        "websiteTitle": "xcpcio",
+        "websiteDescription": "XCPC 知识百科。"
+      },
+      {
+        "avatarUrl": "https://acmer.info/favicon.ico",
+        "websiteUrl": "https://acmer.info/",
+        "websiteTitle": "ACMer.info",
+        "websiteDescription": "ACMer 资源网站。"
+      },
+      {
+        "avatarUrl": "https://gplt.patest.cn/favicon.ico",
+        "websiteUrl": "https://gplt.patest.cn/regulation",
+        "websiteTitle": "天梯赛",
+        "websiteDescription": "团体程序设计天梯赛。"
+      },
+      {
+        "avatarUrl": "https://www.noi.cn/favicon.ico",
+        "websiteUrl": "https://www.noi.cn/",
+        "websiteTitle": "NOI",
+        "websiteDescription": "青少年信息学奥林匹克。"
+      },
+      {
+        "avatarUrl": "https://oi-wiki.org/favicon.ico",
+        "websiteUrl": "https://oi-wiki.org/",
+        "websiteTitle": "OI Wiki",
+        "websiteDescription": "算法竞赛知识百科。"
+      },
+      {
+        "avatarUrl": "https://oier.baoshuo.dev/favicon.ico",
+        "websiteUrl": "https://oier.baoshuo.dev/",
+        "websiteTitle": "OIerDb",
+        "websiteDescription": "查询选手 OI 经历。"
+      },
+      {
+        "avatarUrl": "https://cftracker.netlify.app/favicon.ico",
+        "websiteUrl": "https://cftracker.netlify.app/contests",
+        "websiteTitle": "CFTracker",
+        "websiteDescription": "Codeforces 题目与比赛清单。"
+      },
+      {
+        "avatarUrl": "https://kenkoooo.com/favicon.ico",
+        "websiteUrl": "https://kenkoooo.com/atcoder/#/table/",
+        "websiteTitle": "AtCoder题集",
+        "websiteDescription": "AtCoder 题目与比赛清单。"
+      },
+      {
+        "avatarUrl": "https://ojhunt.com/favicon.ico",
+        "websiteUrl": "https://ojhunt.com/statistics",
+        "websiteTitle": "ojhunt",
+        "websiteDescription": "OJ 做题统计工具。"
+      },
+      {
+        "avatarUrl": "https://visualgo.net/favicon.ico",
+        "websiteUrl": "https://visualgo.net/zh/",
+        "websiteTitle": "visualgo",
+        "websiteDescription": "算法与数据结构可视化。"
+      },
+        {
+          "avatarUrl": "https://cpcfinder.com/favicon.ico",
+          "websiteUrl": "https://cpcfinder.com/",
+          "websiteTitle": "cpcfinder",
+          "websiteDescription": "ACMer 数据库。"
+        }
+      ]
+    },
+    {
+      "title": "榜单",
+      "description": "常用的学校、区域赛和综合榜单入口。",
+      "links": [
+        {
+          "avatarUrl": "https://gplt.patest.cn/favicon.ico",
+          "websiteUrl": "https://gplt.patest.cn/rank/school",
+          "websiteTitle": "GPLT School Rank",
+          "websiteDescription": "天梯赛高校榜单入口。"
+        },
+        {
+          "avatarUrl": "https://static.pintia.cn/sparkling-daydream/icons/PTA-logo.svg",
+          "websiteUrl": "https://pintia.cn/competitions/public",
+          "websiteTitle": "PTA Competitions",
+          "websiteDescription": "PTA 公开比赛与榜单入口。"
+        },
+        {
+          "avatarUrl": "https://cpc.csgrandeur.cn/favicon.ico",
+          "websiteUrl": "https://cpc.csgrandeur.cn/outrank/",
+          "websiteTitle": "Grandeur Outrank",
+          "websiteDescription": "CPC 相关外榜与统计入口。"
+        },
+        {
+          "avatarUrl": "https://rl.algoux.cn/favicon.ico",
+          "websiteUrl": "https://rl.algoux.cn/",
+          "websiteTitle": "RankLand",
+          "websiteDescription": "集中收录 ICPC、CCPC 等历史榜单。"
+        },
+        {
+          "avatarUrl": "https://xcpcio.com/favicon.ico",
+          "websiteUrl": "https://board.xcpcio.com/",
+          "websiteTitle": "XCPCBoard",
+          "websiteDescription": "XCPC 榜单与看板入口。"
+        },
+        {
+          "avatarUrl": "https://cftracker.netlify.app/favicon.ico",
+          "websiteUrl": "https://cftracker.netlify.app/contests",
+          "websiteTitle": "CFTracker",
+          "websiteDescription": "Codeforces 题目与比赛清单。"
+        }
+      ]
+    },
+    {
+      "title": "盒武器",
+      "description": "查排名、查经历、查奖项和看评分的常用入口。",
+      "links": [
+        {
+          "avatarUrl": "https://cpcfinder.com/favicon.ico",
+          "websiteUrl": "https://cpcfinder.com/",
+          "websiteTitle": "cpcfinder",
+          "websiteDescription": "ACMer 数据库与资料查询。"
+        },
+        {
+          "avatarUrl": "https://icons.duckduckgo.com/ip3/zzzzzzyt.github.io.ico",
+          "websiteUrl": "https://zzzzzzyt.github.io/xcpc-elo/",
+          "websiteTitle": "XCPC ELO",
+          "websiteDescription": "XCPC 选手评分与排名工具。"
+        },
+        {
+          "avatarUrl": "https://oier.baoshuo.dev/favicon.ico",
+          "websiteUrl": "https://oier.baoshuo.dev/",
+          "websiteTitle": "OIerDb",
+          "websiteDescription": "查询选手 OI 经历与档案。"
+        },
+        {
+          "avatarUrl": "https://dasai.lanqiao.cn/favicon.ico",
+          "websiteUrl": "https://dasai.lanqiao.cn/awards-public",
+          "websiteTitle": "蓝桥奖项",
+          "websiteDescription": "蓝桥杯公开获奖查询入口。"
+        },
+        {
+          "avatarUrl": "https://gplt.patest.cn/favicon.ico",
+          "websiteUrl": "https://gplt.patest.cn/rank/school",
+          "websiteTitle": "GPLT School Rank",
+          "websiteDescription": "天梯赛高校榜单入口。"
+        }
+      ]
+    }
+  ]
 }

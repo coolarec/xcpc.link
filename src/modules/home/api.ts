@@ -44,6 +44,10 @@ const normalizeGallery = (gallery: HomeGallerySectionSource): HomeGallerySection
         links: (gallery.watch.links || []).map((link) => createSiteLink(link)),
       }
     : undefined,
+  watches: (gallery.watches || []).map((watch) => ({
+    ...watch,
+    links: (watch.links || []).map((link) => createSiteLink(link)),
+  })),
 })
 
 const heroDockItems: HeroDockItem[] = [

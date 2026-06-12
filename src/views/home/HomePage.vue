@@ -9,7 +9,7 @@ import HeroDock from './components/HeroDock.vue'
 import HeroTiltCards from './components/HeroTiltCards.vue'
 import HorizontalGallery from './components/HorizontalGallery.vue'
 import { fetchHeroDockItems, fetchHomeGalleries } from '../../modules/home/api'
-import type { AsyncVueModule, HeroDockItem, HomeGallerySection } from '../../types/home'
+import type { AsyncVueModule, HeroDockItem, HomeGallerySection, WatchLinksBlock } from '../../types/home'
 
 gsap.registerPlugin(ScrollToPlugin, ScrollTrigger)
 
@@ -41,6 +41,11 @@ const dockItems = ref<HeroDockItem[]>([])
 
 let context: gsap.Context | undefined
 let removePreloaderListener: (() => void) | undefined
+
+const getGalleryWatches = (gallery: HomeGallerySection): WatchLinksBlock[] => {
+  if (gallery.watches?.length) return gallery.watches
+  return gallery.watch ? [gallery.watch] : []
+}
 
 const toggleTheme = () => {
   isDayMode.value = !isDayMode.value
@@ -239,7 +244,9 @@ onBeforeUnmount(() => {
         :reverse="gallery.reverse"
         :links="[
           { title: '精选链接', items: gallery.cards },
-          ...(gallery.watch?.links?.length ? [{ title: gallery.watch.title || '相关推荐', items: gallery.watch.links }] : [])
+          ...getGalleryWatches(gallery)
+            .filter((watch) => watch.links?.length)
+            .map((watch) => ({ title: watch.title || '相关推荐', items: watch.links }))
         ]"
       >
         <GalleryLinkCard
@@ -253,10 +260,12 @@ onBeforeUnmount(() => {
         />
 
         <WatchFaceLinkCard
-          v-if="gallery.watch?.links?.length"
-          :title="gallery.watch.title"
-          :description="gallery.watch.description"
-          :links="gallery.watch.links"
+          v-for="watch in getGalleryWatches(gallery)"
+          :key="`${gallery.title}-${watch.title}`"
+          v-show="watch.links?.length"
+          :title="watch.title"
+          :description="watch.description"
+          :links="watch.links"
           :accent="gallery.accent"
         />
       </HorizontalGallery>

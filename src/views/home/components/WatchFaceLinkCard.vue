@@ -54,10 +54,46 @@ const visualItems = computed(() => {
 
   if (!source.length) return []
 
+  const assignedIndices: number[][] = Array.from({ length: rowCount.value }, () =>
+    Array.from({ length: columnCount.value }, () => 0),
+  )
+
+  const neighborOffsets = [
+    [0, -1],
+    [-1, -1],
+    [1, -1],
+    [-1, 0],
+    [-2, 0],
+    [0, -2],
+    [-1, -2],
+    [1, -2],
+    [2, -2],
+    [-2, -1],
+    [2, -1],
+  ] as const
+
   return Array.from({ length: rowCount.value }).flatMap((_, row) =>
     Array.from({ length: columnCount.value }).map((__, col) => {
-      const axialQ = col - Math.floor(row / 2)
-      const baseIndex = wrap(axialQ + row * 2, source.length)
+      const preferredIndex = wrap(col * 11 + row * 17 + Math.floor(row / 2) * 5, source.length)
+      const blocked = new Set<number>()
+
+      for (const [deltaCol, deltaRow] of neighborOffsets) {
+        const targetRow = row + deltaRow
+        const targetCol = col + deltaCol
+        if (targetRow < 0 || targetCol < 0 || targetCol >= columnCount.value) continue
+        blocked.add(assignedIndices[targetRow][targetCol])
+      }
+
+      let baseIndex = preferredIndex
+      for (let step = 0; step < source.length * 2; step += 1) {
+        const candidate = wrap(preferredIndex + step * 3, source.length)
+        if (!blocked.has(candidate)) {
+          baseIndex = candidate
+          break
+        }
+      }
+
+      assignedIndices[row][col] = baseIndex
       const item = source[baseIndex]
 
       return {

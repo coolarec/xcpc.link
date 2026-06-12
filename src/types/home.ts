@@ -25,6 +25,7 @@ export interface HomeGallerySectionSource {
   reverse?: boolean
   cards: SiteLink[]
   watch?: WatchLinksBlock
+  watches?: WatchLinksBlock[]
 }
 
 export interface WatchLinksBlock {
@@ -41,6 +42,7 @@ export interface HomeGallerySection {
   reverse?: boolean
   cards: SiteLink[]
   watch?: WatchLinksBlock
+  watches?: WatchLinksBlock[]
 }
 
 export interface HeroDockItem {
