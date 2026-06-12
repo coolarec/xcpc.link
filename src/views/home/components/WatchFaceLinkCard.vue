@@ -255,8 +255,12 @@ const handlePointerDown = (event: PointerEvent) => {
   lastTime = performance.now()
   velocityX = 0
   velocityY = 0
+  
   root.value?.classList.add('is-dragging')
-  root.value?.setPointerCapture?.(event.pointerId)
+  
+  window.addEventListener('pointermove', handlePointerMove)
+  window.addEventListener('pointerup', handlePointerUp, { once: true })
+  window.addEventListener('pointercancel', handlePointerUp, { once: true })
 }
 
 const handlePointerMove = (event: PointerEvent) => {
@@ -269,7 +273,7 @@ const handlePointerMove = (event: PointerEvent) => {
   const deltaX = event.clientX - lastX
   const deltaY = event.clientY - lastY
 
-  if (Math.hypot(dx, dy) > 7) {
+  if (Math.hypot(dx, dy) > 5) {
     suppressClick = true
     hasDragged = true
     isUIHidden.value = true
@@ -283,15 +287,13 @@ const handlePointerMove = (event: PointerEvent) => {
   lastY = event.clientY
   lastTime = now
   scheduleRender()
-  event.preventDefault()
 }
 
 const handlePointerUp = (event: PointerEvent) => {
-  if (!isDragging) return
-
   isDragging = false
   root.value?.classList.remove('is-dragging')
-  root.value?.releasePointerCapture?.(event.pointerId)
+  
+  window.removeEventListener('pointermove', handlePointerMove)
 
   if (uiTimer) window.clearTimeout(uiTimer)
   uiTimer = window.setTimeout(() => {
@@ -310,9 +312,12 @@ const handlePointerUp = (event: PointerEvent) => {
   }
 
   if (suppressClick) {
+    // If we were dragging, we need to prevent the click event that might follow
+    // However, since we used window listeners and no capture, the 'click' event 
+    // will still fire on the original target. handleIconClick will handle it.
     window.setTimeout(() => {
       suppressClick = false
-    }, 140)
+    }, 150)
   }
 }
 
@@ -349,7 +354,10 @@ const hideFaceHint = () => {
   hideTooltip()
 }
 
+const isMounted = ref(false)
+
 onMounted(async () => {
+  isMounted.value = true
   await nextTick()
 
   if (!root.value) return
@@ -394,10 +402,7 @@ onBeforeUnmount(() => {
     :class="{ 'is-ui-hidden': isUIHidden }"
     :style="{ '--accent': accent }"
     @pointerdown="handlePointerDown"
-    @pointermove.capture="handlePointerMove"
-    @pointerup="handlePointerUp"
-    @pointercancel="handlePointerUp"
-    @pointerleave="(e) => { handlePointerUp(e); hideFaceHint(); }"
+    @pointerleave="hideFaceHint"
   >
     <div class="card-watermark" aria-hidden="true">{{ title.charAt(0) }}</div>
 
@@ -449,7 +454,7 @@ onBeforeUnmount(() => {
       <p>{{ description }}</p>
     </div>
 
-    <Teleport to=".theme-scope">
+    <Teleport v-if="isMounted" to=".motion-page">
       <div ref="tooltip" class="watch-floating-tooltip" aria-hidden="true">
         <strong ref="tooltipTitle"></strong>
         <span ref="tooltipDescription"></span>

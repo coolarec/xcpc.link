@@ -237,7 +237,10 @@ onBeforeUnmount(() => {
         :accent="gallery.accent"
         :direction="gallery.direction"
         :reverse="gallery.reverse"
-        :links="[...gallery.cards, ...(gallery.watch?.links || [])]"
+        :links="[
+          { title: '精选链接', items: gallery.cards },
+          ...(gallery.watch?.links?.length ? [{ title: gallery.watch.title || '相关推荐', items: gallery.watch.links }] : [])
+        ]"
       >
         <GalleryLinkCard
           v-for="(card, cardIndex) in gallery.cards"
