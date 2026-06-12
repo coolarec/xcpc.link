@@ -295,7 +295,9 @@ const handlePointerUp = (event: PointerEvent) => {
 
   if (uiTimer) window.clearTimeout(uiTimer)
   uiTimer = window.setTimeout(() => {
-    isUIHidden.value = false
+    if (!root.value?.matches(':hover')) {
+      isUIHidden.value = false
+    }
   }, 1200)
 
   if (Math.hypot(velocityX, velocityY) > 0.018) {
@@ -345,10 +347,21 @@ const hideTooltip = () => {
   tooltip.value?.classList.remove('is-visible')
 }
 
-const showFaceHint = () => {}
+const showFaceHint = () => {
+  isUIHidden.value = true
+  if (uiTimer) {
+    window.clearTimeout(uiTimer)
+    uiTimer = 0
+  }
+}
 
 const hideFaceHint = () => {
   hideTooltip()
+  if (uiTimer) {
+    window.clearTimeout(uiTimer)
+    uiTimer = 0
+  }
+  isUIHidden.value = false
 }
 
 onMounted(async () => {
