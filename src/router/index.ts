@@ -26,6 +26,11 @@ const routes: RouteRecordRaw[] = [
     name: 'settings',
     component: () => import('../views/settings/SettingsPage.vue'),
   },
+  {
+    path: '/lite',
+    name: 'lite',
+    component: () => import('../views/lite/LitePage.vue'),
+  },
 ]
 
 const router = createRouter({
