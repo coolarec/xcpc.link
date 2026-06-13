@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { X } from '@lucide/vue'
-import { computed, nextTick, ref, watch, onBeforeUnmount } from 'vue'
+import { computed, nextTick, ref, watch, onBeforeUnmount, onMounted } from 'vue'
 import { gsap } from 'gsap'
 
 const props = withDefaults(defineProps<{
@@ -8,9 +8,11 @@ const props = withDefaults(defineProps<{
   title: string
   eyebrow?: string
   panelClass?: string
+  isDark?: boolean
 }>(), {
   eyebrow: '',
   panelClass: '',
+  isDark: true,
 })
 
 const emit = defineEmits<{
@@ -18,8 +20,6 @@ const emit = defineEmits<{
 }>()
 
 const overlayRef = ref<HTMLElement | null>(null)
-const shellRef = ref<HTMLElement | null>(null)
-const backdropRef = ref<HTMLElement | null>(null)
 const titleId = computed(() => `floating-panel-${props.title.replace(/\W+/g, '-').toLowerCase()}`)
 
 const close = () => {
@@ -27,74 +27,77 @@ const close = () => {
 }
 
 const isMounted = ref(false)
-const isVisible = ref(false)
 
-// Use GSAP for the entire transition to eliminate Vue Transition component flashes
-watch(() => props.modelValue, async (isOpen) => {
-  document.body.style.overflow = isOpen ? 'hidden' : ''
+// Logic: Use GSAP hooks in Transition component to eliminate any frame-leakage
+const beforeEnter = (el: Element) => {
+  const overlay = el as HTMLElement
+  const backdrop = overlay.querySelector('.floating-panel-backdrop') as HTMLElement
+  const shell = overlay.querySelector('.floating-panel-shell') as HTMLElement
   
-  if (isOpen) {
-    isVisible.value = true
-    await nextTick()
-    
-    if (overlayRef.value && shellRef.value && backdropRef.value) {
-      const tl = gsap.timeline({
-        onComplete: () => {
-          overlayRef.value?.focus()
-        }
-      })
-      
-      // Reset state
-      gsap.set(overlayRef.value, { display: 'grid', opacity: 1 })
-      gsap.set(backdropRef.value, { opacity: 0, backdropFilter: 'blur(0px) saturate(1)', webkitBackdropFilter: 'blur(0px) saturate(1)' })
-      gsap.set(shellRef.value, { opacity: 0, y: 30, scale: 0.95 })
-      
-      tl.to(backdropRef.value, {
-        opacity: 1,
-        backdropFilter: 'blur(20px) saturate(1.8)',
-        webkitBackdropFilter: 'blur(20px) saturate(1.8)',
-        duration: 0.5,
-        ease: 'power2.out'
-      })
-      
-      tl.to(shellRef.value, {
-        opacity: 1,
-        y: 0,
-        scale: 1,
-        duration: 0.5,
-        ease: 'power3.out'
-      }, 0.05)
-    }
-  } else {
-    if (overlayRef.value && shellRef.value && backdropRef.value) {
-      const tl = gsap.timeline({
-        onComplete: () => {
-          isVisible.value = false
-        }
-      })
-      
-      tl.to(shellRef.value, {
-        opacity: 0,
-        y: 20,
-        scale: 0.97,
-        duration: 0.3,
-        ease: 'power2.in'
-      })
-      
-      tl.to(backdropRef.value, {
-        opacity: 0,
-        backdropFilter: 'blur(0px) saturate(1)',
-        webkitBackdropFilter: 'blur(0px) saturate(1)',
-        duration: 0.35,
-        ease: 'power2.inOut'
-      }, 0.1)
-    } else {
-      isVisible.value = false
+  gsap.set(overlay, { opacity: 1, visibility: 'visible' })
+  gsap.set(backdrop, { opacity: 0, backdropFilter: 'blur(0px) saturate(1)', webkitBackdropFilter: 'blur(0px) saturate(1)' })
+  gsap.set(shell, { opacity: 0, y: 32, scale: 0.95 })
+}
+
+const enter = (el: Element, done: () => void) => {
+  const overlay = el as HTMLElement
+  const backdrop = overlay.querySelector('.floating-panel-backdrop') as HTMLElement
+  const shell = overlay.querySelector('.floating-panel-shell') as HTMLElement
+  
+  const tl = gsap.timeline({ onComplete: done })
+  
+  tl.to(backdrop, {
+    opacity: 1,
+    backdropFilter: 'blur(20px) saturate(1.8)',
+    webkitBackdropFilter: 'blur(20px) saturate(1.8)',
+    duration: 0.45,
+    ease: 'power2.out'
+  })
+  
+  tl.to(shell, {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    duration: 0.5,
+    ease: 'power3.out'
+  }, 0.05)
+}
+
+const leave = (el: Element, done: () => void) => {
+  const overlay = el as HTMLElement
+  const backdrop = overlay.querySelector('.floating-panel-backdrop') as HTMLElement
+  const shell = overlay.querySelector('.floating-panel-shell') as HTMLElement
+  
+  const tl = gsap.timeline({ onComplete: done })
+  
+  tl.to(shell, {
+    opacity: 0,
+    y: 20,
+    scale: 0.97,
+    duration: 0.3,
+    ease: 'power2.in'
+  })
+  
+  tl.to(backdrop, {
+    opacity: 0,
+    backdropFilter: 'blur(0px) saturate(1)',
+    webkitBackdropFilter: 'blur(0px) saturate(1)',
+    duration: 0.35,
+    ease: 'power2.inOut'
+  }, 0.1)
+}
+
+watch(
+  () => props.modelValue,
+  async (isOpen) => {
+    document.body.style.overflow = isOpen ? 'hidden' : ''
+    if (isOpen) {
+      await nextTick()
+      overlayRef.value?.focus()
     }
   }
-})
+)
 
-import { onMounted } from 'vue'
 onMounted(() => {
   isMounted.value = true
 })
@@ -106,42 +109,45 @@ onBeforeUnmount(() => {
 
 <template>
   <Teleport v-if="isMounted" to=".motion-page">
-    <div
-      v-if="isVisible"
-      ref="overlayRef"
-      class="floating-panel-overlay"
-      tabindex="-1"
-      @keydown.esc="close"
+    <Transition
+      :css="false"
+      @before-enter="beforeEnter"
+      @enter="enter"
+      @leave="leave"
     >
-      <div 
-        ref="backdropRef" 
-        class="floating-panel-backdrop" 
-        @click="close"
-      ></div>
-
-      <section
-        ref="shellRef"
-        class="floating-panel-shell"
-        :class="panelClass"
-        role="dialog"
-        aria-modal="true"
-        :aria-labelledby="titleId"
+      <div
+        v-if="modelValue"
+        ref="overlayRef"
+        class="floating-panel-overlay theme-scope"
+        :class="{ 'is-day': !isDark }"
+        tabindex="-1"
+        @keydown.esc="close"
       >
-        <header class="floating-panel-header">
-          <div class="floating-panel-titles">
-            <p v-if="eyebrow">{{ eyebrow }}</p>
-            <h3 :id="titleId">{{ title }}</h3>
-          </div>
-          <button class="floating-panel-close" type="button" aria-label="Close panel" @click="close">
-            <X :size="18" :stroke-width="2.3" aria-hidden="true" />
-          </button>
-        </header>
+        <div class="floating-panel-backdrop" @click="close"></div>
 
-        <div class="floating-panel-body">
-          <slot />
-        </div>
-      </section>
-    </div>
+        <section
+          class="floating-panel-shell"
+          :class="panelClass"
+          role="dialog"
+          aria-modal="true"
+          :aria-labelledby="titleId"
+        >
+          <header class="floating-panel-header">
+            <div class="floating-panel-titles">
+              <p v-if="eyebrow">{{ eyebrow }}</p>
+              <h3 :id="titleId">{{ title }}</h3>
+            </div>
+            <button class="floating-panel-close" type="button" aria-label="Close panel" @click="close">
+              <X :size="18" :stroke-width="2.3" aria-hidden="true" />
+            </button>
+          </header>
+
+          <div class="floating-panel-body">
+            <slot />
+          </div>
+        </section>
+      </div>
+    </Transition>
   </Teleport>
 </template>
 
@@ -236,6 +242,11 @@ onBeforeUnmount(() => {
   min-height: 0;
   overflow-y: auto;
   padding: 32px;
+}
+
+/* Light mode specific backdrop overrides */
+.floating-panel-overlay.is-day .floating-panel-backdrop {
+  background: rgba(255, 255, 255, 0.25);
 }
 
 @media (max-width: 720px) {

@@ -69,8 +69,8 @@ const handleAvatarLoad = (event: Event): void => {
 .gallery-card {
   box-sizing: border-box;
   position: relative;
-  width: clamp(360px, 32vw, 600px);
-  height: 480px;
+  width: var(--gallery-card-width, clamp(280px, 32vw, 600px));
+  height: var(--gallery-card-height, 480px);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -223,16 +223,10 @@ const handleAvatarLoad = (event: Event): void => {
 
 @media (max-width: 720px) {
   .gallery-card {
-    width: 100%;
-    max-width: 100%;
-    height: clamp(300px, 76svh, 330px);
-    padding: 28px 24px;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 24px 20px;
     border-radius: 28px;
-  }
-
-  .card-ambient-glow {
-    width: 90%;
-    filter: blur(60px);
   }
 
   .card-watermark {
@@ -242,16 +236,16 @@ const handleAvatarLoad = (event: Event): void => {
   }
 
   .link-avatar-shell {
-    width: 72px;
-    border-radius: 20px;
+    width: 64px;
+    border-radius: 18px;
   }
 
   .link-avatar-shell::before {
-    font-size: 28px;
+    font-size: 26px;
   }
 
   .link-avatar {
-    border-radius: 20px;
+    border-radius: 18px;
   }
 
   .action-btn {
@@ -269,11 +263,11 @@ const handleAvatarLoad = (event: Event): void => {
   }
 
   .gallery-card h3 {
-    font-size: 28px;
+    font-size: 26px;
   }
 
   .gallery-card p {
-    margin-top: 12px;
+    margin-top: 10px;
     font-size: 14px;
     line-clamp: 3;
     -webkit-line-clamp: 3;
@@ -282,22 +276,21 @@ const handleAvatarLoad = (event: Event): void => {
 
 @media (max-width: 420px) {
   .gallery-card {
-    height: clamp(290px, 72svh, 315px);
-    padding: 24px 20px;
+    padding: 20px 18px;
     border-radius: 24px;
   }
 
   .link-avatar-shell {
-    width: 64px;
-    border-radius: 18px;
+    width: 54px;
+    border-radius: 14px;
   }
 
   .link-avatar-shell::before {
-    font-size: 24px;
+    font-size: 22px;
   }
 
   .link-avatar {
-    border-radius: 18px;
+    border-radius: 14px;
   }
 
   .action-btn {
@@ -306,7 +299,7 @@ const handleAvatarLoad = (event: Event): void => {
   }
 
   .gallery-card h3 {
-    font-size: 24px;
+    font-size: 22px;
   }
 
   .gallery-card p {

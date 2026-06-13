@@ -505,8 +505,8 @@ onBeforeUnmount(() => {
 .gallery-card {
   box-sizing: border-box;
   position: relative;
-  width: clamp(360px, 32vw, 600px);
-  height: 480px;
+  width: var(--gallery-card-width, clamp(280px, 32vw, 600px));
+  height: var(--gallery-card-height, 480px);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -549,16 +549,17 @@ onBeforeUnmount(() => {
 }
 
 .link-content {
-  position: absolute; /* Decouple from flex padding */
+  position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
   z-index: 2;
   padding: 48px 32px 36px;
   background: linear-gradient(to bottom, transparent, var(--card-bg) 40%);
-  pointer-events: auto; /* Enable so we can detect touches */
+  pointer-events: auto;
   visibility: visible;
   transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+  touch-action: pan-y;
 }
 
 .gallery-card h3,
@@ -801,9 +802,9 @@ onBeforeUnmount(() => {
 
 @media (max-width: 720px) {
   .gallery-card {
-    width: 100%;
-    max-width: 100%;
-    height: clamp(300px, 76svh, 330px);
+    width: 100% !important;
+    max-width: 100% !important;
+    height: clamp(240px, 62svh, 280px);
     padding: 28px 24px;
     border-radius: 28px;
   }

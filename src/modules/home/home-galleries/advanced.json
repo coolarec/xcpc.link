@@ -1,5 +1,5 @@
 {
-  "eyebrow": "String lab",
+  "eyebrow": "FOR",
   "title": "算竞高手",
   "accent": "#34c759",
   "reverse": true,
@@ -146,7 +146,7 @@
     },
     {
       "title": "工具",
-      "description": "从 SDUT ACM 的算法竞赛工具箱里整理的常用工具入口。",
+      "description": "算法竞赛里常用的工具入口。",
       "links": [
         {
           "avatarUrl": "https://paste.then.ac/favicon.ico",
@@ -257,7 +257,7 @@
           "websiteDescription": "算法竞赛知识百科。"
         },
         {
-          "avatarUrl": "https://visualgo.net/favicon.ico",
+          "avatarUrl": "https://visualgo.net/img/favicon.png",
           "websiteUrl": "https://visualgo.net/zh/",
           "websiteTitle": "visualgo",
           "websiteDescription": "算法与数据结构可视化。"

@@ -263,6 +263,7 @@ onBeforeUnmount(() => {
         :accent="gallery.accent"
         :direction="gallery.direction"
         :reverse="gallery.reverse"
+        :is-dark="!isDayMode"
         :links="[
           { title: '精选链接', items: gallery.cards },
           ...getGalleryWatches(gallery)
@@ -297,6 +298,7 @@ onBeforeUnmount(() => {
       v-model="showComments"
       title="评论"
       eyebrow="XCPC.LINK"
+      :is-dark="!isDayMode"
       panel-class="comments-panel-shell"
     >
       <ArtalkComments :active="showComments" :is-dark="!isDayMode" />
