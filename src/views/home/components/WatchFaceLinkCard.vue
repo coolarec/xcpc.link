@@ -550,12 +550,18 @@ onBeforeUnmount(() => {
 
 .link-content {
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
   z-index: 2;
-  padding: 48px 32px 36px;
-  background: linear-gradient(to bottom, transparent, var(--card-bg) 40%);
+  padding: 96px 34px 38px;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    color-mix(in srgb, var(--card-bg), transparent 18%) 32%,
+    var(--card-bg) 58%,
+    var(--card-bg) 100%
+  );
   pointer-events: auto;
   visibility: visible;
   transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
