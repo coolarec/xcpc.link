@@ -34,7 +34,7 @@
         "websiteDescription": "训练单和难度层级都比较直观，适合布置周练。"
       },
       {
-        "avatarUrl": "https://cses.fi/favicon.ico",
+        "avatarUrl": "https://favicone.com/cses.fi?s=64",
         "websiteUrl": "https://cses.fi/problemset/",
         "websiteTitle": "CSES 题单",
         "websiteDescription": "经典题集中，做小班统一训练很高效。"
@@ -46,7 +46,7 @@
         "websiteDescription": "适合补基础、刷模板题，也方便学生课后自练。"
       },
       {
-        "avatarUrl": "",
+        "avatarUrl": "https://kotlinlang.org/assets/images/favicon.svg?v2",
         "websiteUrl": "https://kotlinlang.org/docs/competitive-programming.html",
         "websiteTitle": "Kotlin CP",
         "websiteDescription": "没有现成头像时也会回退成首字母，适合测试展示兜底。"

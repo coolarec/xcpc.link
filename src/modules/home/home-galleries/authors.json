@@ -11,7 +11,7 @@
       "websiteDescription": "看题源分布、样例风格和数据组织时很方便做横向参考。"
     },
     {
-      "avatarUrl": "https://loj.ac/favicon.ico",
+      "avatarUrl": "https://unavatar.io/loj.ac",
       "websiteUrl": "https://loj.ac/problems",
       "websiteTitle": "LibreOJ 题库",
       "websiteDescription": "不少题的数据和交互设计值得参考，适合做出题调研。"
@@ -40,10 +40,16 @@
         "websiteDescription": "查 testlib、数据生成和校验器时很顺手。"
       },
       {
-        "avatarUrl": "",
+        "avatarUrl": "https://polygon.codeforces.com/favicon.ico",
         "websiteUrl": "https://polygon.codeforces.com/",
         "websiteTitle": "Polygon",
         "websiteDescription": "没有头像时会回退首字母，适合验证出题工具入口展示。"
+      },
+      {
+        "avatarUrl": "https://sua.ac/img/logo.jpg",
+        "websiteUrl": "https://sua.ac/",
+        "websiteTitle": "SUA",
+        "websiteDescription": "程序设计竞赛命题组与竞赛合集入口。"
       }
     ]
   }

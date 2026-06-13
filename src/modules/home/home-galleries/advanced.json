@@ -11,7 +11,7 @@
       "websiteDescription": "ICPC 各区域赛的近期赛程入口。"
     },
     {
-      "avatarUrl": "https://ccpc.io/favicon.ico",
+      "avatarUrl": "https://favicone.com/ccpc.io?s=64",
       "websiteUrl": "https://ccpc.io/rules/369",
       "websiteTitle": "CCPC Rules",
       "websiteDescription": "CCPC 规则与相关说明入口。"
@@ -65,7 +65,7 @@
           "websiteDescription": "经典老题很多，适合翻历史题单做扩展训练。"
         },
         {
-          "avatarUrl": "https://hydro.ac/favicon.ico",
+          "avatarUrl": "https://unavatar.io/hydro.ac",
           "websiteUrl": "https://hydro.ac/",
           "websiteTitle": "Hydro",
           "websiteDescription": "支持多类题库与比赛管理，适合自建训练环境。"
@@ -108,7 +108,7 @@
         },
         {
           "avatarUrl": "https://ucup.ac/assets/favicon.png",
-          "websiteUrl": "https://universalcup.org/",
+          "websiteUrl": "https://ucup.ac/zh/",
           "websiteTitle": "Universal Cup",
           "websiteDescription": "高水平区域赛风格比赛，适合强度拉满的训练。"
         },
@@ -157,194 +157,140 @@
         {
           "avatarUrl": "https://paste.then.ac/favicon.ico",
           "websiteUrl": "https://paste.then.ac/",
-        "websiteTitle": "Paste then AC",
-        "websiteDescription": "适合算法竞赛的自由剪贴板。"
-      },
-      {
-        "avatarUrl": "https://paste.ubuntu.com/favicon.ico",
-        "websiteUrl": "https://paste.ubuntu.com/",
-        "websiteTitle": "paste.ubuntu",
-        "websiteDescription": "简洁稳定的代码粘贴板。"
-      },
-      {
-        "avatarUrl": "https://icons.duckduckgo.com/ip3/paste.nugine.xyz.ico",
-        "websiteUrl": "https://paste.nugine.xyz/",
-        "websiteTitle": "paste.nugine",
-        "websiteDescription": "轻量代码粘贴板。"
-      },
-      {
-        "avatarUrl": "https://www.luogu.com.cn/favicon.ico",
-        "websiteUrl": "https://www.luogu.com.cn/paste",
-        "websiteTitle": "paste.洛谷",
-        "websiteDescription": "洛谷自带的代码粘贴板。"
-      },
-      {
-        "avatarUrl": "https://oeis.org/favicon.ico",
-        "websiteUrl": "http://oeis.org/",
-        "websiteTitle": "OEIS",
-        "websiteDescription": "经典数列查询工具。"
-      },
-      {
-        "avatarUrl": "https://www.diffchecker.com/favicon.ico",
-        "websiteUrl": "https://www.diffchecker.com/",
-        "websiteTitle": "diffchecker",
-        "websiteDescription": "在线代码比对工具。"
-      },
-      {
-        "avatarUrl": "https://static.deepl.com/img/favicon/favicon_32.png",
-        "websiteUrl": "https://www.deepl.com/translator",
-        "websiteTitle": "deepl",
-        "websiteDescription": "翻译工具。"
-      },
-      {
-        "avatarUrl": "https://www.latexlive.com/favicon.ico",
-        "websiteUrl": "https://www.latexlive.com/",
-        "websiteTitle": "LaTeX Live",
-        "websiteDescription": "在线 LaTeX 公式工具。"
-      },
-      {
-        "avatarUrl": "https://www.texpage.com/favicon.ico",
-        "websiteUrl": "https://www.texpage.com/",
-        "websiteTitle": "texpage",
-        "websiteDescription": "在线 LaTeX 工具。"
-      },
-      {
-        "avatarUrl": "https://cn.overleaf.com/favicon.ico",
-        "websiteUrl": "https://cn.overleaf.com/",
-        "websiteTitle": "overleaf",
-        "websiteDescription": "协作式在线 LaTeX 编辑器。"
-      },
-      {
-        "avatarUrl": "https://csacademy.com/favicon.ico",
-        "websiteUrl": "https://csacademy.com/app/graph_editor/",
-        "websiteTitle": "graph editor",
-        "websiteDescription": "图论画图工具。"
-      },
-      {
-        "avatarUrl": "https://www.wolframalpha.com/images/favicon.ico",
-        "websiteUrl": "https://www.wolframalpha.com/",
-        "websiteTitle": "wolframalpha",
-        "websiteDescription": "强大的数学计算工具。"
-      },
-      {
-        "avatarUrl": "https://www.desmos.com/favicon.ico",
-        "websiteUrl": "https://www.desmos.com/calculator?lang=zh-CN",
-        "websiteTitle": "desmos",
-        "websiteDescription": "函数图像画图工具。"
-      },
-      {
-        "avatarUrl": "https://zh.numberempire.com/favicon.ico",
-        "websiteUrl": "https://zh.numberempire.com/",
-        "websiteTitle": "数字帝国",
-        "websiteDescription": "综合数学工具。"
-      },
-      {
-        "avatarUrl": "https://www.geogebra.org/favicon.ico",
-        "websiteUrl": "https://www.geogebra.org/geometry",
-        "websiteTitle": "geogebra 2D",
-        "websiteDescription": "2D 几何与函数图像工具。"
-      },
-      {
-        "avatarUrl": "https://www.geogebra.org/favicon.ico",
-        "websiteUrl": "https://www.geogebra.org/3d",
-        "websiteTitle": "geogebra 3D",
-        "websiteDescription": "3D 图形与几何工具。"
-      },
-      {
-        "avatarUrl": "https://approach0.xyz/favicon.ico",
-        "websiteUrl": "https://approach0.xyz/search/",
-        "websiteTitle": "Approach 0",
-        "websiteDescription": "LaTeX 数学结论搜索工具。"
-      },
-      {
-        "avatarUrl": "https://polygon.codeforces.com/favicon.ico",
-        "websiteUrl": "https://polygon.codeforces.com/",
-        "websiteTitle": "Polygon",
-        "websiteDescription": "规范化命题工具。"
-      },
-      {
-        "avatarUrl": "http://yuantiji.ac/favicon.ico",
-        "websiteUrl": "http://yuantiji.ac/zh/",
-        "websiteTitle": "原题机",
-        "websiteDescription": "原题查找工具。"
-      },
-      {
-        "avatarUrl": "https://icpc.global/favicon.ico",
-        "websiteUrl": "https://icpc.global/",
-        "websiteTitle": "ICPC",
-        "websiteDescription": "ICPC 国际官网。"
-      },
-      {
-        "avatarUrl": "http://icpc.pku.edu.cn/favicon.ico",
-        "websiteUrl": "http://icpc.pku.edu.cn/",
-        "websiteTitle": "ICPC.pku",
-        "websiteDescription": "ICPC 中国官网。"
-      },
-      {
-        "avatarUrl": "https://xcpcio.com/favicon.ico",
-        "websiteUrl": "https://xcpcio.com/",
-        "websiteTitle": "xcpcio",
-        "websiteDescription": "XCPC 知识百科。"
-      },
-      {
-        "avatarUrl": "https://acmer.info/favicon.ico",
-        "websiteUrl": "https://acmer.info/",
-        "websiteTitle": "ACMer.info",
-        "websiteDescription": "ACMer 资源网站。"
-      },
-      {
-        "avatarUrl": "https://gplt.patest.cn/favicon.ico",
-        "websiteUrl": "https://gplt.patest.cn/regulation",
-        "websiteTitle": "天梯赛",
-        "websiteDescription": "团体程序设计天梯赛。"
-      },
-      {
-        "avatarUrl": "https://www.noi.cn/favicon.ico",
-        "websiteUrl": "https://www.noi.cn/",
-        "websiteTitle": "NOI",
-        "websiteDescription": "青少年信息学奥林匹克。"
-      },
-      {
-        "avatarUrl": "https://oi-wiki.org/favicon.ico",
-        "websiteUrl": "https://oi-wiki.org/",
-        "websiteTitle": "OI Wiki",
-        "websiteDescription": "算法竞赛知识百科。"
-      },
-      {
-        "avatarUrl": "https://oier.baoshuo.dev/favicon.ico",
-        "websiteUrl": "https://oier.baoshuo.dev/",
-        "websiteTitle": "OIerDb",
-        "websiteDescription": "查询选手 OI 经历。"
-      },
-      {
-        "avatarUrl": "https://cftracker.netlify.app/favicon.ico",
-        "websiteUrl": "https://cftracker.netlify.app/contests",
-        "websiteTitle": "CFTracker",
-        "websiteDescription": "Codeforces 题目与比赛清单。"
-      },
-      {
-        "avatarUrl": "https://kenkoooo.com/favicon.ico",
-        "websiteUrl": "https://kenkoooo.com/atcoder/#/table/",
-        "websiteTitle": "AtCoder题集",
-        "websiteDescription": "AtCoder 题目与比赛清单。"
-      },
-      {
-        "avatarUrl": "https://ojhunt.com/favicon.ico",
-        "websiteUrl": "https://ojhunt.com/statistics",
-        "websiteTitle": "ojhunt",
-        "websiteDescription": "OJ 做题统计工具。"
-      },
-      {
-        "avatarUrl": "https://visualgo.net/favicon.ico",
-        "websiteUrl": "https://visualgo.net/zh/",
-        "websiteTitle": "visualgo",
-        "websiteDescription": "算法与数据结构可视化。"
-      },
+          "websiteTitle": "Paste then AC",
+          "websiteDescription": "适合算法竞赛的自由剪贴板。"
+        },
         {
-          "avatarUrl": "https://cpcfinder.com/favicon.ico",
-          "websiteUrl": "https://cpcfinder.com/",
-          "websiteTitle": "cpcfinder",
-          "websiteDescription": "ACMer 数据库。"
+          "avatarUrl": "https://paste.ubuntu.com/favicon.ico",
+          "websiteUrl": "https://paste.ubuntu.com/",
+          "websiteTitle": "paste.ubuntu",
+          "websiteDescription": "简洁稳定的代码粘贴板。"
+        },
+        {
+          "avatarUrl": "https://paste.nugine.xyz/favicon.ico",
+          "websiteUrl": "https://paste.nugine.xyz/",
+          "websiteTitle": "paste.nugine",
+          "websiteDescription": "轻量代码粘贴板。"
+        },
+        {
+          "avatarUrl": "https://www.luogu.com.cn/favicon.ico",
+          "websiteUrl": "https://www.luogu.com.cn/paste",
+          "websiteTitle": "paste.洛谷",
+          "websiteDescription": "洛谷自带的代码粘贴板。"
+        },
+        {
+          "avatarUrl": "https://oeis.org/favicon.ico",
+          "websiteUrl": "http://oeis.org/",
+          "websiteTitle": "OEIS",
+          "websiteDescription": "经典数列查询工具。"
+        },
+        {
+          "avatarUrl": "https://www.diffchecker.com/favicon.ico",
+          "websiteUrl": "https://www.diffchecker.com/",
+          "websiteTitle": "diffchecker",
+          "websiteDescription": "在线代码比对工具。"
+        },
+        {
+          "avatarUrl": "https://static.deepl.com/img/favicon/favicon_32.png",
+          "websiteUrl": "https://www.deepl.com/translator",
+          "websiteTitle": "deepl",
+          "websiteDescription": "翻译工具。"
+        },
+        {
+          "avatarUrl": "https://www.latexlive.com/assets/header_logo-DAL0xod2.png",
+          "websiteUrl": "https://www.latexlive.com/",
+          "websiteTitle": "LaTeX Live",
+          "websiteDescription": "在线 LaTeX 公式工具。"
+        },
+        {
+          "avatarUrl": "https://www.texpage.com/favicon.ico",
+          "websiteUrl": "https://www.texpage.com/",
+          "websiteTitle": "texpage",
+          "websiteDescription": "在线 LaTeX 工具。"
+        },
+        {
+          "avatarUrl": "https://cn.overleaf.com/favicon.ico",
+          "websiteUrl": "https://cn.overleaf.com/",
+          "websiteTitle": "overleaf",
+          "websiteDescription": "协作式在线 LaTeX 编辑器。"
+        },
+        {
+          "avatarUrl": "https://csacademy.com/favicon.ico",
+          "websiteUrl": "https://csacademy.com/app/graph_editor/",
+          "websiteTitle": "graph editor",
+          "websiteDescription": "图论画图工具。"
+        },
+        {
+          "avatarUrl": "https://www.wolframalpha.com/images/favicon.ico",
+          "websiteUrl": "https://www.wolframalpha.com/",
+          "websiteTitle": "wolframalpha",
+          "websiteDescription": "强大的数学计算工具。"
+        },
+        {
+          "avatarUrl": "https://www.desmos.com/favicon.ico",
+          "websiteUrl": "https://www.desmos.com/calculator?lang=zh-CN",
+          "websiteTitle": "desmos",
+          "websiteDescription": "函数图像画图工具。"
+        },
+        {
+          "avatarUrl": "https://zh.numberempire.com/favicon.ico",
+          "websiteUrl": "https://zh.numberempire.com/",
+          "websiteTitle": "数字帝国",
+          "websiteDescription": "综合数学工具。"
+        },
+        {
+          "avatarUrl": "https://www.geogebra.org/favicon.ico",
+          "websiteUrl": "https://www.geogebra.org/geometry",
+          "websiteTitle": "geogebra 2D",
+          "websiteDescription": "2D 几何与函数图像工具。"
+        },
+        {
+          "avatarUrl": "https://www.geogebra.org/favicon.ico",
+          "websiteUrl": "https://www.geogebra.org/3d",
+          "websiteTitle": "geogebra 3D",
+          "websiteDescription": "3D 图形与几何工具。"
+        },
+        {
+          "avatarUrl": "https://github.githubassets.com/favicons/favicon.svg",
+          "websiteUrl": "https://approach0.xyz/search/",
+          "websiteTitle": "Approach 0",
+          "websiteDescription": "LaTeX 数学结论搜索工具。"
+        },
+        {
+          "avatarUrl": "https://www.noi.cn/images/logo.png",
+          "websiteUrl": "https://www.noi.cn/",
+          "websiteTitle": "NOI",
+          "websiteDescription": "青少年信息学奥林匹克。"
+        },
+        {
+          "avatarUrl": "https://oi-wiki.org/favicon.ico",
+          "websiteUrl": "https://oi-wiki.org/",
+          "websiteTitle": "OI Wiki",
+          "websiteDescription": "算法竞赛知识百科。"
+        },
+        {
+          "avatarUrl": "https://cftracker.netlify.app/favicon.ico",
+          "websiteUrl": "https://cftracker.netlify.app/contests",
+          "websiteTitle": "CFTracker",
+          "websiteDescription": "Codeforces 题目与比赛清单。"
+        },
+        {
+          "avatarUrl": "https://img.atcoder.jp/assets/favicon.png",
+          "websiteUrl": "https://kenkoooo.com/atcoder/#/table/",
+          "websiteTitle": "AtCoder题集",
+          "websiteDescription": "AtCoder 题目与比赛清单。"
+        },
+        {
+          "avatarUrl": "https://ojhunt.com/favicon.ico",
+          "websiteUrl": "https://ojhunt.com/statistics",
+          "websiteTitle": "ojhunt",
+          "websiteDescription": "OJ 做题统计工具。"
+        },
+        {
+          "avatarUrl": "https://visualgo.net/favicon.ico",
+          "websiteUrl": "https://visualgo.net/zh/",
+          "websiteTitle": "visualgo",
+          "websiteDescription": "算法与数据结构可视化。"
         }
       ]
     },
@@ -353,7 +299,7 @@
       "description": "常用的学校、区域赛和综合榜单入口。",
       "links": [
         {
-          "avatarUrl": "https://gplt.patest.cn/favicon.ico",
+          "avatarUrl": "https://unavatar.io/gplt.patest.cn",
           "websiteUrl": "https://gplt.patest.cn/rank/school",
           "websiteTitle": "GPLT School Rank",
           "websiteDescription": "天梯赛高校榜单入口。"
@@ -365,7 +311,7 @@
           "websiteDescription": "PTA 公开比赛与榜单入口。"
         },
         {
-          "avatarUrl": "https://cpc.csgrandeur.cn/favicon.ico",
+          "avatarUrl": "https://cpc.csgrandeur.cn/static/image/global/favicon.ico",
           "websiteUrl": "https://cpc.csgrandeur.cn/outrank/",
           "websiteTitle": "Grandeur Outrank",
           "websiteDescription": "CPC 相关外榜与统计入口。"
@@ -377,10 +323,16 @@
           "websiteDescription": "集中收录 ICPC、CCPC 等历史榜单。"
         },
         {
-          "avatarUrl": "https://xcpcio.com/favicon.ico",
+          "avatarUrl": "https://unavatar.io/board.xcpcio.com",
           "websiteUrl": "https://board.xcpcio.com/",
           "websiteTitle": "XCPCBoard",
           "websiteDescription": "XCPC 榜单与看板入口。"
+        },
+        {
+          "avatarUrl": "https://domjudge.ou.nl/favicon.ico",
+          "websiteUrl": "https://domjudge.ou.nl/public",
+          "websiteTitle": "OU DOMjudge",
+          "websiteDescription": "DOMjudge 公开榜单入口。"
         },
         {
           "avatarUrl": "https://cftracker.netlify.app/favicon.ico",
@@ -395,13 +347,13 @@
       "description": "查排名、查经历、查奖项和看评分的常用入口。",
       "links": [
         {
-          "avatarUrl": "https://cpcfinder.com/favicon.ico",
+          "avatarUrl": "https://unavatar.io/cpcfinder.com",
           "websiteUrl": "https://cpcfinder.com/",
           "websiteTitle": "cpcfinder",
           "websiteDescription": "ACMer 数据库与资料查询。"
         },
         {
-          "avatarUrl": "https://icons.duckduckgo.com/ip3/zzzzzzyt.github.io.ico",
+          "avatarUrl": "https://github.githubassets.com/favicons/favicon.svg",
           "websiteUrl": "https://zzzzzzyt.github.io/xcpc-elo/",
           "websiteTitle": "XCPC ELO",
           "websiteDescription": "XCPC 选手评分与排名工具。"
@@ -413,13 +365,13 @@
           "websiteDescription": "查询选手 OI 经历与档案。"
         },
         {
-          "avatarUrl": "https://dasai.lanqiao.cn/favicon.ico",
+          "avatarUrl": "https://unavatar.io/dasai.lanqiao.cn",
           "websiteUrl": "https://dasai.lanqiao.cn/awards-public",
           "websiteTitle": "蓝桥奖项",
           "websiteDescription": "蓝桥杯公开获奖查询入口。"
         },
         {
-          "avatarUrl": "https://gplt.patest.cn/favicon.ico",
+          "avatarUrl": "https://unavatar.io/gplt.patest.cn",
           "websiteUrl": "https://gplt.patest.cn/rank/school",
           "websiteTitle": "GPLT School Rank",
           "websiteDescription": "天梯赛高校榜单入口。"
