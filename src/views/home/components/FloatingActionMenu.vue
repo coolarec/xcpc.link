@@ -13,7 +13,7 @@ type FloatingAction = {
 const actions: FloatingAction[] = [
   { id: 'comments', label: '评论', icon: MessageCircle, angle: -92, distance: 94 },
   { id: 'discover', label: '搜索', icon: Search, angle: -138, distance: 92 },
-  { id: 'settings', label: 'Settings', icon: Settings, angle: -184, distance: 88 },
+  { id: 'settings', label: '设置', icon: Settings, angle: -184, distance: 88 },
 ]
 
 const emit = defineEmits<{
@@ -30,7 +30,7 @@ const getActionStyle = (action: FloatingAction, index: number) => {
   return {
     '--x': `${x}px`,
     '--y': `${y}px`,
-    '--delay': `${index * 34}ms`,
+    '--delay': `${index * 40}ms`,
   }
 }
 
@@ -58,7 +58,7 @@ const handleAction = (action: FloatingAction) => {
       :tabindex="isOpen ? 0 : -1"
       @click="handleAction(action)"
     >
-      <component :is="action.icon" :size="20" :stroke-width="2.2" aria-hidden="true" />
+      <component :is="action.icon" :size="22" :stroke-width="2.4" aria-hidden="true" />
       <span class="action-label">{{ action.label }}</span>
     </button>
 
@@ -70,8 +70,8 @@ const handleAction = (action: FloatingAction) => {
       @click="toggleMenu"
     >
       <span class="trigger-halo" aria-hidden="true"></span>
-      <Sparkles class="trigger-sparkles" :size="21" :stroke-width="2.15" aria-hidden="true" />
-      <Plus class="trigger-plus" :size="24" :stroke-width="2.4" aria-hidden="true" />
+      <Sparkles class="trigger-sparkles" :size="22" :stroke-width="2.2" aria-hidden="true" />
+      <Plus class="trigger-plus" :size="26" :stroke-width="2.5" aria-hidden="true" />
     </button>
   </div>
 </template>
@@ -95,7 +95,7 @@ const handleAction = (action: FloatingAction) => {
   justify-content: center;
   border: 0;
   border-radius: 999px;
-  color: var(--page-fg);
+  color: #ffffff;
   pointer-events: auto;
   will-change: transform, opacity;
 }
@@ -103,60 +103,52 @@ const handleAction = (action: FloatingAction) => {
 .radial-trigger {
   inset: 0;
   overflow: hidden;
-  background:
-    radial-gradient(circle at 32% 24%, rgba(255, 255, 255, 0.55), transparent 28%),
-    linear-gradient(135deg, #34c759 0%, #00b4d8 52%, #7c5cff 100%);
+  background: linear-gradient(135deg, #007aff 0%, #5856d6 100%);
   box-shadow:
-    0 22px 70px rgba(0, 0, 0, 0.36),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.28);
+    0 20px 48px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
   transition:
-    transform 0.36s cubic-bezier(0.2, 0.8, 0.2, 1),
-    box-shadow 0.36s ease;
+    transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1.1),
+    box-shadow 0.4s ease;
 }
 
 .radial-trigger:hover {
-  transform: translateY(-2px) scale(1.03);
+  transform: translateY(-2px) scale(1.04);
   box-shadow:
-    0 28px 84px rgba(0, 0, 0, 0.42),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.32);
+    0 24px 56px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
 .radial-trigger:active {
-  transform: translateY(0) scale(0.97);
-}
-
-.trigger-halo {
-  position: absolute;
-  inset: 7px;
-  border-radius: inherit;
-  border: 1px solid rgba(255, 255, 255, 0.26);
+  transform: translateY(0) scale(0.96);
 }
 
 .trigger-sparkles,
 .trigger-plus {
   position: absolute;
-  color: #ffffff;
   transition:
-    transform 0.38s cubic-bezier(0.2, 0.8, 0.2, 1),
-    opacity 0.26s ease;
+    transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1.2),
+    opacity 0.2s ease;
 }
 
 .trigger-sparkles {
-  transform: translate(-8px, -8px) scale(0.78);
-  opacity: 0.9;
+  transform: translate(-7px, -7px) scale(0.85);
+  opacity: 1;
 }
 
 .trigger-plus {
-  transform: translate(7px, 7px) rotate(0deg);
+  transform: translate(7px, 7px) rotate(0deg) scale(0.8);
+  opacity: 0.8;
 }
 
 .is-open .trigger-sparkles {
-  transform: translate(-2px, -2px) scale(0.72);
+  transform: translate(0, 0) scale(0.5);
   opacity: 0;
 }
 
 .is-open .trigger-plus {
-  transform: translate(0, 0) rotate(135deg);
+  transform: translate(0, 0) rotate(135deg) scale(1);
+  opacity: 1;
 }
 
 .radial-action {
@@ -165,17 +157,17 @@ const handleAction = (action: FloatingAction) => {
   width: 48px;
   height: 48px;
   opacity: 0;
-  color: var(--panel-fg);
-  background: color-mix(in srgb, var(--panel-bg), transparent 7%);
-  box-shadow:
-    0 16px 46px rgba(0, 0, 0, 0.28),
-    inset 0 0 0 1px var(--soft-line);
-  backdrop-filter: blur(18px) saturate(1.25);
-  transform: translate(0, 0) scale(0.54) rotate(-18deg);
+  color: var(--page-fg);
+  background: color-mix(in srgb, var(--page-fg) 8%, transparent);
+  backdrop-filter: blur(24px) saturate(1.8);
+  -webkit-backdrop-filter: blur(24px) saturate(1.8);
+  border: 1px solid color-mix(in srgb, var(--page-fg) 10%, transparent);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+  transform: translate(0, 0) scale(0.4) rotate(-15deg);
   transition:
-    opacity 0.18s ease var(--delay),
-    transform 0.42s cubic-bezier(0.19, 1, 0.22, 1) var(--delay),
-    background-color 0.26s ease;
+    opacity 0.2s ease var(--delay),
+    transform 0.4s cubic-bezier(0.17, 0.89, 0.32, 1.28) var(--delay),
+    background-color 0.2s ease;
 }
 
 .is-open .radial-action {
@@ -184,43 +176,41 @@ const handleAction = (action: FloatingAction) => {
 }
 
 .radial-action:hover {
-  background: color-mix(in srgb, var(--panel-bg), #ffffff 10%);
-  transform: translate(var(--x), var(--y)) scale(1.08);
+  background: color-mix(in srgb, var(--page-fg) 14%, transparent);
+  transform: translate(var(--x), var(--y)) scale(1.1);
 }
 
-.radial-action:disabled {
-  pointer-events: none;
+.radial-action:active {
+  transform: translate(var(--x), var(--y)) scale(0.95);
 }
 
 .action-label {
   position: absolute;
-  right: 58px;
-  min-height: 30px;
-  display: inline-flex;
-  align-items: center;
-  padding: 0 11px;
-  border-radius: 999px;
-  color: var(--panel-fg);
-  background: color-mix(in srgb, var(--panel-bg), transparent 2%);
-  box-shadow:
-    0 12px 30px rgba(0, 0, 0, 0.22),
-    inset 0 0 0 1px var(--soft-line);
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1;
-  white-space: nowrap;
+  right: 62px;
+  top: 50%;
+  /* Move higher: -50% centers vertically, -14px pushes it up above the button's center line */
+  transform: translateY(-50%) translateY(-14px) translateX(10px) scale(0.9);
   opacity: 0;
-  transform: translateX(8px) scale(0.96);
+  padding: 6px 12px;
+  border-radius: 12px;
+  color: var(--page-fg);
+  background: color-mix(in srgb, var(--card-bg) 85%, transparent);
+  backdrop-filter: blur(16px) saturate(1.5);
+  -webkit-backdrop-filter: blur(16px) saturate(1.5);
+  border: 1px solid color-mix(in srgb, var(--page-fg) 10%, transparent);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
   pointer-events: none;
   transition:
-    opacity 0.18s ease,
-    transform 0.22s ease;
+    opacity 0.2s ease,
+    transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.radial-action:hover .action-label,
-.radial-action:focus-visible .action-label {
+.radial-action:hover .action-label {
   opacity: 1;
-  transform: translateX(0) scale(1);
+  transform: translateY(-50%) translateY(-14px) translateX(0) scale(1);
 }
 
 @media (max-width: 640px) {

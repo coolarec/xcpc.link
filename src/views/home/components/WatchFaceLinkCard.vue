@@ -378,7 +378,7 @@ const showTooltip = (event: PointerEvent | FocusEvent, item: SiteLink) => {
   if (tooltipDescription.value) tooltipDescription.value.textContent = item.websiteDescription
 
   tooltipNode.style.left = `${rect.left + rect.width / 2}px`
-  tooltipNode.style.top = `${rect.top - 12}px`
+  tooltipNode.style.top = `${rect.top - 16}px`
   tooltipNode.classList.add('is-visible')
 }
 

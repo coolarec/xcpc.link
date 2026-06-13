@@ -10,7 +10,7 @@ import GalleryCardPlaceholder from './components/GalleryCardPlaceholder.vue'
 import HeroDock from './components/HeroDock.vue'
 import HeroTiltCards from './components/HeroTiltCards.vue'
 import HorizontalGallery from './components/HorizontalGallery.vue'
-import TwikooComments from './components/TwikooComments.vue'
+import ArtalkComments from './components/ArtalkComments.vue'
 import { fetchHeroDockItems, fetchHomeGalleries } from '../../modules/home/api'
 import type { AsyncVueModule, HeroDockItem, HomeGallerySection, WatchLinksBlock } from '../../types/home'
 
@@ -288,7 +288,7 @@ onBeforeUnmount(() => {
       eyebrow="XCPC.LINK"
       panel-class="comments-panel-shell"
     >
-      <TwikooComments :active="showComments" />
+      <ArtalkComments :active="showComments" :is-dark="!isDayMode" />
     </FloatingPanel>
     <FloatingActionMenu @action="handleFloatingAction" />
   </main>
