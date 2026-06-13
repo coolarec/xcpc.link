@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
+import { nextTick, onBeforeUnmount, onMounted, ref, watch as vueWatch } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { Flip } from 'gsap/Flip'
+import FloatingPanel from './FloatingPanel.vue'
 import type { SiteLink } from '../../../types/home'
 
 gsap.registerPlugin(ScrollTrigger, Flip)
@@ -30,97 +31,14 @@ const props = withDefaults(defineProps<{
 })
 
 const showAllLinks = ref(false)
-const modalRef = ref<HTMLElement | null>(null)
-const modalContentRef = ref<HTMLElement | null>(null)
-const gridItemsRef = ref<HTMLElement[]>([])
 const isMounted = ref(false)
 
-import { watch as vueWatch } from 'vue'
 vueWatch(showAllLinks, (val) => {
-  if (val) {
-    document.body.style.overflow = 'hidden'
-  } else {
-    document.body.style.overflow = ''
-  }
+  document.body.style.overflow = val ? 'hidden' : ''
 })
 
-const toggleAllLinks = async () => {
-  if (showAllLinks.value) {
-    // Snappy iOS closing scale-down
-    if (modalRef.value && modalContentRef.value) {
-      const tl = gsap.timeline({
-        onComplete: () => {
-          showAllLinks.value = false
-        }
-      })
-
-      tl.to(gridItemsRef.value, { 
-        opacity: 0, 
-        y: 8, 
-        duration: 0.15, 
-        stagger: 0.005, 
-        ease: 'power2.in' 
-      })
-      tl.to(modalContentRef.value, { 
-        scale: 0.95, 
-        opacity: 0, 
-        duration: 0.25, 
-        ease: 'power3.inOut' 
-      }, 0.05)
-      tl.to(modalRef.value.querySelector('.modal-backdrop'), { 
-        opacity: 0, 
-        duration: 0.3, 
-        ease: 'none' 
-      }, 0.1)
-    } else {
-      showAllLinks.value = false
-    }
-  } else {
-    // Opening: Coordinated "Bloom" animation
-    showAllLinks.value = true
-    await nextTick()
-
-    if (modalRef.value && modalContentRef.value) {
-      const tl = gsap.timeline()
-      
-      gsap.set(modalRef.value, { opacity: 1 })
-      
-      // 1. Backdrop Fade
-      tl.fromTo(modalRef.value.querySelector('.modal-backdrop'), 
-        { opacity: 0 }, 
-        { opacity: 1, duration: 0.4, ease: 'power2.out' }
-      )
-
-      // 2. Container Pop (starts almost immediately)
-      tl.fromTo(modalContentRef.value, 
-        { scale: 0.94, opacity: 0, y: 20 },
-        { 
-          scale: 1, 
-          opacity: 1, 
-          y: 0, 
-          duration: 0.5, 
-          ease: 'power4.out' 
-        }, 
-        0.05
-      )
-
-      // 3. Items Stagger (starts halfway through container animation)
-      if (gridItemsRef.value.length) {
-        tl.fromTo(gridItemsRef.value, 
-          { y: 15, opacity: 0 },
-          { 
-            y: 0, 
-            opacity: 1, 
-            stagger: 0.012, 
-            duration: 0.4, 
-            ease: 'power2.out', 
-            clearProps: 'all' 
-          },
-          0.25
-        )
-      }
-    }
-  }
+const toggleAllLinks = () => {
+  showAllLinks.value = !showAllLinks.value
 }
 
 const root = ref<HTMLElement | null>(null)
@@ -263,54 +181,43 @@ onBeforeUnmount(() => {
       </div>
     </div>
 
-    <Teleport v-if="isMounted" to=".motion-page">
-      <div v-if="showAllLinks" ref="modalRef" class="links-grid-overlay">
-        <div class="modal-backdrop" @click="toggleAllLinks"></div>
-        
-        <div ref="modalContentRef" class="modal-content">
-          <header class="modal-header">
-            <div class="header-titles">
-              <h3>{{ title }}</h3>
-              <p>{{ eyebrow }}</p>
-            </div>
-            <button class="close-modal" @click="toggleAllLinks">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </button>
-          </header>
+    <FloatingPanel
+      v-if="isMounted"
+      v-model="showAllLinks"
+      :title="title"
+      :eyebrow="eyebrow"
+      panel-class="links-panel-shell"
+    >
+      <div class="links-grid-body">
+        <div
+          v-for="group in links"
+          :key="group.title"
+          class="mac-group-box"
+        >
+          <h4 v-if="group.title" class="group-title">{{ group.title }}</h4>
 
-          <div class="links-grid-body">
-            <div 
-              v-for="group in links" 
-              :key="group.title" 
-              class="mac-group-box"
+          <div class="links-grid">
+            <a
+              v-for="link in group.items"
+              :key="link.websiteUrl"
+              :href="link.websiteUrl"
+              target="_blank"
+              rel="noreferrer"
+              class="grid-link-item"
             >
-              <h4 v-if="group.title" class="group-title">{{ group.title }}</h4>
-              
-              <div class="links-grid">
-                <a 
-                  v-for="link in group.items" 
-                  :key="link.websiteUrl"
-                  ref="gridItemsRef"
-                  :href="link.websiteUrl"
-                  target="_blank"
-                  rel="noreferrer"
-                  class="grid-link-item"
-                >
-                  <div class="item-avatar">
-                    <img v-if="link.avatarUrl" :src="link.avatarUrl" :alt="link.websiteTitle" />
-                    <span v-else>{{ link.websiteTitle.charAt(0) }}</span>
-                  </div>
-                  <div class="item-info">
-                    <h4>{{ link.websiteTitle }}</h4>
-                    <p>{{ link.websiteDescription }}</p>
-                  </div>
-                </a>
+              <div class="item-avatar">
+                <img v-if="link.avatarUrl" :src="link.avatarUrl" :alt="link.websiteTitle" />
+                <span v-else>{{ link.websiteTitle.charAt(0) }}</span>
               </div>
-            </div>
+              <div class="item-info">
+                <h4>{{ link.websiteTitle }}</h4>
+                <p>{{ link.websiteDescription }}</p>
+              </div>
+            </a>
           </div>
         </div>
       </div>
-    </Teleport>
+    </FloatingPanel>
   </section>
 </template>
 
@@ -368,101 +275,10 @@ onBeforeUnmount(() => {
   box-shadow: 0 4px 12px color-mix(in srgb, var(--accent), transparent 70%);
 }
 
-.links-grid-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-backdrop {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-}
-
-.modal-content {
-  position: relative;
-  width: min(720px, calc(100% - 40px));
-  height: min(800px, calc(100dvh - 80px));
-  background: var(--card-bg);
-  border-radius: 24px;
-  box-shadow: 
-    0 24px 64px rgba(0, 0, 0, 0.5),
-    0 0 0 1px var(--soft-line);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.modal-header {
-  padding: 24px 32px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid var(--soft-line);
-  background: var(--card-bg);
-  position: relative;
-  z-index: 10;
-}
-
-.header-titles {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-}
-
-.header-titles h3 {
-  margin: 0;
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--page-fg) !important;
-  letter-spacing: -0.01em;
-}
-
-.header-titles p {
-  margin: 0;
-  color: var(--muted-fg) !important;
-  font-size: 14px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
-.close-modal {
-  background: color-mix(in srgb, var(--page-fg) 10%, transparent);
-  border: 0;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  color: var(--page-fg) !important;
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-.close-modal svg {
-  width: 16px;
-  height: 16px;
-}
-
-.close-modal:hover {
-  background: color-mix(in srgb, var(--page-fg) 18%, transparent);
-  transform: scale(1.05);
-}
-
 .links-grid-body {
-  padding: 24px 32px 40px;
-  overflow-y: auto;
-  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 24px;
 }
 
 .mac-group-box {
@@ -546,21 +362,12 @@ onBeforeUnmount(() => {
 
 @media (max-width: 720px) {
   .links-grid-body {
-    padding: 16px 12px 32px;
     gap: 20px;
   }
 
   .mac-group-box {
     padding: 12px;
     border-radius: 16px;
-  }
-
-  .modal-header {
-    padding: 20px 16px;
-  }
-
-  .header-titles h3 {
-    font-size: 20px;
   }
 
   .links-grid {

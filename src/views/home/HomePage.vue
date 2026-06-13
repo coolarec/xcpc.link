@@ -4,10 +4,13 @@ import { gsap } from 'gsap'
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import AlgorithmBackground from './components/AlgorithmBackground.vue'
+import FloatingActionMenu from './components/FloatingActionMenu.vue'
+import FloatingPanel from './components/FloatingPanel.vue'
 import GalleryCardPlaceholder from './components/GalleryCardPlaceholder.vue'
 import HeroDock from './components/HeroDock.vue'
 import HeroTiltCards from './components/HeroTiltCards.vue'
 import HorizontalGallery from './components/HorizontalGallery.vue'
+import TwikooComments from './components/TwikooComments.vue'
 import { fetchHeroDockItems, fetchHomeGalleries } from '../../modules/home/api'
 import type { AsyncVueModule, HeroDockItem, HomeGallerySection, WatchLinksBlock } from '../../types/home'
 
@@ -36,6 +39,7 @@ const gallerySection = ref<HTMLElement | null>(null)
 const modeToggle = ref<HTMLElement | null>(null)
 const isDayMode = ref(false)
 const isHeroMotionActive = ref(false)
+const showComments = ref(false)
 const galleries = ref<HomeGallerySection[]>([])
 const dockItems = ref<HeroDockItem[]>([])
 
@@ -86,6 +90,12 @@ const scrollToGallery = (index: number): void => {
 
 const startHeroMotion = () => {
   isHeroMotionActive.value = true
+}
+
+const handleFloatingAction = (id: string) => {
+  if (id === 'comments') {
+    showComments.value = true
+  }
 }
 
 const notifyPreloaderReady = () => {
@@ -272,6 +282,15 @@ onBeforeUnmount(() => {
     </section>
 
     <MotionFooter />
+    <FloatingPanel
+      v-model="showComments"
+      title="评论"
+      eyebrow="XCPC.LINK"
+      panel-class="comments-panel-shell"
+    >
+      <TwikooComments :active="showComments" />
+    </FloatingPanel>
+    <FloatingActionMenu @action="handleFloatingAction" />
   </main>
 </template>
 
