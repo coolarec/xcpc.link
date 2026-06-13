@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { X } from '@lucide/vue'
-import { computed, nextTick, ref, watch } from 'vue'
+import { computed, nextTick, ref, watch, onBeforeUnmount } from 'vue'
+import { gsap } from 'gsap'
 
 const props = withDefaults(defineProps<{
   modelValue: boolean
@@ -17,38 +18,109 @@ const emit = defineEmits<{
 }>()
 
 const overlayRef = ref<HTMLElement | null>(null)
+const shellRef = ref<HTMLElement | null>(null)
+const backdropRef = ref<HTMLElement | null>(null)
 const titleId = computed(() => `floating-panel-${props.title.replace(/\W+/g, '-').toLowerCase()}`)
 
 const close = () => {
   emit('update:modelValue', false)
 }
 
-watch(
-  () => props.modelValue,
-  async (isOpen) => {
-    document.body.style.overflow = isOpen ? 'hidden' : ''
+const isMounted = ref(false)
+const isVisible = ref(false)
 
-    if (isOpen) {
-      await nextTick()
-      overlayRef.value?.focus()
+// Use GSAP for the entire transition to eliminate Vue Transition component flashes
+watch(() => props.modelValue, async (isOpen) => {
+  document.body.style.overflow = isOpen ? 'hidden' : ''
+  
+  if (isOpen) {
+    isVisible.value = true
+    await nextTick()
+    
+    if (overlayRef.value && shellRef.value && backdropRef.value) {
+      const tl = gsap.timeline({
+        onComplete: () => {
+          overlayRef.value?.focus()
+        }
+      })
+      
+      // Reset state
+      gsap.set(overlayRef.value, { display: 'grid', opacity: 1 })
+      gsap.set(backdropRef.value, { opacity: 0, backdropFilter: 'blur(0px) saturate(1)', webkitBackdropFilter: 'blur(0px) saturate(1)' })
+      gsap.set(shellRef.value, { opacity: 0, y: 30, scale: 0.95 })
+      
+      tl.to(backdropRef.value, {
+        opacity: 1,
+        backdropFilter: 'blur(20px) saturate(1.8)',
+        webkitBackdropFilter: 'blur(20px) saturate(1.8)',
+        duration: 0.5,
+        ease: 'power2.out'
+      })
+      
+      tl.to(shellRef.value, {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.5,
+        ease: 'power3.out'
+      }, 0.05)
     }
-  },
-  { immediate: true },
-)
+  } else {
+    if (overlayRef.value && shellRef.value && backdropRef.value) {
+      const tl = gsap.timeline({
+        onComplete: () => {
+          isVisible.value = false
+        }
+      })
+      
+      tl.to(shellRef.value, {
+        opacity: 0,
+        y: 20,
+        scale: 0.97,
+        duration: 0.3,
+        ease: 'power2.in'
+      })
+      
+      tl.to(backdropRef.value, {
+        opacity: 0,
+        backdropFilter: 'blur(0px) saturate(1)',
+        webkitBackdropFilter: 'blur(0px) saturate(1)',
+        duration: 0.35,
+        ease: 'power2.inOut'
+      }, 0.1)
+    } else {
+      isVisible.value = false
+    }
+  }
+})
+
+import { onMounted } from 'vue'
+onMounted(() => {
+  isMounted.value = true
+})
+
+onBeforeUnmount(() => {
+  document.body.style.overflow = ''
+})
 </script>
 
 <template>
-  <Transition name="floating-panel">
+  <Teleport v-if="isMounted" to=".motion-page">
     <div
-      v-if="modelValue"
+      v-if="isVisible"
       ref="overlayRef"
       class="floating-panel-overlay"
       tabindex="-1"
       @keydown.esc="close"
     >
-      <button class="floating-panel-backdrop" type="button" aria-label="Close panel" @click="close"></button>
+      <div 
+        ref="backdropRef" 
+        class="floating-panel-backdrop" 
+        @click="close"
+      ></div>
 
       <section
+        ref="shellRef"
         class="floating-panel-shell"
         :class="panelClass"
         role="dialog"
@@ -70,7 +142,7 @@ watch(
         </div>
       </section>
     </div>
-  </Transition>
+  </Teleport>
 </template>
 
 <style scoped>
@@ -89,16 +161,8 @@ watch(
   inset: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.4);
-  /* The persistent final state must be here */
-  backdrop-filter: blur(20px) saturate(1.8);
-  -webkit-backdrop-filter: blur(20px) saturate(1.8);
-  opacity: 1;
-  /* Always have transition on base class for smooth handover */
-  transition: 
-    backdrop-filter 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), 
-    -webkit-backdrop-filter 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), 
-    opacity 0.4s ease;
+  background: rgba(0, 0, 0, 0.45);
+  cursor: pointer;
 }
 
 .floating-panel-shell {
@@ -114,13 +178,8 @@ watch(
   color: var(--page-fg);
   background: var(--card-bg);
   box-shadow:
-    0 32px 84px rgba(0, 0, 0, 0.45),
+    0 32px 84px rgba(0, 0, 0, 0.5),
     0 0 0 1px var(--soft-line);
-  transform: translateY(0) scale(1);
-  opacity: 1;
-  transition: 
-    transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), 
-    opacity 0.45s ease;
 }
 
 .floating-panel-header {
@@ -131,14 +190,14 @@ watch(
   gap: 20px;
   padding: 0 32px;
   border-bottom: 1px solid var(--soft-line);
-  background: color-mix(in srgb, var(--card-bg) 85%, transparent);
-  backdrop-filter: blur(24px) saturate(1.5);
-  -webkit-backdrop-filter: blur(24px) saturate(1.5);
+  background: var(--card-bg);
+  position: relative;
+  z-index: 10;
 }
 
 .floating-panel-titles p {
   margin: 0;
-  color: var(--muted-fg);
+  color: var(--muted-fg) !important;
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -147,7 +206,7 @@ watch(
 
 .floating-panel-titles h3 {
   margin: 2px 0 0;
-  color: var(--page-fg);
+  color: var(--page-fg) !important;
   font-size: 24px;
   font-weight: 800;
   letter-spacing: -0.01em;
@@ -160,9 +219,11 @@ watch(
   display: inline-grid;
   place-items: center;
   border-radius: 999px;
-  color: var(--page-fg);
+  color: var(--page-fg) !important;
   background: color-mix(in srgb, var(--page-fg) 10%, transparent);
   transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  border: 0;
+  cursor: pointer;
 }
 
 .floating-panel-close:hover {
@@ -175,45 +236,6 @@ watch(
   min-height: 0;
   overflow-y: auto;
   padding: 32px;
-}
-
-/* Fixed Transition to eliminate flash and smooth blur */
-.floating-panel-enter-active,
-.floating-panel-leave-active {
-  transition: opacity 0.5s ease;
-}
-
-.floating-panel-enter-active .floating-panel-backdrop,
-.floating-panel-leave-active .floating-panel-backdrop {
-  transition: 
-    backdrop-filter 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), 
-    -webkit-backdrop-filter 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), 
-    opacity 0.5s ease;
-}
-
-.floating-panel-enter-active .floating-panel-shell,
-.floating-panel-leave-active .floating-panel-shell {
-  transition: 
-    transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), 
-    opacity 0.5s ease;
-}
-
-.floating-panel-enter-from,
-.floating-panel-leave-to {
-  opacity: 0 !important;
-}
-
-.floating-panel-enter-from .floating-panel-backdrop,
-.floating-panel-leave-to .floating-panel-backdrop {
-  backdrop-filter: blur(0px) saturate(1) !important;
-  -webkit-backdrop-filter: blur(0px) saturate(1) !important;
-  opacity: 0 !important;
-}
-
-.floating-panel-enter-from .floating-panel-shell,
-.floating-panel-leave-to .floating-panel-shell {
-  transform: translateY(32px) scale(0.95) !important;
-  opacity: 0 !important;
 }
 
 @media (max-width: 720px) {
@@ -235,15 +257,6 @@ watch(
 
   .floating-panel-body {
     padding: 24px 20px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .floating-panel-enter-active,
-  .floating-panel-leave-active,
-  .floating-panel-enter-active .floating-panel-shell,
-  .floating-panel-leave-active .floating-panel-shell {
-    transition: none;
   }
 }
 </style>
