@@ -177,30 +177,43 @@ watch(
   padding: 32px;
 }
 
-/* Logic: enter-from/leave-to defines the HIDDEN state */
+/* Fixed Transition to eliminate flash and smooth blur */
+.floating-panel-enter-active,
+.floating-panel-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.floating-panel-enter-active .floating-panel-backdrop,
+.floating-panel-leave-active .floating-panel-backdrop {
+  transition: 
+    backdrop-filter 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), 
+    -webkit-backdrop-filter 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), 
+    opacity 0.5s ease;
+}
+
+.floating-panel-enter-active .floating-panel-shell,
+.floating-panel-leave-active .floating-panel-shell {
+  transition: 
+    transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), 
+    opacity 0.5s ease;
+}
+
 .floating-panel-enter-from,
 .floating-panel-leave-to {
-  opacity: 0;
-  pointer-events: none;
+  opacity: 0 !important;
 }
 
 .floating-panel-enter-from .floating-panel-backdrop,
 .floating-panel-leave-to .floating-panel-backdrop {
-  backdrop-filter: blur(0px) saturate(1);
-  -webkit-backdrop-filter: blur(0px) saturate(1);
-  opacity: 0;
+  backdrop-filter: blur(0px) saturate(1) !important;
+  -webkit-backdrop-filter: blur(0px) saturate(1) !important;
+  opacity: 0 !important;
 }
 
 .floating-panel-enter-from .floating-panel-shell,
 .floating-panel-leave-to .floating-panel-shell {
-  transform: translateY(24px) scale(0.96);
-  opacity: 0;
-}
-
-/* active classes are now only for keeping the container visible during transition */
-.floating-panel-enter-active,
-.floating-panel-leave-active {
-  pointer-events: none;
+  transform: translateY(32px) scale(0.95) !important;
+  opacity: 0 !important;
 }
 
 @media (max-width: 720px) {

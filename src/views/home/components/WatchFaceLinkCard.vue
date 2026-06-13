@@ -274,8 +274,8 @@ const glide = () => {
 const handlePointerDown = (event: PointerEvent) => {
   if (event.button && event.button !== 0) return
 
-  // If the user is touching the description/mask area, don't intercept.
-  // This allows for normal page scrolling on mobile.
+  // Critical: If the user is touching the description mask, let the event BUBBLE.
+  // This allows the browser to perform global page scrolling.
   const target = event.target as HTMLElement
   if (target.closest('.link-content')) return
 
@@ -353,9 +353,6 @@ const handlePointerUp = (event: PointerEvent) => {
   }
 
   if (suppressClick) {
-    // If we were dragging, we need to prevent the click event that might follow
-    // However, since we used window listeners and no capture, the 'click' event 
-    // will still fire on the original target. handleIconClick will handle it.
     window.setTimeout(() => {
       suppressClick = false
     }, 150)
@@ -552,18 +549,14 @@ onBeforeUnmount(() => {
 }
 
 .link-content {
-  position: relative;
+  position: absolute; /* Decouple from flex padding */
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: 2;
-  align-self: stretch;
-  padding-top: 48px;
-  /* Restore negative margins to fill card width exactly */
-  margin: 0 -32px -36px;
-  padding-left: 32px;
-  padding-right: 32px;
-  padding-bottom: 36px;
+  padding: 48px 32px 36px;
   background: linear-gradient(to bottom, transparent, var(--card-bg) 40%);
-  /* Enable pointer events so we can detect touches but then bail in handlePointerDown */
-  pointer-events: auto;
+  pointer-events: auto; /* Enable so we can detect touches */
   visibility: visible;
   transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
 }
@@ -601,7 +594,7 @@ onBeforeUnmount(() => {
 .watch-card {
   cursor: grab;
   user-select: none;
-  touch-action: none;
+  touch-action: pan-y; /* CRITICAL: Allow global page scroll */
 }
 
 .watch-card.is-dragging {
@@ -615,6 +608,7 @@ onBeforeUnmount(() => {
   overflow: hidden;
   border-radius: inherit;
   background: transparent;
+  touch-action: none; /* Block scroll ONLY on the icons area */
 }
 
 .watch-drag-hint {
@@ -815,10 +809,7 @@ onBeforeUnmount(() => {
   }
 
   .link-content {
-    margin: 0 -24px -28px;
-    padding-left: 24px;
-    padding-right: 24px;
-    padding-bottom: 28px;
+    padding: 28px 24px 28px; /* Correct padding */
   }
 
   .card-ambient-glow {
@@ -830,10 +821,6 @@ onBeforeUnmount(() => {
     font-size: 200px;
     bottom: -5%;
     right: -5%;
-  }
-
-  .link-content {
-    max-width: 100%;
   }
 
   .gallery-card h3 {
@@ -886,10 +873,7 @@ onBeforeUnmount(() => {
   }
 
   .link-content {
-    margin: 0 -20px -24px;
-    padding-left: 20px;
-    padding-right: 20px;
-    padding-bottom: 24px;
+    padding: 24px 20px 24px;
   }
 
   .gallery-card h3 {
