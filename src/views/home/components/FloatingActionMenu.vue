@@ -167,7 +167,9 @@ const handleAction = (action: FloatingAction) => {
   transition:
     opacity 0.2s ease var(--delay),
     transform 0.4s cubic-bezier(0.17, 0.89, 0.32, 1.28) var(--delay),
-    background-color 0.2s ease;
+    background-color 0.2s ease,
+    backdrop-filter 0.3s ease var(--delay),
+    -webkit-backdrop-filter 0.3s ease var(--delay);
 }
 
 .is-open .radial-action {
@@ -205,7 +207,9 @@ const handleAction = (action: FloatingAction) => {
   pointer-events: none;
   transition:
     opacity 0.2s ease,
-    transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+    transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
+    backdrop-filter 0.2s ease,
+    -webkit-backdrop-filter 0.2s ease;
 }
 
 .radial-action:hover .action-label {

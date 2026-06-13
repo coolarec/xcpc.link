@@ -90,8 +90,15 @@ watch(
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.4);
+  /* The persistent final state must be here */
   backdrop-filter: blur(20px) saturate(1.8);
   -webkit-backdrop-filter: blur(20px) saturate(1.8);
+  opacity: 1;
+  /* Always have transition on base class for smooth handover */
+  transition: 
+    backdrop-filter 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), 
+    -webkit-backdrop-filter 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), 
+    opacity 0.4s ease;
 }
 
 .floating-panel-shell {
@@ -109,6 +116,11 @@ watch(
   box-shadow:
     0 32px 84px rgba(0, 0, 0, 0.45),
     0 0 0 1px var(--soft-line);
+  transform: translateY(0) scale(1);
+  opacity: 1;
+  transition: 
+    transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), 
+    opacity 0.45s ease;
 }
 
 .floating-panel-header {
@@ -165,28 +177,30 @@ watch(
   padding: 32px;
 }
 
-/* Fixed Transition to eliminate flash */
-.floating-panel-enter-active,
-.floating-panel-leave-active {
-  transition: opacity 0.3s ease;
-}
-
-.floating-panel-enter-active .floating-panel-shell,
-.floating-panel-leave-active .floating-panel-shell {
-  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
+/* Logic: enter-from/leave-to defines the HIDDEN state */
 .floating-panel-enter-from,
 .floating-panel-leave-to {
   opacity: 0;
+  pointer-events: none;
 }
 
-.floating-panel-enter-from .floating-panel-shell {
-  transform: translateY(20px) scale(0.96);
+.floating-panel-enter-from .floating-panel-backdrop,
+.floating-panel-leave-to .floating-panel-backdrop {
+  backdrop-filter: blur(0px) saturate(1);
+  -webkit-backdrop-filter: blur(0px) saturate(1);
+  opacity: 0;
 }
 
+.floating-panel-enter-from .floating-panel-shell,
 .floating-panel-leave-to .floating-panel-shell {
-  transform: translateY(12px) scale(0.98);
+  transform: translateY(24px) scale(0.96);
+  opacity: 0;
+}
+
+/* active classes are now only for keeping the container visible during transition */
+.floating-panel-enter-active,
+.floating-panel-leave-active {
+  pointer-events: none;
 }
 
 @media (max-width: 720px) {
