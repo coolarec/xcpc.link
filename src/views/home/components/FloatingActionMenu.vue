@@ -16,6 +16,12 @@ const actions: FloatingAction[] = [
   { id: 'settings', label: '设置', icon: Settings, angle: -184, distance: 88 },
 ]
 
+const props = withDefaults(defineProps<{
+  visible?: boolean
+}>(), {
+  visible: true
+})
+
 const emit = defineEmits<{
   action: [id: string]
 }>()
@@ -45,7 +51,13 @@ const handleAction = (action: FloatingAction) => {
 </script>
 
 <template>
-  <div class="floating-action-menu" :class="{ 'is-open': isOpen }">
+  <div 
+    class="floating-action-menu" 
+    :class="{ 
+      'is-open': isOpen,
+      'is-hidden': !visible 
+    }"
+  >
     <button
       v-for="(action, index) in actions"
       :key="action.id"
@@ -84,6 +96,13 @@ const handleAction = (action: FloatingAction) => {
   z-index: 80;
   width: 64px;
   height: 64px;
+  pointer-events: none;
+  transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1.2);
+}
+
+.floating-action-menu.is-hidden {
+  opacity: 0;
+  transform: translateY(20px) scale(0.8);
   pointer-events: none;
 }
 
@@ -219,8 +238,21 @@ const handleAction = (action: FloatingAction) => {
 
 @media (max-width: 640px) {
   .floating-action-menu {
-    right: max(16px, calc(env(safe-area-inset-right) + 14px));
-    bottom: max(16px, calc(env(safe-area-inset-bottom) + 14px));
+    right: max(16px, calc(env(safe-area-inset-right) + 12px));
+    bottom: max(16px, calc(env(safe-area-inset-bottom) + 12px));
+    width: 48px;
+    height: 48px;
+  }
+
+  .radial-trigger {
+    box-shadow:
+      0 12px 32px rgba(0, 0, 0, 0.25),
+      inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  }
+
+  .radial-action {
+    width: 38px;
+    height: 38px;
   }
 
   .action-label {

@@ -274,6 +274,11 @@ const glide = () => {
 const handlePointerDown = (event: PointerEvent) => {
   if (event.button && event.button !== 0) return
 
+  // If the user is touching the description/mask area, don't intercept.
+  // This allows for normal page scrolling on mobile.
+  const target = event.target as HTMLElement
+  if (target.closest('.link-content')) return
+
   stopInertia()
   isDragging = true
   suppressClick = false
@@ -551,12 +556,14 @@ onBeforeUnmount(() => {
   z-index: 2;
   align-self: stretch;
   padding-top: 48px;
+  /* Restore negative margins to fill card width exactly */
   margin: 0 -32px -36px;
   padding-left: 32px;
   padding-right: 32px;
   padding-bottom: 36px;
   background: linear-gradient(to bottom, transparent, var(--card-bg) 40%);
-  pointer-events: none;
+  /* Enable pointer events so we can detect touches but then bail in handlePointerDown */
+  pointer-events: auto;
   visibility: visible;
   transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
 }
@@ -807,6 +814,13 @@ onBeforeUnmount(() => {
     border-radius: 28px;
   }
 
+  .link-content {
+    margin: 0 -24px -28px;
+    padding-left: 24px;
+    padding-right: 24px;
+    padding-bottom: 28px;
+  }
+
   .card-ambient-glow {
     width: 90%;
     filter: blur(60px);
@@ -869,6 +883,13 @@ onBeforeUnmount(() => {
     height: clamp(290px, 72svh, 315px);
     padding: 24px 20px;
     border-radius: 24px;
+  }
+
+  .link-content {
+    margin: 0 -20px -24px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 24px;
   }
 
   .gallery-card h3 {

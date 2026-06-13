@@ -42,6 +42,7 @@ const isHeroMotionActive = ref(false)
 const showComments = ref(false)
 const galleries = ref<HomeGallerySection[]>([])
 const dockItems = ref<HeroDockItem[]>([])
+const isMenuVisible = ref(false)
 
 let context: gsap.Context | undefined
 let removePreloaderListener: (() => void) | undefined
@@ -200,6 +201,16 @@ onMounted(async () => {
       window.scrollTo(0, 0)
     }
 
+    // Scroll-based menu visibility
+    if (second) {
+      ScrollTrigger.create({
+        trigger: second,
+        start: 'top 80%',
+        onEnter: () => { isMenuVisible.value = true },
+        onLeaveBack: () => { isMenuVisible.value = false },
+      })
+    }
+
     return () => media.revert()
   }, root)
 
@@ -290,7 +301,7 @@ onBeforeUnmount(() => {
     >
       <ArtalkComments :active="showComments" :is-dark="!isDayMode" />
     </FloatingPanel>
-    <FloatingActionMenu @action="handleFloatingAction" />
+    <FloatingActionMenu :visible="isMenuVisible" @action="handleFloatingAction" />
   </main>
 </template>
 
