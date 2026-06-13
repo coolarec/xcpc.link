@@ -28,6 +28,7 @@ const asyncCardOptions = (loader: () => Promise<AsyncVueModule<Component>>) => (
 })
 
 const GalleryLinkCard = defineAsyncComponent(asyncCardOptions(() => import('./components/GalleryLinkCard.vue')))
+const GalleryNewsCard = defineAsyncComponent(asyncCardOptions(() => import('./components/GalleryNewsCard.vue')))
 const MotionFooter = defineAsyncComponent(() => import('./components/MotionFooter.vue'))
 const WatchFaceLinkCard = defineAsyncComponent(
   asyncCardOptions(() => import('./components/WatchFaceLinkCard.vue')),
@@ -256,7 +257,7 @@ onBeforeUnmount(() => {
 
     <section ref="gallerySection" class="gallery-section" aria-label="Horizontal algorithm galleries">
       <HorizontalGallery
-        v-for="gallery in galleries"
+        v-for="(gallery, index) in galleries"
         :key="gallery.title"
         :eyebrow="gallery.eyebrow"
         :title="gallery.title"
@@ -291,6 +292,11 @@ onBeforeUnmount(() => {
           :accent="gallery.accent"
         />
       </HorizontalGallery>
+    </section>
+
+    <!-- Standalone News Section -->
+    <section class="news-section" aria-label="Latest News">
+      <GalleryNewsCard />
     </section>
 
     <MotionFooter />
@@ -436,6 +442,15 @@ onBeforeUnmount(() => {
   position: relative;
   z-index: 2;
   background: var(--page-bg);
+}
+
+.news-section {
+  position: relative;
+  z-index: 2;
+  background: var(--page-bg);
+  padding: 0 0 86px;
+  display: flex;
+  justify-content: center;
 }
 
 @media (max-width: 860px) {

@@ -1,0 +1,53 @@
+{
+  "redList": [
+    {
+      "text": "2026 ICPC World Final 亚洲队伍斩获总金牌",
+      "sourceName": "牛客竞赛",
+      "sourceIcon": "https://ac.nowcoder.com/favicon.ico"
+    },
+    {
+      "text": "全国邀请赛重邮站圆满落幕",
+      "sourceName": "公众号",
+      "sourceIcon": "https://res.wx.qq.com/a/wx_fed/assets/res/NTI4MWU5.ico"
+    },
+    {
+      "text": "洛谷 P10000 题达成！纪念与全新里程碑",
+      "sourceName": "洛谷",
+      "sourceIcon": "https://www.luogu.com.cn/favicon.ico"
+    }
+  ],
+  "blackList": [
+    {
+      "text": "某校天梯赛区域作弊查处通报",
+      "sourceName": "官方通告",
+      "sourceIcon": "https://gplt.patest.cn/favicon.ico"
+    },
+    {
+      "text": "代码查重系统更新：新增多维度对比",
+      "sourceName": "GitHub",
+      "sourceIcon": "https://github.githubassets.com/favicons/favicon.svg"
+    },
+    {
+      "text": "关于近期多场线上赛代打情况的声明",
+      "sourceName": "知乎",
+      "sourceIcon": "https://static.zhihu.com/heifetz/favicon.ico"
+    }
+  ],
+  "gossip": [
+    {
+      "text": "某知名命题组又出毒瘤防 AK 题",
+      "sourceName": "贴吧",
+      "sourceIcon": "https://tb1.bdstatic.com/tb/favicon.ico"
+    },
+    {
+      "text": "「我再打最后一年」：一位八年老兵的退役感言",
+      "sourceName": "小红书",
+      "sourceIcon": "https://xiaohongshu.com/favicon.ico"
+    },
+    {
+      "text": "某省赛现场网络波动，主办方连夜修服务器",
+      "sourceName": "Bilibili",
+      "sourceIcon": "https://www.bilibili.com/favicon.ico"
+    }
+  ]
+}
