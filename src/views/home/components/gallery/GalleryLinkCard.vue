@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { SiteLink } from '../../../types/home'
+import type { SiteLink } from '../../../../types/home'
 
 interface GalleryLinkCardProps extends SiteLink {
   accent?: string

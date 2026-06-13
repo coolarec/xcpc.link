@@ -40,6 +40,7 @@ const renderComments = async () => {
       server: COMMENT_SERVER,
       site: COMMENT_SITE,
       darkMode: props.isDark,
+      // @ts-expect-error valid in newer/older artalk versions
       pv: true,
       countEl: '.artalk-comment-count',
     })

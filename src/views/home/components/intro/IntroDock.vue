@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { gsap } from 'gsap'
-import type { HeroDockItem } from '../../../types/home'
+import type { HeroDockItem } from '../../../../types/home'
 
 const props = defineProps<{
   items: HeroDockItem[]

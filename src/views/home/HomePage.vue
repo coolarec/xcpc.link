@@ -3,16 +3,16 @@ import { defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, ref, type C
 import { gsap } from 'gsap'
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import AlgorithmBackground from './components/AlgorithmBackground.vue'
-import FloatingActionMenu from './components/FloatingActionMenu.vue'
-import FloatingPanel from './components/FloatingPanel.vue'
-import GalleryCardPlaceholder from './components/GalleryCardPlaceholder.vue'
-import HeroDock from './components/HeroDock.vue'
-import HeroTiltCards from './components/HeroTiltCards.vue'
-import HorizontalGallery from './components/HorizontalGallery.vue'
-import ArtalkComments from './components/ArtalkComments.vue'
-import { fetchHeroDockItems, fetchHomeGalleries } from '../../modules/home/api'
-import type { AsyncVueModule, HeroDockItem, HomeGallerySection, WatchLinksBlock } from '../../types/home'
+import AlgorithmBackground from './components/intro/AlgorithmBackground.vue'
+import FloatingActionMenu from '../../components/FloatingActionMenu.vue'
+import FloatingPanel from '../../components/FloatingPanel.vue'
+import GalleryCardPlaceholder from './components/gallery/GalleryCardPlaceholder.vue'
+import IntroDock from './components/intro/IntroDock.vue'
+import IntroTiltCards from './components/intro/IntroTiltCards.vue'
+import HorizontalGallery from './components/gallery/HorizontalGallery.vue'
+import ArtalkComments from '../../components/ArtalkComments.vue'
+import { fetchHeroDockItems, fetchHomeGalleries, fetchNewsData } from '../../modules/home/api'
+import type { AsyncVueModule, HeroDockItem, HomeGallerySection, NewsData, WatchLinksBlock } from '../../types/home'
 
 gsap.registerPlugin(ScrollToPlugin, ScrollTrigger)
 
@@ -27,11 +27,11 @@ const asyncCardOptions = (loader: () => Promise<AsyncVueModule<Component>>) => (
   delay: 0,
 })
 
-const GalleryLinkCard = defineAsyncComponent(asyncCardOptions(() => import('./components/GalleryLinkCard.vue')))
-const GalleryNewsCard = defineAsyncComponent(asyncCardOptions(() => import('./components/GalleryNewsCard.vue')))
-const MotionFooter = defineAsyncComponent(() => import('./components/MotionFooter.vue'))
+const GalleryLinkCard = defineAsyncComponent(asyncCardOptions(() => import('./components/gallery/GalleryLinkCard.vue')))
+const GalleryNewsCard = defineAsyncComponent(asyncCardOptions(() => import('./components/news/GalleryNewsCard.vue')))
+const MotionFooter = defineAsyncComponent(() => import('../../components/MotionFooter.vue'))
 const WatchFaceLinkCard = defineAsyncComponent(
-  asyncCardOptions(() => import('./components/WatchFaceLinkCard.vue')),
+  asyncCardOptions(() => import('./components/gallery/WatchFaceLinkCard.vue')),
 )
 
 const pageRoot = ref<HTMLElement | null>(null)
@@ -43,6 +43,7 @@ const isHeroMotionActive = ref(false)
 const showComments = ref(false)
 const galleries = ref<HomeGallerySection[]>([])
 const dockItems = ref<HeroDockItem[]>([])
+const newsData = ref<NewsData | null>(null)
 const isMenuVisible = ref(false)
 
 let context: gsap.Context | undefined
@@ -109,8 +110,16 @@ const notifyPreloaderReady = () => {
 }
 
 onMounted(async () => {
-  dockItems.value = await fetchHeroDockItems()
-  galleries.value = await fetchHomeGalleries()
+  const [dockData, galleryData, news] = await Promise.all([
+    fetchHeroDockItems(),
+    fetchHomeGalleries(),
+    fetchNewsData()
+  ])
+  
+  dockItems.value = dockData
+  galleries.value = galleryData
+  newsData.value = news
+
   await nextTick()
 
   const root = pageRoot.value
@@ -251,8 +260,8 @@ onBeforeUnmount(() => {
         <span class="mode-icon mode-icon-moon" aria-hidden="true"></span>
       </button>
       <p class="demo-label">XCPC.LINK</p>
-      <HeroTiltCards :motion-active="isHeroMotionActive" />
-      <HeroDock :items="dockItems" @select="scrollToGallery" />
+      <IntroTiltCards :motion-active="isHeroMotionActive" />
+      <IntroDock :items="dockItems" @select="scrollToGallery" />
     </section>
 
     <section ref="gallerySection" class="gallery-section" aria-label="Horizontal algorithm galleries">
@@ -295,8 +304,8 @@ onBeforeUnmount(() => {
     </section>
 
     <!-- Standalone News Section -->
-    <section class="news-section" aria-label="Latest News">
-      <GalleryNewsCard />
+    <section class="news-section" aria-label="Latest News" v-if="newsData">
+      <GalleryNewsCard :data="newsData" />
     </section>
 
     <MotionFooter />

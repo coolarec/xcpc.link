@@ -34,6 +34,18 @@ export interface WatchLinksBlock {
   links: SiteLink[]
 }
 
+export interface NewsItem {
+  text: string
+  sourceName: string
+  sourceIcon: string
+}
+
+export interface NewsData {
+  redList: NewsItem[]
+  blackList: NewsItem[]
+  gossip: NewsItem[]
+}
+
 export interface HomeGallerySection {
   eyebrow: string
   title: string

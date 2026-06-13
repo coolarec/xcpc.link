@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { gsap } from 'gsap'
-import { fetchAlgorithmWords } from '../../../modules/home/api'
+import { fetchAlgorithmWords } from '../../../../modules/home/api'
 
 interface BackgroundWord {
   word: string

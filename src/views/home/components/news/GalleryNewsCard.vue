@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import newsData from '../../../modules/home/home-news.json'
 import GalleryNewsColumn from './GalleryNewsColumn.vue'
-const { redList, blackList, gossip } = newsData
+import type { NewsData } from '../../../../types/home'
+
+defineProps<{
+  data: NewsData
+}>()
 </script>
 
 <template>
@@ -13,10 +16,10 @@ const { redList, blackList, gossip } = newsData
       </div>
     </header>
 
-    <div class="bento-grid">
-      <GalleryNewsColumn title="红榜" :items="redList" badge-color="red" />
-      <GalleryNewsColumn title="黑榜" :items="blackList" badge-color="gray" />
-      <GalleryNewsColumn title="实时吃瓜" :items="gossip" badge-color="orange" />
+    <div class="bento-grid" v-if="data">
+      <GalleryNewsColumn title="红榜" :items="data.redList" badge-color="red" />
+      <GalleryNewsColumn title="黑榜" :items="data.blackList" badge-color="gray" />
+      <GalleryNewsColumn title="实时吃瓜" :items="data.gossip" badge-color="orange" />
     </div>
   </div>
 </template>

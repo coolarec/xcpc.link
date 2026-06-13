@@ -3,8 +3,8 @@ import { nextTick, onBeforeUnmount, onMounted, ref, watch as vueWatch } from 'vu
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { Flip } from 'gsap/Flip'
-import FloatingPanel from './FloatingPanel.vue'
-import type { SiteLink } from '../../../types/home'
+import FloatingPanel from '../../../../components/FloatingPanel.vue'
+import type { SiteLink } from '../../../../types/home'
 
 gsap.registerPlugin(ScrollTrigger, Flip)
 

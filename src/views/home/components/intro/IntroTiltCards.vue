@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { gsap } from 'gsap'
-import { fetchHeroPanelEmojis } from '../../../modules/home/api'
+import { fetchHeroPanelEmojis } from '../../../../modules/home/api'
 
 const props = withDefaults(defineProps<{
   motionActive?: boolean
