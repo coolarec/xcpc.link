@@ -60,6 +60,7 @@ export interface HomeGallerySection {
 export interface HeroDockItem {
   label: string
   glyph: string
+  icon?: 'book' | 'rocket' | 'users' | 'pen' | 'trophy'
 }
 
 export interface AsyncVueModule<T> {

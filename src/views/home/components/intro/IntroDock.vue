@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { gsap } from 'gsap'
+import { BookOpenCheck, GraduationCap, PenTool, Rocket, Trophy, type LucideIcon } from '@lucide/vue'
 import type { HeroDockItem } from '../../../../types/home'
 
 const props = defineProps<{
@@ -11,6 +12,16 @@ const emit = defineEmits<{
   select: [index: number]
 }>()
 const dock = ref<HTMLDivElement | null>(null)
+
+const iconMap: Record<NonNullable<HeroDockItem['icon']>, LucideIcon> = {
+  book: BookOpenCheck,
+  rocket: Rocket,
+  users: GraduationCap,
+  pen: PenTool,
+  trophy: Trophy,
+}
+
+const getIcon = (item: HeroDockItem) => item.icon ? iconMap[item.icon] : undefined
 
 let context: gsap.Context | undefined
 let removeListeners: (() => void) | undefined
@@ -146,7 +157,16 @@ onBeforeUnmount(teardownDock)
       :aria-label="`Jump to ${item.label}`"
       @click="emit('select', index)"
     >
-      <span>{{ item.glyph }}</span>
+      <span class="dock-icon-plate">
+        <component
+          :is="getIcon(item)"
+          v-if="getIcon(item)"
+          :size="24"
+          :stroke-width="2.25"
+          aria-hidden="true"
+        />
+        <template v-else>{{ item.glyph }}</template>
+      </span>
     </button>
   </div>
 </template>
@@ -160,8 +180,8 @@ onBeforeUnmount(teardownDock)
   z-index: 8;
   display: flex;
   align-items: flex-end;
-  gap: 13px;
-  height: 104px;
+  gap: 12px;
+  height: 106px;
   padding: 14px 16px 16px;
   border: 0;
   border-radius: 24px;
@@ -177,7 +197,9 @@ onBeforeUnmount(teardownDock)
   inset: 0;
   z-index: 0;
   border-radius: inherit;
-  background: color-mix(in srgb, var(--panel-bg), transparent 22%);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--page-fg), transparent 92%), transparent 44%),
+    color-mix(in srgb, var(--panel-bg), transparent 18%);
   box-shadow: var(--dock-shadow);
   backdrop-filter: blur(30px) saturate(1.42);
   transform: scaleX(var(--dock-stretch));
@@ -194,27 +216,35 @@ onBeforeUnmount(teardownDock)
   place-items: center;
   border: 0;
   border-radius: 18px;
-  background: color-mix(in srgb, var(--panel-bg), var(--page-fg) 8%);
-  color: var(--panel-fg);
-  box-shadow: inset 0 0 0 1px var(--soft-line);
+  background: var(--card-bg);
+  color: var(--page-fg); /* Monochrome (Black in Light, White in Dark) */
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.04),
+    0 0 0 1px var(--soft-line);
   cursor: pointer;
   transform-origin: 50% 115%;
   will-change: transform;
+  overflow: hidden;
+  transition: background-color 0.2s ease;
 }
 
-.hero-dock-item span {
-  width: 38px;
-  aspect-ratio: 1;
+.hero-dock-item:hover {
+  background: color-mix(in srgb, var(--card-bg), var(--page-fg) 2%);
+}
+
+.dock-icon-plate {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
   display: grid;
   place-items: center;
-  border-radius: 14px;
-  background:
-    radial-gradient(circle at 32% 24%, rgba(255, 255, 255, 0.24), transparent 34%),
-    var(--panel-fg);
-  color: var(--page-bg);
-  font-size: 18px;
-  font-weight: 850;
-  line-height: 1;
+}
+
+.dock-icon-plate :deep(svg) {
+  width: 32px;
+  height: 32px;
+  stroke-width: 2;
 }
 
 .hero-dock-item:focus-visible {
@@ -225,16 +255,22 @@ onBeforeUnmount(teardownDock)
 @media (max-width: 860px) {
   .hero-dock {
     height: 98px;
-    padding: 13px 13px 15px;
+    gap: 9px;
+    padding: 13px 12px 15px;
   }
 
   .hero-dock-item {
-    width: 64px;
+    width: 58px;
   }
 
-  .hero-dock-item span {
-    width: 36px;
+  .dock-icon-plate {
+    width: 40px;
     font-size: 16px;
+  }
+
+  .dock-icon-plate :deep(svg) {
+    width: 22px;
+    height: 22px;
   }
 }
 </style>

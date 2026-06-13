@@ -149,6 +149,18 @@
       "description": "算法竞赛里常用的工具入口。",
       "links": [
         {
+          "avatarUrl": "https://cftracker.netlify.app/favicon.ico",
+          "websiteUrl": "https://cftracker.netlify.app/contests",
+          "websiteTitle": "CFTracker",
+          "websiteDescription": "Codeforces 题目与比赛清单。"
+        },
+        {
+          "avatarUrl": "https://img.atcoder.jp/assets/favicon.png",
+          "websiteUrl": "https://kenkoooo.com/atcoder/#/table/",
+          "websiteTitle": "AtCoder题集",
+          "websiteDescription": "AtCoder 题目与比赛清单。"
+        },
+        {
           "avatarUrl": "https://paste.then.ac/favicon.ico",
           "websiteUrl": "https://paste.then.ac/",
           "websiteTitle": "Paste then AC",
@@ -268,18 +280,6 @@
       "title": "榜单",
       "description": "常用的学校、区域赛和综合榜单入口。",
       "links": [
-        {
-          "avatarUrl": "https://cftracker.netlify.app/favicon.ico",
-          "websiteUrl": "https://cftracker.netlify.app/contests",
-          "websiteTitle": "CFTracker",
-          "websiteDescription": "Codeforces 题目与比赛清单。"
-        },
-        {
-          "avatarUrl": "https://img.atcoder.jp/assets/favicon.png",
-          "websiteUrl": "https://kenkoooo.com/atcoder/#/table/",
-          "websiteTitle": "AtCoder题集",
-          "websiteDescription": "AtCoder 题目与比赛清单。"
-        },
         {
           "avatarUrl": "https://unavatar.io/gplt.patest.cn",
           "websiteUrl": "https://gplt.patest.cn/rank/school",

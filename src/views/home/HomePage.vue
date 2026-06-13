@@ -37,6 +37,7 @@ const WatchFaceLinkCard = defineAsyncComponent(
 const pageRoot = ref<HTMLElement | null>(null)
 const tiltSection = ref<HTMLElement | null>(null)
 const gallerySection = ref<HTMLElement | null>(null)
+const newsSection = ref<HTMLElement | null>(null)
 const modeToggle = ref<HTMLElement | null>(null)
 const isDayMode = ref(false)
 const isHeroMotionActive = ref(false)
@@ -77,7 +78,7 @@ const scrollToGallery = (index: number): void => {
   if (!section) return
 
   const galleries = section.querySelectorAll<HTMLElement>('.horizontal-gallery-pin-wrapper')
-  const target = galleries.item(index)
+  const target = galleries.item(index) || newsSection.value
 
   if (!target) return
 
@@ -96,6 +97,14 @@ const startHeroMotion = () => {
 }
 
 const handleFloatingAction = (id: string) => {
+  if (id === 'top') {
+    gsap.to(window, {
+      duration: 1,
+      scrollTo: { y: 0 },
+      ease: 'power3.inOut',
+    })
+  }
+
   if (id === 'comments') {
     showComments.value = true
   }
@@ -304,7 +313,7 @@ onBeforeUnmount(() => {
     </section>
 
     <!-- Standalone News Section -->
-    <section class="news-section" aria-label="Latest News" v-if="newsData">
+    <section ref="newsSection" class="news-section" aria-label="Latest News" v-if="newsData">
       <GalleryNewsCard :data="newsData" />
     </section>
 

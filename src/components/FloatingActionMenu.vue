@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { MessageCircle, Plus, Search, Settings, Sparkles } from '@lucide/vue'
+import { ArrowUp, MessageCircle, Plus, Search, Settings, Sparkles } from '@lucide/vue'
 import { ref, type Component } from 'vue'
 
 type FloatingAction = {
@@ -11,9 +11,10 @@ type FloatingAction = {
 }
 
 const actions: FloatingAction[] = [
-  { id: 'comments', label: '评论', icon: MessageCircle, angle: -92, distance: 94 },
-  { id: 'discover', label: '搜索', icon: Search, angle: -138, distance: 92 },
-  { id: 'settings', label: '设置', icon: Settings, angle: -184, distance: 88 },
+  { id: 'top', label: '顶部', icon: ArrowUp, angle: -90, distance: 104 },
+  { id: 'comments', label: '评论', icon: MessageCircle, angle: -120, distance: 104 },
+  { id: 'discover', label: '搜索', icon: Search, angle: -150, distance: 104 },
+  { id: 'settings', label: '设置', icon: Settings, angle: -180, distance: 104 },
 ]
 
 const props = withDefaults(defineProps<{
@@ -91,12 +92,13 @@ const handleAction = (action: FloatingAction) => {
 <style scoped>
 .floating-action-menu {
   position: fixed;
-  right: max(24px, calc(env(safe-area-inset-right) + 20px));
-  bottom: max(24px, calc(env(safe-area-inset-bottom) + 20px));
-  z-index: 80;
-  width: 64px;
-  height: 64px;
+  right: max(32px, calc(env(safe-area-inset-right) + 24px));
+  bottom: max(32px, calc(env(safe-area-inset-bottom) + 24px));
+  z-index: 9999;
+  width: 56px;
+  height: 56px;
   pointer-events: none;
+  overflow: visible;
   transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1.2);
 }
 
@@ -124,7 +126,7 @@ const handleAction = (action: FloatingAction) => {
   overflow: hidden;
   background: linear-gradient(135deg, #007aff 0%, #5856d6 100%);
   box-shadow:
-    0 20px 48px rgba(0, 0, 0, 0.28),
+    0 12px 32px rgba(0, 0, 0, 0.22),
     inset 0 1px 0 rgba(255, 255, 255, 0.3);
   transition:
     transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1.1),
@@ -134,7 +136,7 @@ const handleAction = (action: FloatingAction) => {
 .radial-trigger:hover {
   transform: translateY(-2px) scale(1.04);
   box-shadow:
-    0 24px 56px rgba(0, 0, 0, 0.35),
+    0 16px 40px rgba(0, 0, 0, 0.28),
     inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
@@ -151,12 +153,12 @@ const handleAction = (action: FloatingAction) => {
 }
 
 .trigger-sparkles {
-  transform: translate(-7px, -7px) scale(0.85);
+  transform: translate(-6px, -6px) scale(0.8);
   opacity: 1;
 }
 
 .trigger-plus {
-  transform: translate(7px, 7px) rotate(0deg) scale(0.8);
+  transform: translate(6px, 6px) rotate(0deg) scale(0.75);
   opacity: 0.8;
 }
 
@@ -171,17 +173,21 @@ const handleAction = (action: FloatingAction) => {
 }
 
 .radial-action {
-  right: 8px;
-  bottom: 8px;
+  right: 4px;
+  bottom: 4px;
   width: 48px;
   height: 48px;
   opacity: 0;
   color: var(--page-fg);
-  background: color-mix(in srgb, var(--page-fg) 8%, transparent);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--page-fg) 12%, transparent), transparent 54%),
+    color-mix(in srgb, var(--panel-bg, var(--card-bg)) 84%, transparent);
   backdrop-filter: blur(24px) saturate(1.8);
   -webkit-backdrop-filter: blur(24px) saturate(1.8);
-  border: 1px solid color-mix(in srgb, var(--page-fg) 10%, transparent);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+  border: 1px solid color-mix(in srgb, var(--page-fg) 14%, transparent);
+  box-shadow:
+    0 14px 34px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 color-mix(in srgb, var(--page-fg) 18%, transparent);
   transform: translate(0, 0) scale(0.4) rotate(-15deg);
   transition:
     opacity 0.2s ease var(--delay),
@@ -197,7 +203,9 @@ const handleAction = (action: FloatingAction) => {
 }
 
 .radial-action:hover {
-  background: color-mix(in srgb, var(--page-fg) 14%, transparent);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--page-fg) 18%, transparent), transparent 54%),
+    color-mix(in srgb, var(--panel-bg, var(--card-bg)) 78%, transparent);
   transform: translate(var(--x), var(--y)) scale(1.1);
 }
 

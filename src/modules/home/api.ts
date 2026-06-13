@@ -52,9 +52,11 @@ const normalizeGallery = (gallery: HomeGallerySectionSource): HomeGallerySection
 })
 
 const heroDockItems: HeroDockItem[] = [
-  { label: 'Graph', glyph: 'G' },
-  { label: 'String', glyph: 'S' },
-  { label: 'Struct', glyph: 'D' },
+  { label: '入门', glyph: 'B', icon: 'book' },
+  { label: '进阶', glyph: 'A', icon: 'rocket' },
+  { label: '学生教练', glyph: 'C', icon: 'users' },
+  { label: '出题人', glyph: 'P', icon: 'pen' },
+  { label: '榜单', glyph: 'R', icon: 'trophy' },
 ]
 
 const heroPanelEmojis: string[] = ['🏆', '💻', '🧠', '🧩', '🥇', '⏱️']

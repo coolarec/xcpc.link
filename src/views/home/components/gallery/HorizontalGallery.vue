@@ -98,7 +98,7 @@ onMounted(async () => {
         horizontalScrollLength = Math.max(0, stripElement.scrollWidth - wrapperElement.clientWidth)
       }
 
-      const getScrollDistance = () => horizontalScrollLength * 1.05
+      const getScrollDistance = () => horizontalScrollLength * 1.35 // Increased multiplier for more precise scrolling room
       const cards = () => gsap.utils.toArray<HTMLElement>(stripElement.children)
       const getStartX = () => (isReversed() ? -horizontalScrollLength : 0)
       const getEndX = () => (isReversed() ? 0 : -horizontalScrollLength)
@@ -118,6 +118,8 @@ onMounted(async () => {
           start: 'top top',
           end: () => `+=${getScrollDistance()}`,
           invalidateOnRefresh: true,
+          fastScrollEnd: true,
+          preventOverlaps: true,
         },
         x: getEndX,
         force3D: true,
