@@ -56,7 +56,7 @@ const getGalleryWatches = (gallery: HomeGallerySection): WatchLinksBlock[] => {
 const getGroups = (gallery: HomeGallerySection): LinkGroup[] => [
   {
     id: `${gallery.title}-featured`,
-    title: '精选资源',
+    title: '无分组',
     links: gallery.cards,
   },
   ...getGalleryWatches(gallery).map((watch, index) => ({
@@ -201,7 +201,6 @@ const handleFloatingAction = (id: string) => {
 
         <div class="title-row">
           <div>
-            <p class="kicker">Lite</p>
             <div class="brand-title">
               <img class="brand-mark" src="/favicon.svg" alt="" width="52" height="52" aria-hidden="true" />
               <h1>
@@ -494,6 +493,7 @@ const handleFloatingAction = (id: string) => {
 }
 
 .header-actions {
+  min-width: 0;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -566,6 +566,7 @@ const handleFloatingAction = (id: string) => {
 
 .view-switch {
   min-height: 42px;
+  box-sizing: border-box;
   display: inline-grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   padding: 3px;
@@ -576,6 +577,7 @@ const handleFloatingAction = (id: string) => {
 
 .theme-segment {
   min-height: 42px;
+  box-sizing: border-box;
   display: inline-grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   padding: 3px;
@@ -585,6 +587,7 @@ const handleFloatingAction = (id: string) => {
 }
 
 .theme-option {
+  box-sizing: border-box;
   min-width: 58px;
   min-height: 36px;
   padding: 0 12px;
@@ -609,6 +612,7 @@ const handleFloatingAction = (id: string) => {
 }
 
 .view-button {
+  box-sizing: border-box;
   min-width: 64px;
   min-height: 36px;
   padding: 0 10px;
@@ -1004,15 +1008,23 @@ const handleFloatingAction = (id: string) => {
   }
 
   .title-row {
+    width: 100%;
+    min-width: 0;
     align-items: flex-start;
     flex-direction: column;
     gap: 16px;
+  }
+
+  .title-row > div:first-child {
+    width: 100%;
+    min-width: 0;
   }
 
   .brand-title {
     --brand-title-size: clamp(31px, 10vw, 42px);
 
     width: 100%;
+    min-width: 0;
     align-items: flex-start;
     gap: 10px;
   }
@@ -1050,6 +1062,12 @@ const handleFloatingAction = (id: string) => {
 
   .view-switch {
     min-width: 0;
+  }
+
+  .theme-option,
+  .view-button {
+    min-width: 0;
+    padding-inline: 6px;
   }
 
   .category-header {
