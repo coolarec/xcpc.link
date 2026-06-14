@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ArrowUp, MessageCircle, Plus, Search, Settings, Sparkles } from '@lucide/vue'
+import { ArrowUp, MessageCircle, Plus, Sparkles } from '@lucide/vue'
 import { ref, type Component } from 'vue'
 
 type FloatingAction = {
@@ -11,10 +11,8 @@ type FloatingAction = {
 }
 
 const actions: FloatingAction[] = [
-  { id: 'top', label: '顶部', icon: ArrowUp, angle: -90, distance: 104 },
-  { id: 'comments', label: '评论', icon: MessageCircle, angle: -120, distance: 104 },
-  { id: 'discover', label: '搜索', icon: Search, angle: -150, distance: 104 },
-  { id: 'settings', label: '设置', icon: Settings, angle: -180, distance: 104 },
+  { id: 'top', label: '顶部', icon: ArrowUp, angle: -96, distance: 92 },
+  { id: 'comments', label: '评论', icon: MessageCircle, angle: -156, distance: 92 },
 ]
 
 const props = withDefaults(defineProps<{
@@ -124,20 +122,30 @@ const handleAction = (action: FloatingAction) => {
 .radial-trigger {
   inset: 0;
   overflow: hidden;
-  background: linear-gradient(135deg, #007aff 0%, #5856d6 100%);
+  color: var(--page-fg);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--page-fg) 12%, transparent), transparent 58%),
+    color-mix(in srgb, var(--panel-bg, var(--card-bg)) 88%, transparent);
+  border: 1px solid color-mix(in srgb, var(--page-fg) 13%, transparent);
+  backdrop-filter: blur(24px) saturate(1.55);
+  -webkit-backdrop-filter: blur(24px) saturate(1.55);
   box-shadow:
-    0 12px 32px rgba(0, 0, 0, 0.22),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    0 10px 26px color-mix(in srgb, var(--page-fg) 12%, transparent),
+    inset 0 1px 0 color-mix(in srgb, #ffffff 38%, transparent);
   transition:
     transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1.1),
+    background 0.25s ease,
     box-shadow 0.4s ease;
 }
 
 .radial-trigger:hover {
   transform: translateY(-2px) scale(1.04);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--page-fg) 16%, transparent), transparent 58%),
+    color-mix(in srgb, var(--panel-bg, var(--card-bg)) 82%, transparent);
   box-shadow:
-    0 16px 40px rgba(0, 0, 0, 0.28),
-    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    0 14px 30px color-mix(in srgb, var(--page-fg) 15%, transparent),
+    inset 0 1px 0 color-mix(in srgb, #ffffff 46%, transparent);
 }
 
 .radial-trigger:active {
@@ -180,14 +188,14 @@ const handleAction = (action: FloatingAction) => {
   opacity: 0;
   color: var(--page-fg);
   background:
-    linear-gradient(180deg, color-mix(in srgb, var(--page-fg) 12%, transparent), transparent 54%),
-    color-mix(in srgb, var(--panel-bg, var(--card-bg)) 84%, transparent);
-  backdrop-filter: blur(24px) saturate(1.8);
-  -webkit-backdrop-filter: blur(24px) saturate(1.8);
-  border: 1px solid color-mix(in srgb, var(--page-fg) 14%, transparent);
+    linear-gradient(180deg, color-mix(in srgb, var(--page-fg) 10%, transparent), transparent 54%),
+    color-mix(in srgb, var(--panel-bg, var(--card-bg)) 88%, transparent);
+  backdrop-filter: blur(22px) saturate(1.5);
+  -webkit-backdrop-filter: blur(22px) saturate(1.5);
+  border: 1px solid color-mix(in srgb, var(--page-fg) 12%, transparent);
   box-shadow:
-    0 14px 34px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 color-mix(in srgb, var(--page-fg) 18%, transparent);
+    0 10px 26px color-mix(in srgb, var(--page-fg) 12%, transparent),
+    inset 0 1px 0 color-mix(in srgb, #ffffff 34%, transparent);
   transform: translate(0, 0) scale(0.4) rotate(-15deg);
   transition:
     opacity 0.2s ease var(--delay),
@@ -204,8 +212,8 @@ const handleAction = (action: FloatingAction) => {
 
 .radial-action:hover {
   background:
-    linear-gradient(180deg, color-mix(in srgb, var(--page-fg) 18%, transparent), transparent 54%),
-    color-mix(in srgb, var(--panel-bg, var(--card-bg)) 78%, transparent);
+    linear-gradient(180deg, color-mix(in srgb, var(--page-fg) 15%, transparent), transparent 54%),
+    color-mix(in srgb, var(--panel-bg, var(--card-bg)) 82%, transparent);
   transform: translate(var(--x), var(--y)) scale(1.1);
 }
 
@@ -227,7 +235,7 @@ const handleAction = (action: FloatingAction) => {
   backdrop-filter: blur(16px) saturate(1.5);
   -webkit-backdrop-filter: blur(16px) saturate(1.5);
   border: 1px solid color-mix(in srgb, var(--page-fg) 10%, transparent);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 22px color-mix(in srgb, var(--page-fg) 10%, transparent);
   font-size: 13px;
   font-weight: 700;
   white-space: nowrap;
@@ -254,8 +262,8 @@ const handleAction = (action: FloatingAction) => {
 
   .radial-trigger {
     box-shadow:
-      0 12px 32px rgba(0, 0, 0, 0.25),
-      inset 0 1px 0 rgba(255, 255, 255, 0.25);
+      0 10px 24px color-mix(in srgb, var(--page-fg) 14%, transparent),
+      inset 0 1px 0 color-mix(in srgb, #ffffff 32%, transparent);
   }
 
   .radial-action {

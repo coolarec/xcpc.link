@@ -4,12 +4,13 @@ import { defineStore } from 'pinia'
 export type ThemeMode = 'system' | 'day' | 'night'
 
 const STORAGE_KEY = 'xcpc-link-theme-mode'
+const DEFAULT_THEME_MODE: ThemeMode = 'system'
 
 const readStoredMode = (): ThemeMode => {
-  if (typeof window === 'undefined') return 'system'
+  if (typeof window === 'undefined') return DEFAULT_THEME_MODE
 
   const value = window.localStorage.getItem(STORAGE_KEY)
-  return value === 'day' || value === 'night' || value === 'system' ? value : 'system'
+  return value === 'day' || value === 'night' || value === 'system' ? value : DEFAULT_THEME_MODE
 }
 
 export const useThemeStore = defineStore('theme', () => {

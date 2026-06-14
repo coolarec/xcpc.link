@@ -4,7 +4,7 @@ import { ArrowLeft, ExternalLink } from '@lucide/vue'
 import { useHomeContentStore } from '../../stores/homeContent'
 import { useLitePreferencesStore } from '../../stores/litePreferences'
 import { useThemeStore, type ThemeMode } from '../../stores/theme'
-import type { HomeGallerySection, SiteLink, WatchLinksBlock } from '../../types/home'
+import type { HomeGallerySection, NewsItem, SiteLink, WatchLinksBlock } from '../../types/home'
 
 interface LinkGroup {
   id: string
@@ -12,14 +12,20 @@ interface LinkGroup {
   links: SiteLink[]
 }
 
+interface NewsGroup {
+  id: string
+  title: string
+  items: NewsItem[]
+}
+
 const linkColumnCount = ref(6)
 const homeContentStore = useHomeContentStore()
 const litePreferencesStore = useLitePreferencesStore()
 const themeStore = useThemeStore()
 const themeOptions: Array<{ label: string; value: ThemeMode }> = [
+  { label: '系统', value: 'system' },
   { label: '日间', value: 'day' },
   { label: '夜间', value: 'night' },
-  { label: '系统', value: 'system' },
 ]
 
 const getGalleryWatches = (gallery: HomeGallerySection): WatchLinksBlock[] => {
@@ -42,6 +48,20 @@ const getGroups = (gallery: HomeGallerySection): LinkGroup[] => [
 
 const getGalleryLinkCount = (gallery: HomeGallerySection): number =>
   getGroups(gallery).reduce((total, group) => total + group.links.length, 0)
+
+const getNewsGroups = (): NewsGroup[] => {
+  const news = homeContentStore.newsData
+  if (!news) return []
+
+  return [
+    { id: 'red-list', title: '红榜', items: news.redList },
+    { id: 'black-list', title: '黑榜', items: news.blackList },
+    { id: 'live-list', title: '实时榜', items: news.gossip },
+  ]
+}
+
+const getNewsCount = (): number =>
+  getNewsGroups().reduce((total, group) => total + group.items.length, 0)
 
 const totalLinks = computed(() =>
   homeContentStore.galleries.reduce((total, gallery) => total + getGalleryLinkCount(gallery), 0),
@@ -211,6 +231,52 @@ watch(() => litePreferencesStore.viewMode, updateLinkColumnCount)
                   class="resource-link resource-placeholder"
                   aria-hidden="true"
                 ></span>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section
+          v-if="!homeContentStore.isLoading && !homeContentStore.loadError && homeContentStore.newsData"
+          class="category-section news-category"
+        >
+          <header class="category-header">
+            <div>
+              <p>XCPC Board</p>
+              <h2>圈内播报</h2>
+            </div>
+            <span>{{ getNewsCount() }}</span>
+          </header>
+
+          <div class="group-list">
+            <section v-for="group in getNewsGroups()" :key="group.id" class="link-group news-group">
+              <header class="group-header">
+                <h3>{{ group.title }}</h3>
+                <span>{{ group.items.length }}</span>
+              </header>
+
+              <div class="links news-links">
+                <div v-for="item in group.items" :key="`${group.id}-${item.text}`" class="resource-link news-row">
+                  <span class="resource-copy">
+                    <span class="resource-title">{{ item.text }}</span>
+                  </span>
+
+                  <span class="news-source">
+                    <span class="favicon" aria-hidden="true">
+                      <span>{{ item.sourceName.charAt(0) }}</span>
+                      <img
+                        v-if="item.sourceIcon"
+                        :src="item.sourceIcon"
+                        :alt="item.sourceName"
+                        width="24"
+                        height="24"
+                        loading="lazy"
+                        @error="hideBrokenIcon"
+                      />
+                    </span>
+                    <span>{{ item.sourceName }}</span>
+                  </span>
+                </div>
               </div>
             </section>
           </div>
@@ -650,6 +716,54 @@ watch(() => litePreferencesStore.viewMode, updateLinkColumnCount)
   white-space: nowrap;
 }
 
+.news-category {
+  margin-top: 0;
+}
+
+.news-links {
+  grid-template-columns: 1fr;
+}
+
+.news-row {
+  min-height: 48px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  cursor: default;
+}
+
+.news-row:hover,
+.news-row:focus-visible {
+  z-index: 1;
+}
+
+.news-source {
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.news-source .favicon {
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+}
+
+.news-source > span:last-child {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lite-page[data-mode='detail'] .news-row {
+  min-height: 56px;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
 .state-panel {
   min-height: 220px;
   display: grid;
@@ -760,6 +874,15 @@ watch(() => litePreferencesStore.viewMode, updateLinkColumnCount)
 
   .resource-link {
     margin-left: 0;
+  }
+
+  .news-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .news-source {
+    justify-content: flex-start;
   }
 
   .resource-link::before,

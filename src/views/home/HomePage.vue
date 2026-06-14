@@ -48,9 +48,9 @@ let removePreloaderListener: (() => void) | undefined
 const homeContentStore = useHomeContentStore()
 const themeStore = useThemeStore()
 const themeOptions: Array<{ label: string; value: ThemeMode }> = [
+  { label: '系统', value: 'system' },
   { label: '日间', value: 'day' },
   { label: '夜间', value: 'night' },
-  { label: '系统', value: 'system' },
 ]
 const dockItemsWithTooltips = computed(() =>
   homeContentStore.dockItems.map((item, index) => ({

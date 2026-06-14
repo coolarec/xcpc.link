@@ -11,7 +11,7 @@ const props = withDefaults(defineProps<{
 })
 
 const COMMENT_SERVER = 'https://comment.xcpc.link'
-const COMMENT_SITE = 'XCPC.LINK'
+const COMMENT_SITE = 'AWESOME XCPC'
 
 const commentRef = ref<HTMLElement | null>(null)
 const isLoading = ref(false)

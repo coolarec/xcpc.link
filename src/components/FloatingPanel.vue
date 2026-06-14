@@ -108,7 +108,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <Teleport v-if="isMounted" to=".motion-page">
+  <Teleport v-if="isMounted" to="body">
     <Transition
       :css="false"
       @before-enter="beforeEnter"
@@ -155,7 +155,7 @@ onBeforeUnmount(() => {
 .floating-panel-overlay {
   position: fixed;
   inset: 0;
-  z-index: 9999;
+  z-index: 10020;
   display: grid;
   place-items: center;
   padding: 40px 20px;
