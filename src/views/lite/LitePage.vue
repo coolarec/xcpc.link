@@ -1,20 +1,54 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
+import { ArrowLeft, ExternalLink } from '@lucide/vue'
 import { fetchHomeGalleries } from '../../modules/home/api'
-import type { HomeGallerySection, WatchLinksBlock } from '../../types/home'
-import { ArrowLeft, Star } from '@lucide/vue'
+import type { HomeGallerySection, SiteLink, WatchLinksBlock } from '../../types/home'
+
+type ViewMode = 'compact' | 'detail'
+
+interface LinkGroup {
+  id: string
+  title: string
+  links: SiteLink[]
+}
 
 const galleries = ref<HomeGallerySection[]>([])
 const isLoading = ref(true)
+const loadError = ref('')
+const viewMode = ref<ViewMode>('compact')
 
 const getGalleryWatches = (gallery: HomeGallerySection): WatchLinksBlock[] => {
   if (gallery.watches?.length) return gallery.watches
   return gallery.watch ? [gallery.watch] : []
 }
 
+const getGroups = (gallery: HomeGallerySection): LinkGroup[] => [
+  {
+    id: `${gallery.title}-featured`,
+    title: '精选资源',
+    links: gallery.cards,
+  },
+  ...getGalleryWatches(gallery).map((watch, index) => ({
+    id: `${gallery.title}-${watch.title}-${index}`,
+    title: watch.title || '相关推荐',
+    links: watch.links,
+  })),
+]
+
+const getGalleryLinkCount = (gallery: HomeGallerySection): number =>
+  getGroups(gallery).reduce((total, group) => total + group.links.length, 0)
+
+const totalLinks = computed(() => galleries.value.reduce((total, gallery) => total + getGalleryLinkCount(gallery), 0))
+
+const setViewMode = (mode: ViewMode) => {
+  viewMode.value = mode
+}
+
 onMounted(async () => {
   try {
     galleries.value = await fetchHomeGalleries()
+  } catch {
+    loadError.value = '资源加载失败'
   } finally {
     isLoading.value = false
   }
@@ -22,304 +56,485 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="lite-page theme-scope">
-    <div class="lite-container">
-      <header class="lite-header">
-        <router-link to="/" class="back-btn">
-          <ArrowLeft :size="18" />
-          <span>返回主站</span>
+  <div class="lite-page" :data-mode="viewMode">
+    <div class="page-shell">
+      <header class="page-header">
+        <router-link class="back-link" to="/" aria-label="返回主站">
+          <ArrowLeft :size="17" aria-hidden="true" />
+          <span>主站</span>
         </router-link>
-        <div class="header-content">
-          <h1>XCPC.LINK</h1>
-          <p>高密度导航模式 · 全量资源</p>
+
+        <div class="title-row">
+          <div>
+            <p class="kicker">Lite</p>
+            <div class="brand-title">
+              <img class="brand-mark" src="/favicon.svg" alt="" width="52" height="52" aria-hidden="true" />
+              <h1>XCPC.LINK</h1>
+            </div>
+          </div>
+
+          <div class="view-switch" role="group" aria-label="显示模式">
+            <button
+              type="button"
+              class="view-button"
+              :class="{ 'is-active': viewMode === 'compact' }"
+              :aria-pressed="viewMode === 'compact'"
+              @click="setViewMode('compact')"
+            >
+              简洁
+            </button>
+            <button
+              type="button"
+              class="view-button"
+              :class="{ 'is-active': viewMode === 'detail' }"
+              :aria-pressed="viewMode === 'detail'"
+              @click="setViewMode('detail')"
+            >
+              详细
+            </button>
+          </div>
         </div>
+
+        <p class="meta-line">{{ galleries.length }} 分类 · {{ totalLinks }} 链接</p>
       </header>
 
-      <main class="lite-content" v-if="!isLoading">
-        <section 
-          v-for="gallery in galleries" 
-          :key="gallery.title" 
-          class="category-block"
-        >
-          <div class="category-header">
-            <h2 class="category-title">{{ gallery.title }}</h2>
-          </div>
+      <main class="directory">
+        <section v-if="isLoading" class="state-panel" role="status" aria-live="polite">
+          <span class="spinner" aria-hidden="true"></span>
+          <span>Loading</span>
+        </section>
 
-          <!-- Group 1: Featured Links -->
-          <div class="sub-group">
-            <h3 class="sub-group-title">精选资源</h3>
-            <div class="compact-grid">
-              <a 
-                v-for="link in gallery.cards" 
-                :key="link.websiteUrl"
-                :href="link.websiteUrl"
-                target="_blank"
-                class="grid-item"
-              >
-                <div class="item-top">
-                  <div class="item-icon-box">
-                    <img v-if="link.avatarUrl" :src="link.avatarUrl" :alt="link.websiteTitle" loading="lazy" />
-                    <span v-else>{{ link.websiteTitle.charAt(0) }}</span>
-                  </div>
-                  <span class="item-name">{{ link.websiteTitle }}</span>
-                </div>
-                <p class="item-desc">{{ link.websiteDescription }}</p>
-              </a>
-            </div>
-          </div>
+        <section v-else-if="loadError" class="state-panel" role="alert">
+          <span>{{ loadError }}</span>
+        </section>
 
-          <!-- Group 2+: Additional Recommendation Groups (Watches) -->
-          <div 
-            v-for="(watchGroup, idx) in getGalleryWatches(gallery)"
-            :key="idx"
-            class="sub-group"
-          >
-            <h3 class="sub-group-title">{{ watchGroup.title || '相关推荐' }}</h3>
-            <div class="compact-grid">
-              <a 
-                v-for="link in watchGroup.links" 
-                :key="link.websiteUrl"
-                :href="link.websiteUrl"
-                target="_blank"
-                class="grid-item is-rec"
-              >
-                <div class="item-top">
-                  <div class="item-icon-box">
-                    <div class="rec-star"><Star :size="8" fill="currentColor" /></div>
-                    <img v-if="link.avatarUrl" :src="link.avatarUrl" :alt="link.websiteTitle" loading="lazy" />
-                    <span v-else>{{ link.websiteTitle.charAt(0) }}</span>
-                  </div>
-                  <span class="item-name">{{ link.websiteTitle }}</span>
-                </div>
-                <p class="item-desc">{{ link.websiteDescription }}</p>
-              </a>
+        <section v-for="gallery in galleries" v-else :key="gallery.title" class="category-section">
+          <header class="category-header">
+            <div>
+              <p>{{ gallery.eyebrow }}</p>
+              <h2>{{ gallery.title }}</h2>
             </div>
+            <span>{{ getGalleryLinkCount(gallery) }}</span>
+          </header>
+
+          <div class="group-list">
+            <section v-for="group in getGroups(gallery)" :key="group.id" class="link-group">
+              <header class="group-header">
+                <h3>{{ group.title }}</h3>
+                <span>{{ group.links.length }}</span>
+              </header>
+
+              <div class="links">
+                <a
+                  v-for="link in group.links"
+                  :key="link.websiteUrl"
+                  class="resource-link"
+                  :href="link.websiteUrl"
+                  target="_blank"
+                  rel="noreferrer"
+                  :aria-label="`打开 ${link.websiteTitle}`"
+                >
+                  <span class="favicon" aria-hidden="true">
+                    <img
+                      v-if="link.avatarUrl"
+                      :src="link.avatarUrl"
+                      :alt="link.websiteTitle"
+                      width="28"
+                      height="28"
+                      loading="lazy"
+                    />
+                    <span v-else>{{ link.websiteTitle.charAt(0) }}</span>
+                  </span>
+
+                  <span class="resource-copy">
+                    <span class="resource-title">{{ link.websiteTitle }}</span>
+                    <span v-if="viewMode === 'detail'" class="resource-description">
+                      {{ link.websiteDescription }}
+                    </span>
+                  </span>
+
+                  <ExternalLink class="resource-action" :size="15" aria-hidden="true" />
+                </a>
+              </div>
+            </section>
           </div>
         </section>
       </main>
-
-      <div v-else class="lite-loading">
-        <div class="spinner"></div>
-      </div>
-
-      <footer class="lite-footer">
-        <p>© 2026 XCPC.LINK · High Density</p>
-      </footer>
     </div>
   </div>
 </template>
 
 <style scoped>
 .lite-page {
-  min-height: 100vh;
-  background: var(--page-bg);
-  color: var(--page-fg);
-  padding: 64px 32px;
+  --page: #f5f5f7;
+  --surface: #ffffff;
+  --surface-subtle: #fbfbfd;
+  --text: #1d1d1f;
+  --muted: #6e6e73;
+  --secondary: #86868b;
+  --line: rgba(0, 0, 0, 0.08);
+  --focus: #0071e3;
+
+  min-height: 100dvh;
+  background: var(--page);
+  color: var(--text);
 }
 
-.lite-container {
-  max-width: 1140px;
+.page-shell {
+  width: min(100% - 32px, 1240px);
   margin: 0 auto;
+  padding: 22px 0 48px;
 }
 
-.lite-header {
-  margin-bottom: 64px;
+.page-header {
+  display: grid;
+  gap: 12px;
+  padding: 2px 0 18px;
 }
 
-.back-btn {
+.back-link {
+  width: fit-content;
+  min-height: 44px;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  color: var(--muted-fg);
+  gap: 8px;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 650;
   text-decoration: none;
-  font-size: 13px;
-  font-weight: 700;
-  margin-bottom: 20px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
 }
 
-.back-btn:hover {
-  color: var(--page-fg);
+.back-link:hover,
+.back-link:focus-visible {
+  color: var(--text);
 }
 
-.header-content h1 {
-  font-family: "Sora", sans-serif;
-  font-weight: 800;
-  font-size: 36px;
-  letter-spacing: -0.02em;
-  margin: 0;
-}
-
-.header-content p {
-  color: var(--muted-fg);
-  font-size: 15px;
-  margin: 6px 0 0;
-  font-weight: 500;
-}
-
-.category-block {
-  margin-bottom: 64px;
-}
-
-.category-header {
-  margin-bottom: 24px;
-  border-bottom: 1px solid var(--soft-line);
-  padding-bottom: 12px;
-}
-
-.category-title {
-  font-family: "Sora", sans-serif;
-  font-weight: 800;
-  font-size: 26px;
-  letter-spacing: -0.01em;
-  margin: 0;
-}
-
-.sub-group {
-  margin-bottom: 44px;
-}
-
-.sub-group:last-child {
-  margin-bottom: 0;
-}
-
-.sub-group-title {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--muted-fg);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin: 0 0 20px 4px;
-}
-
-.compact-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 16px;
-}
-
-.grid-item {
+.title-row {
   display: flex;
-  flex-direction: column;
-  padding: 18px;
-  background: var(--card-bg);
-  border: 1px solid var(--soft-line);
-  border-radius: 18px;
-  text-decoration: none;
-  color: inherit;
-  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
 }
 
-.grid-item:hover {
-  background: color-mix(in srgb, var(--page-fg) 3%, transparent);
-  transform: translateY(-3px);
-  box-shadow: 
-    0 12px 32px rgba(0, 0, 0, 0.04),
-    0 0 0 1px var(--page-fg);
+.kicker,
+.meta-line,
+.category-header p,
+.group-header span {
+  margin: 0;
+  color: var(--secondary);
+  font-size: 13px;
+  font-weight: 650;
 }
 
-.item-top {
+.brand-title {
+  --brand-title-size: clamp(38px, 6vw, 58px);
+
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 12px;
+  margin-top: 3px;
 }
 
-.item-icon-box {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
+.brand-title h1 {
+  margin: 0;
+  font-family: "Sora", -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+  font-size: var(--brand-title-size);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.brand-mark {
+  width: calc(var(--brand-title-size) * 0.92);
+  height: calc(var(--brand-title-size) * 0.92);
+  flex: 0 0 auto;
+  display: block;
+  transform: translateY(-3px);
+}
+
+.view-switch {
+  min-height: 42px;
+  display: inline-grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+}
+
+.view-button {
+  min-width: 82px;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 999px;
+  color: var(--muted);
+  background: transparent;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.view-button.is-active {
+  color: var(--text);
+  background: #f0f0f2;
+}
+
+.directory {
+  display: grid;
+  gap: 10px;
+}
+
+.category-section,
+.state-panel {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--surface);
+}
+
+.category-section {
   overflow: hidden;
-  background: color-mix(in srgb, var(--page-fg) 8%, transparent);
+}
+
+.category-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.category-header h2 {
+  margin: 4px 0 0;
+  font-family: "Sora", -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+  font-size: clamp(22px, 3vw, 30px);
+  font-weight: 800;
+  line-height: 1.12;
+  letter-spacing: 0;
+}
+
+.category-header > span {
+  color: var(--secondary);
+  font-family: "Sora", -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.group-list {
+  display: grid;
+}
+
+.link-group {
+  display: grid;
+  grid-template-columns: 132px minmax(0, 1fr);
+  border-top: 1px solid var(--line);
+}
+
+.link-group:first-child {
+  border-top: 0;
+}
+
+.group-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 12px 14px 18px;
+  border-right: 1px solid var(--line);
+  background: var(--surface-subtle);
+}
+
+.group-header h3 {
+  margin: 0;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 750;
+  line-height: 1.3;
+}
+
+.links {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 176px);
+  justify-content: start;
+}
+
+.resource-link {
+  min-height: 42px;
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) 16px;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 10px;
+  box-shadow: inset 0 0 0 1px var(--line);
+  color: var(--text);
+  text-decoration: none;
+  transition:
+    background-color 0.16s ease,
+    color 0.16s ease;
+}
+
+.resource-link:hover,
+.resource-link:focus-visible {
+  background: #f5f5f7;
+}
+
+.favicon {
+  width: 24px;
+  height: 24px;
   display: grid;
   place-items: center;
-  flex-shrink: 0;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 7px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 11px;
   font-weight: 800;
-  font-size: 14px;
-  position: relative;
 }
 
-.item-icon-box img {
+.favicon img {
   width: 100%;
   height: 100%;
+  display: block;
   object-fit: cover;
 }
 
-.rec-star {
-  position: absolute;
-  top: -1px;
-  right: -1px;
-  background: #ffcc00;
-  color: #000;
-  width: 12px;
-  height: 12px;
+.resource-copy {
+  min-width: 0;
   display: grid;
-  place-items: center;
-  border-radius: 0 0 0 4px;
-  z-index: 2;
+  gap: 4px;
 }
 
-.item-name {
-  font-size: 15px;
-  font-weight: 700;
-  white-space: nowrap;
+.resource-title {
+  min-width: 0;
   overflow: hidden;
-  text-overflow: ellipsis;
-  color: var(--page-fg);
-}
-
-.item-desc {
-  margin: 0;
+  color: var(--text);
   font-size: 13px;
-  line-height: 1.5;
-  color: var(--muted-fg);
+  font-weight: 700;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.resource-description {
   display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
   overflow: hidden;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.48;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
-.lite-footer {
-  margin-top: 100px;
-  padding: 48px 0;
-  text-align: center;
-  opacity: 0.5;
-  border-top: 1px solid var(--soft-line);
+.resource-action {
+  color: var(--secondary);
+  opacity: 0;
+  transition: opacity 0.16s ease;
 }
 
-.lite-loading {
-  height: 300px;
+.resource-link:hover .resource-action,
+.resource-link:focus-visible .resource-action {
+  opacity: 1;
+}
+
+.lite-page[data-mode='detail'] .links {
+  grid-template-columns: repeat(auto-fill, 260px);
+}
+
+.lite-page[data-mode='detail'] .resource-link {
+  min-height: 84px;
+  align-items: start;
+  grid-template-columns: 28px minmax(0, 1fr) 16px;
+  padding: 12px;
+}
+
+.lite-page[data-mode='detail'] .favicon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+}
+
+.lite-page[data-mode='detail'] .resource-title {
+  font-size: 14px;
+  white-space: normal;
+}
+
+.state-panel {
+  min-height: 220px;
   display: grid;
   place-items: center;
+  align-content: center;
+  gap: 12px;
+  color: var(--muted);
+  font-weight: 700;
 }
 
 .spinner {
-  width: 32px;
-  height: 32px;
-  border: 3px solid var(--soft-line);
-  border-top-color: var(--page-fg);
-  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  border: 3px solid #d2d2d7;
+  border-top-color: var(--focus);
+  border-radius: 999px;
   animation: spin 0.8s linear infinite;
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-@media (max-width: 640px) {
-  .lite-page {
-    padding: 40px 16px;
+@media (prefers-reduced-motion: reduce) {
+  .resource-link,
+  .resource-action,
+  .spinner {
+    animation: none;
+    transition: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .page-shell {
+    width: min(100% - 20px, 1240px);
+    padding-top: 18px;
   }
 
-  .compact-grid {
+  .title-row {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .view-switch {
+    width: 100%;
+  }
+
+  .category-header {
+    align-items: flex-start;
+    padding: 20px;
+  }
+
+  .link-group {
     grid-template-columns: 1fr;
-    gap: 10px;
   }
 
-  .grid-item {
-    padding: 16px;
-    border-radius: 14px;
+  .links,
+  .lite-page[data-mode='detail'] .links {
+    grid-template-columns: 1fr;
+  }
+
+  .group-header {
+    padding: 14px 16px;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .resource-action {
+    opacity: 1;
   }
 }
 </style>

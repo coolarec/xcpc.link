@@ -182,7 +182,7 @@ onBeforeUnmount(teardownDock)
   align-items: flex-end;
   gap: 12px;
   height: 106px;
-  padding: 14px 16px 16px;
+  padding: 14px 16px 19px;
   border: 0;
   border-radius: 24px;
   background: transparent;
