@@ -66,7 +66,7 @@ onBeforeUnmount(() => {
     <div class="footer-inner">
       <span>AWESOME XCPC</span>
       <div class="footer-copy">
-        <strong>Competitive Programming Link Hub</strong>
+        <strong>Building the ACM universe, together.</strong>
         <p>QQ 群 876103138</p>
       </div>
     </div>
