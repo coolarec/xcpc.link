@@ -52,6 +52,11 @@ const getPlaceholderCount = (linkCount: number): number => {
   return rest === 0 ? 0 : linkColumnCount.value - rest
 }
 
+const hideBrokenIcon = (event: Event) => {
+  const image = event.target as HTMLImageElement
+  image.style.display = 'none'
+}
+
 const updateLinkColumnCount = () => {
   const width = window.innerWidth
   const isDetailMode = litePreferencesStore.viewMode === 'detail'
@@ -179,6 +184,7 @@ watch(() => litePreferencesStore.viewMode, updateLinkColumnCount)
                   :aria-label="`打开 ${link.websiteTitle}`"
                 >
                   <span class="favicon" aria-hidden="true">
+                    <span>{{ link.websiteTitle.charAt(0) }}</span>
                     <img
                       v-if="link.avatarUrl"
                       :src="link.avatarUrl"
@@ -186,8 +192,8 @@ watch(() => litePreferencesStore.viewMode, updateLinkColumnCount)
                       width="28"
                       height="28"
                       loading="lazy"
+                      @error="hideBrokenIcon"
                     />
-                    <span v-else>{{ link.websiteTitle.charAt(0) }}</span>
                   </span>
 
                   <span class="resource-copy">
@@ -229,7 +235,7 @@ watch(() => litePreferencesStore.viewMode, updateLinkColumnCount)
   --tooltip-border: rgba(0, 0, 0, 0.12);
   --tooltip-shadow: rgba(0, 0, 0, 0.14);
 
-  min-height: 100dvh;
+  min-height: 64px;
   background: var(--page);
   color: var(--text);
   color-scheme: light;
@@ -561,6 +567,7 @@ watch(() => litePreferencesStore.viewMode, updateLinkColumnCount)
 }
 
 .favicon {
+  position: relative;
   width: 24px;
   height: 24px;
   display: grid;
@@ -575,6 +582,8 @@ watch(() => litePreferencesStore.viewMode, updateLinkColumnCount)
 }
 
 .favicon img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   display: block;
@@ -605,7 +614,7 @@ watch(() => litePreferencesStore.viewMode, updateLinkColumnCount)
   font-size: 12px;
   line-height: 1.35;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1;
+  -webkit-line-clamp: 2;
 }
 
 .resource-action {
@@ -620,10 +629,10 @@ watch(() => litePreferencesStore.viewMode, updateLinkColumnCount)
 }
 
 .lite-page[data-mode='detail'] .resource-link {
-  min-height: 60px;
+  min-height: 74px;
   align-items: center;
   grid-template-columns: 26px minmax(0, 1fr) 16px;
-  padding: 9px 10px;
+  padding: 10px;
 }
 
 .lite-page[data-mode='detail'] .links {

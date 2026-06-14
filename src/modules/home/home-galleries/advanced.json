@@ -11,16 +11,16 @@
       "websiteDescription": "ICPC 各区域赛的近期赛程入口。"
     },
     {
-      "avatarUrl": "https://favicone.com/ccpc.io?s=64",
+      "avatarUrl": "",
       "websiteUrl": "https://ccpc.io/rules/369",
       "websiteTitle": "CCPC Rules",
       "websiteDescription": "CCPC 规则与相关说明入口。"
     },
     {
-      "avatarUrl": "https://unavatar.io/ojhunt.com",
-      "websiteUrl": "https://ojhunt.com/statistics",
-      "websiteTitle": "ojhunt",
-      "websiteDescription": "OJ 做题统计与排行工具。"
+      "avatarUrl": "https://unavatar.io/icpc.pku.edu.cn",
+      "websiteUrl": "https://icpc.pku.edu.cn/",
+      "websiteTitle": "ICPC 北京总部",
+      "websiteDescription": "ICPC 北京总部官方网站入口。"
     }
   ],
   "watches": [
@@ -107,7 +107,7 @@
           "websiteDescription": "支持多类题库与比赛管理，适合自建训练环境。"
         },
         {
-          "avatarUrl": "https://static.pintia.cn/sparkling-daydream/icons/PTA-logo.svg",
+          "avatarUrl": "",
           "websiteUrl": "https://pintia.cn/",
           "websiteTitle": "PTA",
           "websiteDescription": "程序设计类课程和题库入口，校内外训练都常见。"
@@ -132,15 +132,39 @@
         },
         {
           "avatarUrl": "https://bs.daimayuan.top/favicon.ico",
-          "websiteUrl": "https://www.luogu.com.cn/problem/list?tag=题目来源-代码源",
-          "websiteTitle": "代码源",
-          "websiteDescription": "国内题源平台，适合补不同出题风格。"
+          "websiteUrl": "http://oj.daimayuan.top/courses",
+          "websiteTitle": "代码源 OJ",
+          "websiteDescription": "代码源课程与在线评测入口。"
         },
         {
-          "avatarUrl": "https://onlinemathcontest.com/favicon.ico",
-          "websiteUrl": "https://onlinemathcontest.com/",
-          "websiteTitle": "OMC",
-          "websiteDescription": "补充型题源入口，方便横向收集不同平台题目。"
+          "avatarUrl": "https://unavatar.io/qoj.ac",
+          "websiteUrl": "https://qoj.ac/",
+          "websiteTitle": "QOJ",
+          "websiteDescription": "高质量竞赛题库与在线评测平台。"
+        }
+      ]
+    },
+    {
+      "title": "算法模板",
+      "description": "常用算法知识库、模板仓库与竞赛资料入口。",
+      "links": [
+        {
+          "avatarUrl": "https://oi-wiki.org/favicon.ico",
+          "websiteUrl": "https://oi-wiki.org/",
+          "websiteTitle": "OI Wiki",
+          "websiteDescription": "算法竞赛知识百科。"
+        },
+        {
+          "avatarUrl": "https://github.com/hh2048.png",
+          "websiteUrl": "https://github.com/hh2048/XCPC",
+          "websiteTitle": "hh2048/XCPC",
+          "websiteDescription": "XCPC 算法模板与竞赛资料仓库。"
+        },
+        {
+          "avatarUrl": "https://unavatar.io/cp.feynmach.com",
+          "websiteUrl": "https://cp.feynmach.com/",
+          "websiteTitle": "pstrode",
+          "websiteDescription": "算法模板、竞赛资料与代码片段整理站点。"
         }
       ]
     },
@@ -148,6 +172,12 @@
       "title": "工具",
       "description": "算法竞赛里常用的工具入口。",
       "links": [
+        {
+          "avatarUrl": "https://unavatar.io/ojhunt.com",
+          "websiteUrl": "https://ojhunt.com/statistics",
+          "websiteTitle": "ojhunt",
+          "websiteDescription": "OJ 做题统计与排行工具。"
+        },
         {
           "avatarUrl": "https://cftracker.netlify.app/favicon.ico",
           "websiteUrl": "https://cftracker.netlify.app/contests",
@@ -263,16 +293,22 @@
           "websiteDescription": "青少年信息学奥林匹克。"
         },
         {
-          "avatarUrl": "https://oi-wiki.org/favicon.ico",
-          "websiteUrl": "https://oi-wiki.org/",
-          "websiteTitle": "OI Wiki",
-          "websiteDescription": "算法竞赛知识百科。"
-        },
-        {
           "avatarUrl": "https://visualgo.net/img/favicon.png",
           "websiteUrl": "https://visualgo.net/zh/",
           "websiteTitle": "visualgo",
           "websiteDescription": "算法与数据结构可视化。"
+        },
+        {
+          "avatarUrl": "https://github.com/anacc22.png",
+          "websiteUrl": "https://anacc22.github.io/another_graph_editor/",
+          "websiteTitle": "Another Graph Editor",
+          "websiteDescription": "适合算法竞赛出题和题解配图的图论编辑器。"
+        },
+        {
+          "avatarUrl": "https://unavatar.io/clist.by",
+          "websiteUrl": "https://clist.by/",
+          "websiteTitle": "CLIST",
+          "websiteDescription": "聚合各大平台竞赛日程、榜单和比赛信息。"
         }
       ]
     },
@@ -287,7 +323,7 @@
           "websiteDescription": "天梯赛高校榜单入口。"
         },
         {
-          "avatarUrl": "https://static.pintia.cn/sparkling-daydream/icons/PTA-logo.svg",
+          "avatarUrl": "",
           "websiteUrl": "https://pintia.cn/competitions/public",
           "websiteTitle": "PTA Competitions",
           "websiteDescription": "PTA 公开比赛与榜单入口。"
@@ -315,6 +351,24 @@
           "websiteUrl": "https://domjudge.ou.nl/public",
           "websiteTitle": "OU DOMjudge",
           "websiteDescription": "DOMjudge 公开榜单入口。"
+        },
+        {
+          "avatarUrl": "https://unavatar.io/board.chacewebsite.cn",
+          "websiteUrl": "https://board.chacewebsite.cn/",
+          "websiteTitle": "Chace Board",
+          "websiteDescription": "榜单与竞赛看板入口。"
+        },
+        {
+          "avatarUrl": "https://unavatar.io/scoreboard.ucup.ac",
+          "websiteUrl": "https://scoreboard.ucup.ac/",
+          "websiteTitle": "Universal Cup Scoreboard Archive",
+          "websiteDescription": "Universal Cup 历史榜单与成绩归档入口。"
+        },
+        {
+          "avatarUrl": "https://unavatar.io/rank.thusaac.com",
+          "websiteUrl": "https://rank.thusaac.com/",
+          "websiteTitle": "TUOJ Ranklist",
+          "websiteDescription": "TUOJ 榜单与训练排名入口。"
         }
       ]
     },
@@ -345,6 +399,18 @@
           "websiteUrl": "https://dasai.lanqiao.cn/awards-public",
           "websiteTitle": "蓝桥奖项",
           "websiteDescription": "蓝桥杯公开获奖查询入口。"
+        },
+        {
+          "avatarUrl": "https://unavatar.io/c16h22o4.github.io",
+          "websiteUrl": "https://c16h22o4.github.io/",
+          "websiteTitle": "蓝桥杯 Finder",
+          "websiteDescription": "蓝桥杯获奖和选手信息查询工具。"
+        },
+        {
+          "avatarUrl": "https://unavatar.io/dbywsc.github.io",
+          "websiteUrl": "https://dbywsc.github.io/XIPF/#/",
+          "websiteTitle": "XIPF",
+          "websiteDescription": "大学生程序设计竞赛数据统计工具。"
         }
       ]
     }

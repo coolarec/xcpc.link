@@ -5,64 +5,78 @@
   "direction": "left",
   "cards": [
     {
-      "avatarUrl": "https://codeforces.org/s/0/favicon-32x32.png",
-      "websiteUrl": "https://codeforces.com/edu/courses",
-      "websiteTitle": "Codeforces EDU",
-      "websiteDescription": "课程化训练入口，适合给学生安排成体系的阶段训练。"
+      "avatarUrl": "https://unavatar.io/uep.pintia.cn",
+      "websiteUrl": "https://uep.pintia.cn/dashboard",
+      "websiteTitle": "攀拓 UEP",
+      "websiteDescription": "攀拓计算机能力测评与教培管理入口。"
     },
     {
-      "avatarUrl": "https://atcoder.jp/favicon.ico",
-      "websiteUrl": "https://kenkoooo.com/atcoder/",
-      "websiteTitle": "AtCoder Problems",
-      "websiteDescription": "按难度和标签筛题很方便，做训练计划时非常好用。"
+      "avatarUrl": "https://unavatar.io/signup.ccpc.io",
+      "websiteUrl": "https://signup.ccpc.io/",
+      "websiteTitle": "CCPC 报名系统",
+      "websiteDescription": "中国大学生程序设计竞赛报名系统入口。"
     },
     {
-      "avatarUrl": "https://www.nowcoder.com/favicon.ico",
-      "websiteUrl": "https://ac.nowcoder.com/acm/contest/vip-index",
-      "websiteTitle": "牛客训练营",
-      "websiteDescription": "适合集中训练和赛前集训，组织学生一起刷更方便。"
+      "avatarUrl": "https://icpc.global/favicon.ico",
+      "websiteUrl": "https://icpc.global/register",
+      "websiteTitle": "ICPC Register",
+      "websiteDescription": "ICPC 官方队伍与赛事注册入口。"
     }
   ],
-  "watch": {
-    "title": "Coach links",
-    "description": "Training references arranged as a draggable watch face.",
-    "links": [
-      {
-        "avatarUrl": "https://www.luogu.com.cn/favicon.ico",
-        "websiteUrl": "https://www.luogu.com.cn/training/list",
-        "websiteTitle": "洛谷训练",
-        "websiteDescription": "训练单和难度层级都比较直观，适合布置周练。"
-      },
-      {
-        "avatarUrl": "https://favicone.com/cses.fi?s=64",
-        "websiteUrl": "https://cses.fi/problemset/",
-        "websiteTitle": "CSES 题单",
-        "websiteDescription": "经典题集中，做小班统一训练很高效。"
-      },
-      {
-        "avatarUrl": "https://leetcode.cn/favicon.ico",
-        "websiteUrl": "https://leetcode.cn/problemset/",
-        "websiteTitle": "力扣题单",
-        "websiteDescription": "适合补基础、刷模板题，也方便学生课后自练。"
-      },
-      {
-        "avatarUrl": "https://kotlinlang.org/assets/images/favicon.svg?v2",
-        "websiteUrl": "https://kotlinlang.org/docs/competitive-programming.html",
-        "websiteTitle": "Kotlin CP",
-        "websiteDescription": "没有现成头像时也会回退成首字母，适合测试展示兜底。"
-      },
-      {
-        "avatarUrl": "https://www.geeksforgeeks.org/favicon.ico",
-        "websiteUrl": "https://www.geeksforgeeks.org/competitive-programming-a-complete-guide/",
-        "websiteTitle": "GFG CP Guide",
-        "websiteDescription": "给学生补外围知识和题型综述时很方便。"
-      },
-      {
-        "avatarUrl": "https://www.acwing.com/favicon.ico",
-        "websiteUrl": "https://www.acwing.com/problem/",
-        "websiteTitle": "AcWing 题库",
-        "websiteDescription": "从基础到提高都能接得上，方便分层安排作业。"
-      }
-    ]
-  }
+  "watches": [
+    {
+      "title": "出题相关",
+      "description": "命题、题面排版和题目准备时常用的工具入口。",
+      "links": [
+        {
+          "avatarUrl": "https://unavatar.io/texnique.xyz",
+          "websiteUrl": "https://texnique.xyz/",
+          "websiteTitle": "TeXnique",
+          "websiteDescription": "在线 LaTeX 公式练习与排版工具。"
+        },
+        {
+          "avatarUrl": "https://unavatar.io/chumeng.xyz",
+          "websiteUrl": "https://chumeng.xyz/xcpc-statement-generator/",
+          "websiteTitle": "XCPC PDF 题面管理工具",
+          "websiteDescription": "用于生成和管理 XCPC PDF 题面的工具入口。"
+        },
+        {
+          "avatarUrl": "https://unavatar.io/yuantiji.ac",
+          "websiteUrl": "https://yuantiji.ac/",
+          "websiteTitle": "原题机",
+          "websiteDescription": "检查题目是否可能撞题或已有相似题的工具。"
+        },
+        {
+          "avatarUrl": "https://oi-wiki.org/favicon.ico",
+          "websiteUrl": "https://oi-wiki.org/tools/testlib/general/",
+          "websiteTitle": "OI Wiki 出题工具",
+          "websiteDescription": "查 testlib、数据生成和校验器时很顺手。"
+        },
+        {
+          "avatarUrl": "https://polygon.codeforces.com/favicon.ico",
+          "websiteUrl": "https://polygon.codeforces.com/",
+          "websiteTitle": "Polygon",
+          "websiteDescription": "没有头像时会回退首字母，适合验证出题工具入口展示。"
+        },
+        {
+          "avatarUrl": "https://sua.ac/img/logo.jpg",
+          "websiteUrl": "https://sua.ac/",
+          "websiteTitle": "SUA",
+          "websiteDescription": "程序设计竞赛命题组与竞赛合集入口。"
+        },
+        {
+          "avatarUrl": "https://github.com/SZTU-ACM.png",
+          "websiteUrl": "https://github.com/SZTU-ACM/AutoCode",
+          "websiteTitle": "AutoCode",
+          "websiteDescription": "面向 ICPC/CCPC 的 AI 辅助自动化出题与验题系统。"
+        },
+        {
+          "avatarUrl": "https://github.com/Lumine2024.png",
+          "websiteUrl": "https://github.com/Lumine2024/ICPC-Problem-Creator.skill",
+          "websiteTitle": "ICPC-Problem-Creator.skill",
+          "websiteDescription": "使用 AI Agent 创造 ICPC 风格题目的技能仓库。"
+        }
+      ]
+    }
+  ]
 }

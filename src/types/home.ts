@@ -61,6 +61,7 @@ export interface HeroDockItem {
   label: string
   glyph: string
   icon?: 'book' | 'rocket' | 'users' | 'pen' | 'trophy' | 'lite'
+  tooltip?: string
   to?: string
 }
 

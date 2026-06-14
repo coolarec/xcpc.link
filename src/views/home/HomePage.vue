@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, ref, type Component } from 'vue'
+import { computed, defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, ref, type Component } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -52,6 +52,12 @@ const themeOptions: Array<{ label: string; value: ThemeMode }> = [
   { label: '夜间', value: 'night' },
   { label: '系统', value: 'system' },
 ]
+const dockItemsWithTooltips = computed(() =>
+  homeContentStore.dockItems.map((item, index) => ({
+    ...item,
+    tooltip: item.to ? 'XCPC.LINK Lite' : homeContentStore.galleries[index]?.title || '圈内播报',
+  })),
+)
 
 const getGalleryWatches = (gallery: HomeGallerySection): WatchLinksBlock[] => {
   if (gallery.watches?.length) return gallery.watches
@@ -250,7 +256,7 @@ onBeforeUnmount(() => {
       </div>
       <p class="demo-label">XCPC.LINK</p>
       <IntroTiltCards :motion-active="isHeroMotionActive" />
-      <IntroDock :items="homeContentStore.dockItems" @select="scrollToGallery" />
+      <IntroDock :items="dockItemsWithTooltips" @select="scrollToGallery" />
     </section>
 
     <section ref="gallerySection" class="gallery-section" aria-label="Horizontal algorithm galleries">
@@ -334,7 +340,7 @@ onBeforeUnmount(() => {
   background: var(--hero-bg);
   transform-origin: center bottom;
   isolation: isolate;
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56' viewBox='0 0 56 56'%3E%3Ccircle cx='28' cy='28' r='28' fill='%23ffffff' fill-opacity='0.42'/%3E%3C/svg%3E") 28 28, auto;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Ccircle cx='24' cy='24' r='22' fill='%23ffffff' fill-opacity='0.5' stroke='%23000000' stroke-opacity='0.22' stroke-width='1'/%3E%3Ccircle cx='24' cy='24' r='2.5' fill='%23000000' fill-opacity='0.36'/%3E%3C/svg%3E") 24 24, auto;
 }
 
 .tilt-section :deep(*) {
@@ -342,11 +348,11 @@ onBeforeUnmount(() => {
 }
 
 :global(.is-day) .tilt-section {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56' viewBox='0 0 56 56'%3E%3Ccircle cx='28' cy='28' r='28' fill='%231d1d1f' fill-opacity='0.34'/%3E%3C/svg%3E") 28 28, auto;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Ccircle cx='24' cy='24' r='22' fill='%231d1d1f' fill-opacity='0.3' stroke='%23ffffff' stroke-opacity='0.65' stroke-width='1'/%3E%3Ccircle cx='24' cy='24' r='2.5' fill='%23ffffff' fill-opacity='0.72'/%3E%3C/svg%3E") 24 24, auto;
 }
 
 :global(.is-night) .tilt-section {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56' viewBox='0 0 56 56'%3E%3Ccircle cx='28' cy='28' r='28' fill='%23ffffff' fill-opacity='0.42'/%3E%3C/svg%3E") 28 28, auto;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Ccircle cx='24' cy='24' r='22' fill='%23ffffff' fill-opacity='0.5' stroke='%23000000' stroke-opacity='0.22' stroke-width='1'/%3E%3Ccircle cx='24' cy='24' r='2.5' fill='%23000000' fill-opacity='0.36'/%3E%3C/svg%3E") 24 24, auto;
 }
 
 .theme-segment {
