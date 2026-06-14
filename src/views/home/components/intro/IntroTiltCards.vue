@@ -272,10 +272,18 @@ onBeforeUnmount(() => {
   <div ref="root" class="tilt-layer">
     <div class="tilt-orbit" aria-hidden="true"></div>
     <div ref="core" class="tilt-core">
-      <span>ALGORITHM COLLECTION</span>
-      <strong ref="title">XCPC</strong>
+      <span class="hero-kicker">XCPC.LINK</span>
+      <strong ref="title" class="hero-title">
+        <span>AWESOME</span>
+        <span class="ccpc-word" aria-label="XCPC">
+          <i>X</i><i>C</i><i>P</i><i>C</i>
+        </span>
+      </strong>
     </div>
-    <div class="title-cast" aria-hidden="true">XCPC</div>
+    <div class="title-cast" aria-hidden="true">
+      <span>AWESOME</span>
+      <span class="ccpc-word"><i>X</i><i>C</i><i>P</i><i>C</i></span>
+    </div>
     <div
       v-for="(panel, index) in panels"
       :key="panel"
@@ -312,6 +320,9 @@ onBeforeUnmount(() => {
   border-radius: 18px;
   background: var(--panel-bg);
   box-shadow: var(--hero-card-shadow);
+}
+
+.tilt-panel {
   overflow: hidden;
 }
 
@@ -341,7 +352,15 @@ onBeforeUnmount(() => {
   will-change: transform;
 }
 
-.tilt-core span {
+.tilt-core::before {
+  inset: 0;
+  width: auto;
+  height: auto;
+  border-radius: inherit;
+  overflow: hidden;
+}
+
+.hero-kicker {
   position: relative;
   z-index: 1;
   color: var(--muted-fg);
@@ -354,17 +373,50 @@ onBeforeUnmount(() => {
 .tilt-core strong {
   position: relative;
   z-index: 1;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  column-gap: 0.26em;
+  row-gap: 0.04em;
   transform-origin: center;
   color: var(--panel-fg);
   font-family: "Sora", sans-serif;
   font-weight: 800;
-  font-size: clamp(72px, 9vw, 132px);
+  font-size: clamp(52px, 6.8vw, 104px);
   line-height: 0.92;
   letter-spacing: -0.03em;
   text-align: center;
   text-shadow: var(--title-glow);
   will-change: transform;
+}
+
+.ccpc-word {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.02em;
+}
+
+.ccpc-word i {
+  font-style: normal;
+}
+
+.ccpc-word i:nth-child(1) {
+  color: #007aff;
+}
+
+.ccpc-word i:nth-child(2) {
+  color: #ffcc00;
+}
+
+.ccpc-word i:nth-child(3) {
+  color: #ff3b30;
+}
+
+.ccpc-word i:nth-child(4) {
+  color: #34c759;
 }
 
 .title-cast {
@@ -375,7 +427,7 @@ onBeforeUnmount(() => {
   place-items: center;
   color: var(--title-cast-color);
   font-family: "Sora", sans-serif;
-  font-size: clamp(72px, 9vw, 132px);
+  font-size: clamp(52px, 6.8vw, 104px);
   font-weight: 900;
   line-height: 0.92;
   letter-spacing: -0.03em;

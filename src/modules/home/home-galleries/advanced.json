@@ -17,7 +17,7 @@
       "websiteDescription": "CCPC 规则与相关说明入口。"
     },
     {
-      "avatarUrl": "https://unavatar.io/icpc.pku.edu.cn",
+      "avatarUrl": "",
       "websiteUrl": "https://icpc.pku.edu.cn/",
       "websiteTitle": "ICPC 北京总部",
       "websiteDescription": "ICPC 北京总部官方网站入口。"
@@ -107,7 +107,7 @@
           "websiteDescription": "支持多类题库与比赛管理，适合自建训练环境。"
         },
         {
-          "avatarUrl": "",
+          "avatarUrl": "https://unavatar.io/pintia.cn",
           "websiteUrl": "https://pintia.cn/",
           "websiteTitle": "PTA",
           "websiteDescription": "程序设计类课程和题库入口，校内外训练都常见。"
@@ -137,7 +137,7 @@
           "websiteDescription": "代码源课程与在线评测入口。"
         },
         {
-          "avatarUrl": "https://unavatar.io/qoj.ac",
+          "avatarUrl": "",
           "websiteUrl": "https://qoj.ac/",
           "websiteTitle": "QOJ",
           "websiteDescription": "高质量竞赛题库与在线评测平台。"
@@ -323,7 +323,7 @@
           "websiteDescription": "天梯赛高校榜单入口。"
         },
         {
-          "avatarUrl": "",
+          "avatarUrl": "https://unavatar.io/pintia.cn",
           "websiteUrl": "https://pintia.cn/competitions/public",
           "websiteTitle": "PTA Competitions",
           "websiteDescription": "PTA 公开比赛与榜单入口。"
@@ -353,7 +353,7 @@
           "websiteDescription": "DOMjudge 公开榜单入口。"
         },
         {
-          "avatarUrl": "https://unavatar.io/board.chacewebsite.cn",
+          "avatarUrl": "",
           "websiteUrl": "https://board.chacewebsite.cn/",
           "websiteTitle": "Chace Board",
           "websiteDescription": "榜单与竞赛看板入口。"
@@ -365,10 +365,10 @@
           "websiteDescription": "Universal Cup 历史榜单与成绩归档入口。"
         },
         {
-          "avatarUrl": "https://unavatar.io/rank.thusaac.com",
+          "avatarUrl": "https://www.google.com/s2/favicons?sz=64&domain_url=https://rank.thusaac.com",
           "websiteUrl": "https://rank.thusaac.com/",
-          "websiteTitle": "TUOJ Ranklist",
-          "websiteDescription": "TUOJ 榜单与训练排名入口。"
+          "websiteTitle": "CSP 榜单",
+          "websiteDescription": "CSP 相关榜单与成绩查询入口。"
         }
       ]
     },
@@ -407,10 +407,16 @@
           "websiteDescription": "蓝桥杯获奖和选手信息查询工具。"
         },
         {
-          "avatarUrl": "https://unavatar.io/dbywsc.github.io",
+          "avatarUrl": "",
           "websiteUrl": "https://dbywsc.github.io/XIPF/#/",
           "websiteTitle": "XIPF",
           "websiteDescription": "大学生程序设计竞赛数据统计工具。"
+        },
+        {
+          "avatarUrl": "",
+          "websiteUrl": "https://www.raicom.com.cn/certificate.html",
+          "websiteTitle": "睿抗(Raicom)",
+          "websiteDescription": "睿抗相关证书与成绩查询入口。"
         }
       ]
     }

@@ -100,7 +100,7 @@ watch(() => litePreferencesStore.viewMode, updateLinkColumnCount)
             <p class="kicker">Lite</p>
             <div class="brand-title">
               <img class="brand-mark" src="/favicon.svg" alt="" width="52" height="52" aria-hidden="true" />
-              <h1>XCPC.LINK</h1>
+              <h1>AWESOME XCPC</h1>
             </div>
           </div>
 

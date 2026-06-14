@@ -55,7 +55,7 @@ const themeOptions: Array<{ label: string; value: ThemeMode }> = [
 const dockItemsWithTooltips = computed(() =>
   homeContentStore.dockItems.map((item, index) => ({
     ...item,
-    tooltip: item.to ? 'XCPC.LINK Lite' : homeContentStore.galleries[index]?.title || '圈内播报',
+    tooltip: item.to ? 'AWESOME XCPC Lite' : homeContentStore.galleries[index]?.title || '圈内播报',
   })),
 )
 
@@ -254,7 +254,7 @@ onBeforeUnmount(() => {
           {{ option.label }}
         </button>
       </div>
-      <p class="demo-label">XCPC.LINK</p>
+      <p class="demo-label">AWESOME XCPC</p>
       <IntroTiltCards :motion-active="isHeroMotionActive" />
       <IntroDock :items="dockItemsWithTooltips" @select="scrollToGallery" />
     </section>
@@ -307,7 +307,7 @@ onBeforeUnmount(() => {
     <FloatingPanel
       v-model="showComments"
       title="评论"
-      eyebrow="XCPC.LINK"
+      eyebrow="AWESOME XCPC"
       :is-dark="themeStore.isDarkMode"
       panel-class="comments-panel-shell"
     >

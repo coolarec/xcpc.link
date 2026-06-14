@@ -64,7 +64,7 @@ onBeforeUnmount(() => {
       <path ref="footerPath" class="footer-wave-path" :d="footerCenterPath" />
     </svg>
     <div class="footer-inner">
-      <span>XCPC.LINK</span>
+      <span>AWESOME XCPC</span>
       <strong>Algorithm collection system</strong>
     </div>
   </footer>

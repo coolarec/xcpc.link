@@ -17,7 +17,7 @@
       "description": "退役后做工具、教培和内容生产时常用的大模型入口。",
       "links": [
         {
-          "avatarUrl": "https://unavatar.io/api.zhehentiaohe.cn",
+          "avatarUrl": "",
           "websiteUrl": "https://api.zhehentiaohe.cn/console",
           "websiteTitle": "New API",
           "websiteDescription": "大模型 API 控制台与调用管理入口。"
@@ -35,19 +35,19 @@
       "description": "退役后参与教学、培训和内容整理时常用的入口。",
       "links": [
         {
-          "avatarUrl": "https://unavatar.io/zhitu-ai.cn",
+          "avatarUrl": "",
           "websiteUrl": "https://zhitu-ai.cn/",
           "websiteTitle": "织途AI",
           "websiteDescription": "面向题目整理和内容处理的 AI 工具入口。"
         },
         {
-          "avatarUrl": "https://unavatar.io/118.24.53.223",
+          "avatarUrl": "",
           "websiteUrl": "http://118.24.53.223/",
           "websiteTitle": "AtCoder GESP 题目数据库",
           "websiteDescription": "AtCoder GESP 题目数据库入口。"
         },
         {
-          "avatarUrl": "https://unavatar.io/algocard.pages.dev",
+          "avatarUrl": "",
           "websiteUrl": "https://algocard.pages.dev/",
           "websiteTitle": "算法卡片 AlgoCard",
           "websiteDescription": "适合教培与知识整理的算法卡片工具。"
@@ -83,7 +83,7 @@
           "websiteDescription": "手握红莲，青息不偃"
         },
         {
-          "avatarUrl": "https://unavatar.io/anoyer.cn",
+          "avatarUrl": "",
           "websiteUrl": "http://anoyer.cn",
           "websiteTitle": "anoyer",
           "websiteDescription": "一个快乐的鸽子，写博客超佛系，想起来就写写"
@@ -173,7 +173,7 @@
           "websiteDescription": "菜鸡不定期发病"
         },
         {
-          "avatarUrl": "https://unavatar.io/shallowdream.site",
+          "avatarUrl": "",
           "websiteUrl": "https://shallowdream.site",
           "websiteTitle": "浅梦",
           "websiteDescription": "慷慨天光斑斓岁月溶金落梧桐"
@@ -185,7 +185,7 @@
           "websiteDescription": "沃若の日记本"
         },
         {
-          "avatarUrl": "https://unavatar.io/xzm2001.cn",
+          "avatarUrl": "",
           "websiteUrl": "http://xzm2001.cn",
           "websiteTitle": "徐子懋",
           "websiteDescription": "垃圾技工，技工渣渣"
