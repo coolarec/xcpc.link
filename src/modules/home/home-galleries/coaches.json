@@ -3,27 +3,32 @@
   "title": "学生教练 & 出题人",
   "accent": "#ff9f0a",
   "direction": "left",
-  "cards": [
-    {
-      "avatarUrl": "https://unavatar.io/uep.pintia.cn",
-      "websiteUrl": "https://uep.pintia.cn/dashboard",
-      "websiteTitle": "攀拓 UEP",
-      "websiteDescription": "攀拓计算机能力测评与教培管理入口。"
-    },
-    {
-      "avatarUrl": "",
-      "websiteUrl": "https://signup.ccpc.io/",
-      "websiteTitle": "CCPC 报名系统",
-      "websiteDescription": "中国大学生程序设计竞赛报名系统入口。"
-    },
-    {
-      "avatarUrl": "https://icpc.global/favicon.ico",
-      "websiteUrl": "https://icpc.global/register",
-      "websiteTitle": "ICPC Register",
-      "websiteDescription": "ICPC 官方队伍与赛事注册入口。"
-    }
-  ],
+  "cards": [],
   "watches": [
+    {
+      "title": "报名系统",
+      "description": "竞赛报名、队伍注册和教培管理入口。",
+      "links": [
+        {
+          "avatarUrl": "https://unavatar.io/uep.pintia.cn",
+          "websiteUrl": "https://uep.pintia.cn/dashboard",
+          "websiteTitle": "攀拓 UEP",
+          "websiteDescription": "攀拓计算机能力测评与教培管理入口。"
+        },
+        {
+          "avatarUrl": "",
+          "websiteUrl": "https://signup.ccpc.io/",
+          "websiteTitle": "CCPC 报名系统",
+          "websiteDescription": "中国大学生程序设计竞赛报名系统入口。"
+        },
+        {
+          "avatarUrl": "https://icpc.global/favicon.ico",
+          "websiteUrl": "https://icpc.global/register",
+          "websiteTitle": "ICPC Register",
+          "websiteDescription": "ICPC 官方队伍与赛事注册入口。"
+        }
+      ]
+    },
     {
       "title": "出题相关",
       "description": "命题、题面排版和题目准备时常用的工具入口。",

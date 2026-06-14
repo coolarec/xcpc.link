@@ -64,7 +64,7 @@ const getGroups = (gallery: HomeGallerySection): LinkGroup[] => [
     title: watch.title || '相关推荐',
     links: watch.links,
   })),
-]
+].filter((group) => group.links.length > 0)
 
 const getGalleryLinkCount = (gallery: HomeGallerySection): number =>
   getGroups(gallery).reduce((total, group) => total + group.links.length, 0)
@@ -1113,5 +1113,14 @@ const handleFloatingAction = (id: string) => {
   .lite-page[data-mode='detail'] .links {
     grid-template-columns: 1fr;
   }
+}
+
+.news-group > .news-links,
+.lite-page[data-mode='detail'] .news-group > .news-links {
+  grid-template-columns: 1fr;
+}
+
+.news-group > .news-links > .news-row {
+  width: 100%;
 }
 </style>
