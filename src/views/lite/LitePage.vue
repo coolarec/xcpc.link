@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { ArrowLeft, ExternalLink } from '@lucide/vue'
+import ArtalkComments from '../../components/ArtalkComments.vue'
+import FloatingActionMenu from '../../components/FloatingActionMenu.vue'
+import FloatingPanel from '../../components/FloatingPanel.vue'
 import { useHomeContentStore } from '../../stores/homeContent'
 import { useLitePreferencesStore } from '../../stores/litePreferences'
 import { useThemeStore, type ThemeMode } from '../../stores/theme'
@@ -19,6 +22,7 @@ interface NewsGroup {
 }
 
 const linkColumnCount = ref(6)
+const showComments = ref(false)
 const homeContentStore = useHomeContentStore()
 const litePreferencesStore = useLitePreferencesStore()
 const themeStore = useThemeStore()
@@ -104,6 +108,16 @@ onBeforeUnmount(() => {
 })
 
 watch(() => litePreferencesStore.viewMode, updateLinkColumnCount)
+
+const handleFloatingAction = (id: string) => {
+  if (id === 'top') {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  if (id === 'comments') {
+    showComments.value = true
+  }
+}
 </script>
 
 <template>
@@ -120,7 +134,12 @@ watch(() => litePreferencesStore.viewMode, updateLinkColumnCount)
             <p class="kicker">Lite</p>
             <div class="brand-title">
               <img class="brand-mark" src="/favicon.svg" alt="" width="52" height="52" aria-hidden="true" />
-              <h1>AWESOME XCPC</h1>
+              <h1>
+                <span>AWESOME</span>
+                <span class="ccpc-word" aria-label="XCPC">
+                  <i>X</i><i>C</i><i>P</i><i>C</i>
+                </span>
+              </h1>
             </div>
           </div>
 
@@ -249,14 +268,27 @@ watch(() => litePreferencesStore.viewMode, updateLinkColumnCount)
           </header>
 
           <div class="group-list">
-            <section v-for="group in getNewsGroups()" :key="group.id" class="link-group news-group">
+            <section
+              v-for="group in getNewsGroups()"
+              :key="group.id"
+              class="link-group news-group"
+              :class="`is-${group.id}`"
+            >
               <header class="group-header">
                 <h3>{{ group.title }}</h3>
                 <span>{{ group.items.length }}</span>
               </header>
 
               <div class="links news-links">
-                <div v-for="item in group.items" :key="`${group.id}-${item.text}`" class="resource-link news-row">
+                <a
+                  v-for="item in group.items"
+                  :key="`${group.id}-${item.text}`"
+                  class="resource-link news-row"
+                  :href="item.sourceUrl"
+                  target="_blank"
+                  rel="noreferrer"
+                  :aria-label="`打开 ${item.text}`"
+                >
                   <span class="resource-copy">
                     <span class="resource-title">{{ item.text }}</span>
                   </span>
@@ -276,13 +308,25 @@ watch(() => litePreferencesStore.viewMode, updateLinkColumnCount)
                     </span>
                     <span>{{ item.sourceName }}</span>
                   </span>
-                </div>
+                </a>
               </div>
             </section>
           </div>
         </section>
       </main>
     </div>
+
+    <FloatingPanel
+      v-model="showComments"
+      title="评论"
+      eyebrow="AWESOME XCPC"
+      :is-dark="themeStore.isDarkMode"
+      panel-class="comments-panel-shell"
+    >
+      <ArtalkComments :active="showComments" :is-dark="themeStore.isDarkMode" />
+    </FloatingPanel>
+
+    <FloatingActionMenu :visible="true" @action="handleFloatingAction" />
   </div>
 </template>
 
@@ -390,11 +434,40 @@ watch(() => litePreferencesStore.viewMode, updateLinkColumnCount)
 
 .brand-title h1 {
   margin: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 0.18em;
   font-family: "Sora", -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
   font-size: var(--brand-title-size);
   font-weight: 800;
   line-height: 1;
   letter-spacing: 0;
+}
+
+.ccpc-word {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.02em;
+}
+
+.ccpc-word i {
+  font-style: normal;
+}
+
+.ccpc-word i:nth-child(1) {
+  color: #007aff;
+}
+
+.ccpc-word i:nth-child(2) {
+  color: #ffcc00;
+}
+
+.ccpc-word i:nth-child(3) {
+  color: #ff3b30;
+}
+
+.ccpc-word i:nth-child(4) {
+  color: #34c759;
 }
 
 .brand-mark {
@@ -481,7 +554,7 @@ watch(() => litePreferencesStore.viewMode, updateLinkColumnCount)
 }
 
 .category-section {
-  overflow: hidden;
+  overflow: visible;
 }
 
 .category-header {
@@ -724,6 +797,10 @@ watch(() => litePreferencesStore.viewMode, updateLinkColumnCount)
   grid-template-columns: 1fr;
 }
 
+.lite-page[data-mode='detail'] .news-links {
+  grid-template-columns: 1fr;
+}
+
 .news-row {
   min-height: 48px;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -733,6 +810,27 @@ watch(() => litePreferencesStore.viewMode, updateLinkColumnCount)
 .news-row:hover,
 .news-row:focus-visible {
   z-index: 1;
+}
+
+.news-row::before,
+.news-row::after {
+  display: none;
+}
+
+.news-group.is-red-list .group-header h3 {
+  color: #ff3b30;
+}
+
+.news-group.is-black-list .group-header h3 {
+  color: #111111;
+}
+
+.lite-page.is-night .news-group.is-black-list .group-header h3 {
+  color: #f5f5f7;
+}
+
+.news-group.is-live-list .group-header h3 {
+  color: #007aff;
 }
 
 .news-source {
@@ -762,6 +860,18 @@ watch(() => litePreferencesStore.viewMode, updateLinkColumnCount)
 .lite-page[data-mode='detail'] .news-row {
   min-height: 56px;
   grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.lite-page[data-mode='detail'] .news-row .resource-copy {
+  align-self: start;
+}
+
+.lite-page[data-mode='detail'] .news-row .resource-title {
+  display: -webkit-box;
+  overflow: hidden;
+  white-space: normal;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
 }
 
 .state-panel {
@@ -808,6 +918,10 @@ watch(() => litePreferencesStore.viewMode, updateLinkColumnCount)
   .lite-page[data-mode='detail'] .links {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+
+  .lite-page[data-mode='detail'] .news-links {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 820px) {
@@ -818,6 +932,11 @@ watch(() => litePreferencesStore.viewMode, updateLinkColumnCount)
   .links,
   .lite-page[data-mode='detail'] .links {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .news-links,
+  .lite-page[data-mode='detail'] .news-links {
+    grid-template-columns: 1fr;
   }
 }
 

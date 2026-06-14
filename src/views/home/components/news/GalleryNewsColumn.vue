@@ -3,6 +3,7 @@ interface NewsItem {
   text: string
   sourceName: string
   sourceIcon: string
+  sourceUrl?: string
 }
 
 defineProps<{
@@ -16,12 +17,19 @@ defineProps<{
   <div class="bento-card">
     <div class="card-label">{{ title }}</div>
     <ul class="news-list">
-      <li v-for="(item, i) in items" :key="i" class="news-item">
+      <li v-for="(item, i) in items" :key="i">
+        <a
+          class="news-item"
+          :href="item.sourceUrl"
+          target="_blank"
+          rel="noreferrer"
+        >
         <span class="badge" :class="`badge-${badgeColor}`">
           <img class="badge-icon" :src="item.sourceIcon" alt="" />
           <span class="badge-name">{{ item.sourceName }}</span>
         </span>
         <span class="news-text">{{ item.text }}</span>
+        </a>
       </li>
     </ul>
   </div>

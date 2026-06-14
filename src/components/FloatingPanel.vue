@@ -188,6 +188,15 @@ onBeforeUnmount(() => {
     0 0 0 1px var(--soft-line);
 }
 
+.floating-panel-shell.is-docked-right {
+  width: min(560px, calc(100vw - 40px));
+  height: min(680px, calc(100dvh - 120px));
+  margin-left: auto;
+  margin-right: max(24px, calc(env(safe-area-inset-right) + 24px));
+  margin-top: auto;
+  margin-bottom: max(108px, calc(env(safe-area-inset-bottom) + 108px));
+}
+
 .floating-panel-header {
   min-height: 80px;
   display: flex;
@@ -260,6 +269,13 @@ onBeforeUnmount(() => {
     width: 100%;
     height: min(720px, calc(100dvh - 24px));
     border-radius: 28px;
+  }
+
+  .floating-panel-shell.is-docked-right {
+    width: 100%;
+    height: min(720px, calc(100dvh - 88px));
+    margin-right: 0;
+    margin-bottom: max(72px, calc(env(safe-area-inset-bottom) + 72px));
   }
 
   .floating-panel-header {

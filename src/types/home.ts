@@ -38,6 +38,7 @@ export interface NewsItem {
   text: string
   sourceName: string
   sourceIcon: string
+  sourceUrl?: string
 }
 
 export interface NewsData {

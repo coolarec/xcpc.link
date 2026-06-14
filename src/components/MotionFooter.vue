@@ -65,7 +65,10 @@ onBeforeUnmount(() => {
     </svg>
     <div class="footer-inner">
       <span>AWESOME XCPC</span>
-      <strong>Algorithm collection system</strong>
+      <div class="footer-copy">
+        <strong>Competitive Programming Link Hub</strong>
+        <p>QQ 群 876103138</p>
+      </div>
     </div>
   </footer>
 </template>
@@ -117,7 +120,8 @@ onBeforeUnmount(() => {
 }
 
 .footer-inner span,
-.footer-inner strong {
+.footer-copy strong,
+.footer-copy p {
   letter-spacing: 0;
 }
 
@@ -127,7 +131,13 @@ onBeforeUnmount(() => {
   color: var(--muted-fg);
 }
 
-.footer-inner strong {
+.footer-copy {
+  display: grid;
+  justify-items: end;
+  gap: 10px;
+}
+
+.footer-copy strong {
   max-width: 520px;
   font-family: "Sora", sans-serif;
   font-weight: 800;
@@ -135,6 +145,14 @@ onBeforeUnmount(() => {
   line-height: 0.96;
   text-align: right;
   letter-spacing: -0.03em;
+}
+
+.footer-copy p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 650;
+  color: var(--muted-fg);
+  text-align: right;
 }
 
 @media (max-width: 860px) {
@@ -148,7 +166,12 @@ onBeforeUnmount(() => {
     align-items: flex-start;
   }
 
-  .footer-inner strong {
+  .footer-copy {
+    justify-items: start;
+  }
+
+  .footer-copy strong,
+  .footer-copy p {
     text-align: left;
   }
 }
