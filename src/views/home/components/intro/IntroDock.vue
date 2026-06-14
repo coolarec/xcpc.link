@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { gsap } from 'gsap'
-import { BookOpenCheck, GraduationCap, PenTool, Rocket, Trophy, type LucideIcon } from '@lucide/vue'
+import { BookOpenCheck, ExternalLink, GraduationCap, PenTool, Rocket, Trophy, type LucideIcon } from '@lucide/vue'
 import type { HeroDockItem } from '../../../../types/home'
 
 const props = defineProps<{
@@ -19,6 +19,7 @@ const iconMap: Record<NonNullable<HeroDockItem['icon']>, LucideIcon> = {
   users: GraduationCap,
   pen: PenTool,
   trophy: Trophy,
+  lite: ExternalLink,
 }
 
 const getIcon = (item: HeroDockItem) => item.icon ? iconMap[item.icon] : undefined
@@ -149,13 +150,15 @@ onBeforeUnmount(teardownDock)
 
 <template>
   <div ref="dock" class="hero-dock" aria-label="Jump to algorithm sections">
-    <button
+    <component
       v-for="(item, index) in items"
       :key="item.label"
+      :is="item.to ? 'router-link' : 'button'"
       class="hero-dock-item"
-      type="button"
+      :type="item.to ? undefined : 'button'"
+      :to="item.to"
       :aria-label="`Jump to ${item.label}`"
-      @click="emit('select', index)"
+      @click="!item.to && emit('select', index)"
     >
       <span class="dock-icon-plate">
         <component
@@ -167,7 +170,7 @@ onBeforeUnmount(teardownDock)
         />
         <template v-else>{{ item.glyph }}</template>
       </span>
-    </button>
+    </component>
   </div>
 </template>
 
@@ -218,6 +221,7 @@ onBeforeUnmount(teardownDock)
   border-radius: 18px;
   background: var(--card-bg);
   color: var(--page-fg); /* Monochrome (Black in Light, White in Dark) */
+  text-decoration: none;
   box-shadow:
     0 2px 8px rgba(0, 0, 0, 0.04),
     0 0 0 1px var(--soft-line);

@@ -1,9 +1,17 @@
 import { createApp } from 'vue'
+import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 import './assets/styles/global.scss'
 
-createApp(App).use(router).mount('#app')
+createApp(App).use(createPinia()).use(router).mount('#app')
+
+if ('serviceWorker' in navigator) {
+  const serviceWorkerUrl = `${import.meta.env.BASE_URL}icon-cache-sw.js`
+  navigator.serviceWorker.register(serviceWorkerUrl, { scope: import.meta.env.BASE_URL }).catch((error) => {
+    console.warn('Failed to register icon cache service worker:', error)
+  })
+}
 
 const preloader = document.getElementById('app-preloader')
 
