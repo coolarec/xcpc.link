@@ -56,7 +56,7 @@ const getGalleryWatches = (gallery: HomeGallerySection): WatchLinksBlock[] => {
 const getGroups = (gallery: HomeGallerySection): LinkGroup[] => [
   {
     id: `${gallery.title}-featured`,
-    title: '无分组',
+    title: '未分组',
     links: gallery.cards,
   },
   ...getGalleryWatches(gallery).map((watch, index) => ({
