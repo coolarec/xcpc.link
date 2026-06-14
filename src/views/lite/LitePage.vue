@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { ArrowLeft, ExternalLink } from '@lucide/vue'
+import { ArrowRight, ExternalLink } from '@lucide/vue'
 import ArtalkComments from '../../components/ArtalkComments.vue'
 import FloatingActionMenu from '../../components/FloatingActionMenu.vue'
 import FloatingPanel from '../../components/FloatingPanel.vue'
@@ -21,8 +21,24 @@ interface NewsGroup {
   items: NewsItem[]
 }
 
+interface LiteTooltip {
+  visible: boolean
+  text: string
+  x: number
+  y: number
+  placement: 'top' | 'bottom'
+}
+
 const linkColumnCount = ref(6)
 const showComments = ref(false)
+const expandedLinkUrl = ref<string | null>(null)
+const tooltip = ref<LiteTooltip>({
+  visible: false,
+  text: '',
+  x: 0,
+  y: 0,
+  placement: 'top',
+})
 const homeContentStore = useHomeContentStore()
 const litePreferencesStore = useLitePreferencesStore()
 const themeStore = useThemeStore()
@@ -81,6 +97,37 @@ const hideBrokenIcon = (event: Event) => {
   image.style.display = 'none'
 }
 
+const hideTooltip = () => {
+  tooltip.value.visible = false
+}
+
+const isMobileViewport = () => window.innerWidth <= 760
+
+const shouldShowInlineDetails = (link: SiteLink) =>
+  litePreferencesStore.viewMode === 'detail' || expandedLinkUrl.value === link.websiteUrl
+
+const showTooltip = (link: SiteLink, event: MouseEvent | FocusEvent) => {
+  if (litePreferencesStore.viewMode === 'detail' || isMobileViewport()) return
+
+  const target = event.currentTarget as HTMLElement | null
+  if (!target) return
+
+  const rect = target.getBoundingClientRect()
+  const tooltipWidth = 280
+  const gutter = 16
+  const centeredX = rect.left + rect.width / 2
+  const x = Math.min(window.innerWidth - tooltipWidth / 2 - gutter, Math.max(tooltipWidth / 2 + gutter, centeredX))
+  const shouldShowBelow = rect.top < 96
+
+  tooltip.value = {
+    visible: true,
+    text: link.websiteDescription || link.websiteTitle,
+    x,
+    y: shouldShowBelow ? rect.bottom + 10 : rect.top - 10,
+    placement: shouldShowBelow ? 'bottom' : 'top',
+  }
+}
+
 const updateLinkColumnCount = () => {
   const width = window.innerWidth
   const isDetailMode = litePreferencesStore.viewMode === 'detail'
@@ -94,20 +141,43 @@ const updateLinkColumnCount = () => {
   } else {
     linkColumnCount.value = isDetailMode ? 4 : 6
   }
+
+  if (!isMobileViewport()) {
+    expandedLinkUrl.value = null
+  }
 }
 
 onMounted(async () => {
   updateLinkColumnCount()
   window.addEventListener('resize', updateLinkColumnCount)
+  window.addEventListener('scroll', hideTooltip, { passive: true })
 
   await homeContentStore.load().catch(() => undefined)
 })
 
 onBeforeUnmount(() => {
   window.removeEventListener('resize', updateLinkColumnCount)
+  window.removeEventListener('scroll', hideTooltip)
 })
 
 watch(() => litePreferencesStore.viewMode, updateLinkColumnCount)
+
+watch(
+  () => litePreferencesStore.viewMode,
+  () => {
+    hideTooltip()
+    expandedLinkUrl.value = null
+  },
+)
+
+const handleResourceClick = (link: SiteLink, event: MouseEvent) => {
+  if (litePreferencesStore.viewMode === 'detail' || !isMobileViewport()) return
+
+  if (expandedLinkUrl.value !== link.websiteUrl) {
+    event.preventDefault()
+    expandedLinkUrl.value = link.websiteUrl
+  }
+}
 
 const handleFloatingAction = (id: string) => {
   if (id === 'top') {
@@ -124,9 +194,9 @@ const handleFloatingAction = (id: string) => {
   <div class="lite-page" :class="{ 'is-night': themeStore.isDarkMode }" :data-mode="litePreferencesStore.viewMode">
     <div class="page-shell">
       <header class="page-header">
-        <router-link class="back-link" to="/" aria-label="返回主站">
-          <ArrowLeft :size="17" aria-hidden="true" />
-          <span>主站</span>
+        <router-link class="back-link" to="/dev" aria-label="访问 DEV 版">
+          <span>DEV 版</span>
+          <ArrowRight :size="17" aria-hidden="true" />
         </router-link>
 
         <div class="title-row">
@@ -221,6 +291,12 @@ const handleFloatingAction = (id: string) => {
                   rel="noreferrer"
                   :data-tooltip="`${link.websiteTitle}\n${link.websiteDescription}`"
                   :aria-label="`打开 ${link.websiteTitle}`"
+                  :class="{ 'is-expanded': expandedLinkUrl === link.websiteUrl }"
+                  @click="handleResourceClick(link, $event)"
+                  @mouseenter="showTooltip(link, $event)"
+                  @mouseleave="hideTooltip"
+                  @focus="showTooltip(link, $event)"
+                  @blur="hideTooltip"
                 >
                   <span class="favicon" aria-hidden="true">
                     <span>{{ link.websiteTitle.charAt(0) }}</span>
@@ -237,7 +313,7 @@ const handleFloatingAction = (id: string) => {
 
                   <span class="resource-copy">
                     <span class="resource-title">{{ link.websiteTitle }}</span>
-                    <span v-if="litePreferencesStore.viewMode === 'detail'" class="resource-description">
+                    <span v-if="shouldShowInlineDetails(link)" class="resource-description">
                       {{ link.websiteDescription }}
                     </span>
                   </span>
@@ -314,6 +390,16 @@ const handleFloatingAction = (id: string) => {
           </div>
         </section>
       </main>
+    </div>
+
+    <div
+      v-if="tooltip.visible"
+      class="lite-tooltip"
+      :class="`is-${tooltip.placement}`"
+      :style="{ left: `${tooltip.x}px`, top: `${tooltip.y}px` }"
+      role="tooltip"
+    >
+      {{ tooltip.text }}
     </div>
 
     <FloatingPanel
@@ -523,9 +609,9 @@ const handleFloatingAction = (id: string) => {
 }
 
 .view-button {
-  min-width: 82px;
+  min-width: 64px;
   min-height: 36px;
-  padding: 0 14px;
+  padding: 0 10px;
   border: 0;
   border-radius: 999px;
   color: var(--muted);
@@ -554,7 +640,7 @@ const handleFloatingAction = (id: string) => {
 }
 
 .category-section {
-  overflow: visible;
+  overflow: hidden;
 }
 
 .category-header {
@@ -640,65 +726,10 @@ const handleFloatingAction = (id: string) => {
     color 0.16s ease;
 }
 
-.resource-link::before,
-.resource-link::after {
-  position: absolute;
-  left: 50%;
-  z-index: 20;
-  opacity: 0;
-  pointer-events: none;
-  transform: translate(-50%, 4px);
-  transition:
-    opacity 0.12s ease,
-    transform 0.12s ease;
-}
-
-.resource-link::before {
-  bottom: calc(100% + 9px);
-  width: max-content;
-  max-width: min(280px, calc(100vw - 40px));
-  padding: 8px 10px;
-  border: 1px solid var(--tooltip-border);
-  border-radius: 10px;
-  background: var(--tooltip-bg);
-  box-shadow: 0 10px 30px var(--tooltip-shadow);
-  color: var(--text);
-  content: attr(data-tooltip);
-  font-size: 12px;
-  font-weight: 650;
-  line-height: 1.45;
-  text-align: left;
-  white-space: pre-line;
-}
-
-.resource-link::after {
-  bottom: calc(100% + 4px);
-  width: 10px;
-  height: 10px;
-  border-right: 1px solid var(--tooltip-border);
-  border-bottom: 1px solid var(--tooltip-border);
-  background: var(--tooltip-bg);
-  content: "";
-  transform: translate(-50%, 4px) rotate(45deg);
-}
-
 .resource-link:hover,
 .resource-link:focus-visible {
   z-index: 2;
   background: var(--surface-hover);
-}
-
-.resource-link:hover::before,
-.resource-link:hover::after,
-.resource-link:focus-visible::before,
-.resource-link:focus-visible::after {
-  opacity: 1;
-  transform: translate(-50%, 0);
-}
-
-.resource-link:hover::after,
-.resource-link:focus-visible::after {
-  transform: translate(-50%, 0) rotate(45deg);
 }
 
 .resource-placeholder {
@@ -762,6 +793,30 @@ const handleFloatingAction = (id: string) => {
   transition: opacity 0.16s ease;
 }
 
+.lite-tooltip {
+  position: fixed;
+  z-index: 200;
+  width: max-content;
+  max-width: min(280px, calc(100vw - 40px));
+  padding: 8px 10px;
+  border: 1px solid var(--tooltip-border);
+  border-radius: 10px;
+  background: var(--tooltip-bg);
+  box-shadow: 0 10px 30px var(--tooltip-shadow);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.45;
+  pointer-events: none;
+  text-align: left;
+  transform: translate(-50%, -100%);
+  white-space: pre-line;
+}
+
+.lite-tooltip.is-bottom {
+  transform: translate(-50%, 0);
+}
+
 .resource-link:hover .resource-action,
 .resource-link:focus-visible .resource-action {
   opacity: 1;
@@ -787,6 +842,10 @@ const handleFloatingAction = (id: string) => {
 .lite-page[data-mode='detail'] .resource-title {
   font-size: 13px;
   white-space: nowrap;
+}
+
+.lite-page[data-mode='detail'] .resource-action {
+  opacity: 1;
 }
 
 .news-category {
@@ -902,8 +961,6 @@ const handleFloatingAction = (id: string) => {
 @media (prefers-reduced-motion: reduce) {
   .resource-link,
   .resource-action,
-  .resource-link::before,
-  .resource-link::after,
   .spinner {
     animation: none;
     transition: none;
@@ -952,20 +1009,47 @@ const handleFloatingAction = (id: string) => {
     gap: 16px;
   }
 
-  .view-switch {
+  .brand-title {
+    --brand-title-size: clamp(31px, 10vw, 42px);
+
+    width: 100%;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .brand-title h1 {
+    min-width: 0;
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    row-gap: 4px;
+  }
+
+  .brand-title h1 > span:first-child {
+    flex: 0 1 100%;
+  }
+
+  .ccpc-word {
+    flex: 0 1 auto;
+  }
+
+  .view-switch,
+  .theme-segment {
     width: 100%;
   }
 
   .header-actions {
     width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
   }
 
   .theme-segment {
-    flex: 0 0 auto;
+    min-width: 0;
   }
 
   .view-switch {
-    flex: 1 1 auto;
+    min-width: 0;
   }
 
   .category-header {
@@ -983,16 +1067,16 @@ const handleFloatingAction = (id: string) => {
     border-bottom: 1px solid var(--line);
   }
 
-  .resource-action {
-    opacity: 1;
-  }
-
   .resource-placeholder {
     display: none;
   }
 
   .resource-link {
     margin-left: 0;
+  }
+
+  .resource-link.is-expanded .resource-action {
+    opacity: 1;
   }
 
   .news-row {
@@ -1004,10 +1088,6 @@ const handleFloatingAction = (id: string) => {
     justify-content: flex-start;
   }
 
-  .resource-link::before,
-  .resource-link::after {
-    display: none;
-  }
 }
 
 @media (max-width: 560px) {
