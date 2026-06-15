@@ -215,7 +215,9 @@ const handleFloatingAction = (id: string) => {
   --tooltip-shadow: rgba(0, 0, 0, 0.14);
   --news-black-color: #111111;
 
-  min-height: 64px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  min-height: 100svh;
   background: var(--page);
   color: var(--text);
   color-scheme: light;

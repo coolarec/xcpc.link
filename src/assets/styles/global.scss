@@ -119,16 +119,20 @@
 
 html {
   min-width: 320px;
-  background: var(--surface);
+  min-height: 100%;
+  background: #f5f5f7;
 }
 
 body {
   min-width: 320px;
+  min-height: 100vh;
+  min-height: 100dvh;
   min-height: 100svh;
   margin: 0;
   color: var(--text);
-  background: var(--surface);
+  background: #f5f5f7;
   letter-spacing: 0;
+  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -159,7 +163,10 @@ a {
 }
 
 #app {
+  min-height: 100vh;
+  min-height: 100dvh;
   min-height: 100svh;
+  background: inherit;
 }
 
 .route-page {

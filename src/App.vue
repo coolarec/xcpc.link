@@ -46,6 +46,8 @@ watch(
 
 <style scoped>
 .app-layout {
+  min-height: 100vh;
+  min-height: 100dvh;
   min-height: 100svh;
   overflow-x: hidden;
   background: var(--page-bg);
@@ -53,6 +55,8 @@ watch(
 }
 
 .route-view {
+  min-height: 100vh;
+  min-height: 100dvh;
   min-height: 100svh;
 }
 
