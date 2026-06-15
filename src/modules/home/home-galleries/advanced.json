@@ -318,7 +318,7 @@
           "websiteDescription": "测测你的算竞人格(仅供娱乐,请勿当真)"
         },
         {
-          "avatarUrl": "https://patchouli-7.github.io/favicon.ico",
+          "avatarUrl": "https://github.com/patchouli-7.png",
           "websiteUrl": "https://patchouli-7.github.io/",
           "websiteTitle": "Codeforces 练习可视化面板",
           "websiteDescription": "预测 CF rating 及绘制历史刷题颜色图。"
@@ -403,7 +403,7 @@
           "websiteDescription": "ACMer 数据库与资料查询（仅包含区域赛）"
         },
         {
-          "avatarUrl": "https://github.githubassets.com/favicons/favicon.svg",
+          "avatarUrl": "https://github.com/zzzzzzyt.png",
           "websiteUrl": "https://zzzzzzyt.github.io/xcpc-elo/",
           "websiteTitle": "XCPC ELO",
           "websiteDescription": "由 zzzzzzyt 开发的基于 elo 机制的 XCPC 选手评分与排名工具。（包含省赛，邀请赛及区域赛）"
@@ -421,13 +421,13 @@
           "websiteDescription": "由苯环开发的蓝桥杯获奖和选手信息查询工具。"
         },
         {
-          "avatarUrl": "",
+          "avatarUrl": "https://github.com/dbywsc.png",
           "websiteUrl": "https://dbywsc.github.io/XIPF/#/",
           "websiteTitle": "XIPF",
           "websiteDescription": "大学生程序设计竞赛数据统计工具。"
         },
         {
-          "avatarUrl": "https://hei-maom.github.io/favicon.ico",
+          "avatarUrl": "https://github.com/hei-maom.png",
           "websiteUrl": "https://hei-maom.github.io/xcpcrating/#/",
           "websiteTitle": "XCPC Rating",
           "websiteDescription": "XCPC 选手评分与排名查询工具。"
