@@ -41,9 +41,9 @@
         },
         {
           "avatarUrl": "https://unavatar.io/chumeng.xyz",
-          "websiteUrl": "https://chumeng.xyz/xcpc-statement-generator/",
+          "websiteUrl": "https://xcpc-statement-generator.netlify.app/",
           "websiteTitle": "XCPC PDF 题面管理工具",
-          "websiteDescription": "用于生成和管理 XCPC PDF 题面的工具入口。"
+          "websiteDescription": "由 chumeng 开发的用于生成和管理 XCPC PDF 题面的工具。"
         },
         {
           "avatarUrl": "https://unavatar.io/yuantiji.ac",
