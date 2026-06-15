@@ -159,6 +159,12 @@
           "websiteUrl": "https://github.com/hh2048/XCPC",
           "websiteTitle": "hh2048/XCPC",
           "websiteDescription": "XCPC 算法模板与竞赛资料仓库。"
+        },
+        {
+          "avatarUrl": "https://judge.yosupo.jp/favicon.ico",
+          "websiteUrl": "https://judge.yosupo.jp/",
+          "websiteTitle": "Library Checker",
+          "websiteDescription": "用于验证算法模板正确性的标准题库。"
         }
       ]
     },
@@ -302,6 +308,24 @@
       ]
     },
     {
+      "title": "娱乐",
+      "description": "竞赛圈里适合放松和看看趣味内容的入口。",
+      "links": [
+        {
+          "avatarUrl": "https://cpti.top/favicon.ico",
+          "websiteUrl": "https://cpti.top/",
+          "websiteTitle": "CPTI",
+          "websiteDescription": "测测你的算竞人格(仅供娱乐,请勿当真)"
+        },
+        {
+          "avatarUrl": "https://patchouli-7.github.io/favicon.ico",
+          "websiteUrl": "https://patchouli-7.github.io/",
+          "websiteTitle": "Codeforces 练习可视化面板",
+          "websiteDescription": "预测 CF rating 及绘制历史刷题颜色图。"
+        }
+      ]
+    },
+    {
       "title": "榜单",
       "description": "常用的学校、区域赛和综合榜单入口。",
       "links": [
@@ -401,6 +425,12 @@
           "websiteUrl": "https://dbywsc.github.io/XIPF/#/",
           "websiteTitle": "XIPF",
           "websiteDescription": "大学生程序设计竞赛数据统计工具。"
+        },
+        {
+          "avatarUrl": "https://hei-maom.github.io/favicon.ico",
+          "websiteUrl": "https://hei-maom.github.io/xcpcrating/#/",
+          "websiteTitle": "XCPC Rating",
+          "websiteDescription": "XCPC 选手评分与排名查询工具。"
         },
         {
           "avatarUrl": "",

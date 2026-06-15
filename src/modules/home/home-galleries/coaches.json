@@ -61,7 +61,7 @@
           "avatarUrl": "https://polygon.codeforces.com/favicon.ico",
           "websiteUrl": "https://polygon.codeforces.com/",
           "websiteTitle": "Polygon",
-          "websiteDescription": "没有头像时会回退首字母，适合验证出题工具入口展示。"
+          "websiteDescription": "Codeforces 官方命题平台，用于题目准备、数据配置和验题。"
         },
         {
           "avatarUrl": "https://sua.ac/img/logo.jpg",
@@ -80,6 +80,54 @@
           "websiteUrl": "https://github.com/Lumine2024/ICPC-Problem-Creator.skill",
           "websiteTitle": "ICPC-Problem-Creator.skill",
           "websiteDescription": "使用 AI Agent 创造 ICPC 风格题目的技能仓库。"
+        },
+        {
+          "avatarUrl": "https://www.cnblogs.com/favicon.ico",
+          "websiteUrl": "https://www.cnblogs.com/frostyice/p/19215603",
+          "websiteTitle": "Polygon 教程",
+          "websiteDescription": "Polygon 平台命题、配置和出题流程教程。"
+        }
+      ]
+    },
+    {
+      "title": "办赛",
+      "description": "搭建 OJ、榜单、验题和比赛资料流转时常用的项目入口。",
+      "links": [
+        {
+          "avatarUrl": "https://github.com/CSGrandeur.png",
+          "websiteUrl": "https://github.com/CSGrandeur/CCPCOJ",
+          "websiteTitle": "CCPCOJ（CSGOJ）",
+          "websiteDescription": "CCPC 赛事相关的在线评测与办赛系统项目。"
+        },
+        {
+          "avatarUrl": "https://github.com/hydro-dev.png",
+          "websiteUrl": "https://github.com/hydro-dev/Hydro",
+          "websiteTitle": "HydroOJ",
+          "websiteDescription": "开源在线评测与比赛管理系统。"
+        },
+        {
+          "avatarUrl": "https://github.com/DOMjudge.png",
+          "websiteUrl": "https://github.com/DOMjudge/domjudge",
+          "websiteTitle": "DOMjudge",
+          "websiteDescription": "ICPC 风格比赛常用的开源评测与榜单系统。"
+        },
+        {
+          "avatarUrl": "https://github.com/icpctools.png",
+          "websiteUrl": "https://github.com/icpctools/icpctools",
+          "websiteTitle": "icpctools",
+          "websiteDescription": "ICPC 比赛运行、榜单展示和数据处理工具集。"
+        },
+        {
+          "avatarUrl": "https://github.com/cn-xcpc-tools.png",
+          "websiteUrl": "https://github.com/cn-xcpc-tools/cn-xcpc-docs",
+          "websiteTitle": "cn-xcpc-docs",
+          "websiteDescription": "国内 XCPC 办赛、工具和流程文档整理。"
+        },
+        {
+          "avatarUrl": "https://github.com/cn-xcpc-tools.png",
+          "websiteUrl": "https://github.com/cn-xcpc-tools/Polygon2DOMjudge",
+          "websiteTitle": "Polygon2DOMjudge",
+          "websiteDescription": "将 Polygon 题目包转换到 DOMjudge 的工具。"
         }
       ]
     }
