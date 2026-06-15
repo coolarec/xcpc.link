@@ -3,15 +3,15 @@
     <div class="sponsor-line" aria-label="Sponsored by CoolArec and bLue">
       <span class="sponsor-heart" aria-hidden="true">♥</span>
       <span>Sponsored by</span>
-      <span class="sponsor-person">
+      <a class="sponsor-person" href="https://www.coolarec.link/" target="_blank" rel="noreferrer">
         <img src="/assets/icons/sponsor-coolarec-desktop.png" alt="" width="22" height="22" loading="lazy" />
         <span>CoolArec</span>
-      </span>
+      </a>
       <span class="sponsor-separator">&amp;</span>
-      <span class="sponsor-person">
+      <a class="sponsor-person" href="https://dreamer.blue/" target="_blank" rel="noreferrer">
         <img src="/assets/icons/sponsor-blue-dreamerblue.png" alt="" width="22" height="22" loading="lazy" />
         <span>dreamerbLue</span>
-      </span>
+      </a>
 
     </div>
     <p class="cdn-credit">
@@ -57,6 +57,7 @@
   border-radius: 999px;
   background: var(--surface);
   color: var(--text);
+  text-decoration: none;
 }
 
 .sponsor-person img {

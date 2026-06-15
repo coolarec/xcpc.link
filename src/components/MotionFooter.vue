@@ -69,15 +69,15 @@ onBeforeUnmount(() => {
         <strong>Building the ACM universe, together.</strong>
         <div class="sponsor-line" aria-label="Sponsored by CoolArec and bLue">
           <span>Sponsored by</span>
-          <span class="sponsor-person">
+          <a class="sponsor-person" href="https://www.coolarec.link/" target="_blank" rel="noreferrer">
             <img src="/assets/icons/sponsor-coolarec-desktop.png" alt="" width="28" height="28" loading="lazy" />
             <span>CoolArec</span>
-          </span>
+          </a>
           <span class="sponsor-separator">&amp;</span>
-          <span class="sponsor-person">
+          <a class="sponsor-person" href="https://dreamer.blue/" target="_blank" rel="noreferrer">
             <img src="/assets/icons/sponsor-blue-dreamerblue.png" alt="" width="28" height="28" loading="lazy" />
             <span>bLue</span>
-          </span>
+          </a>
         </div>
         <p class="cdn-credit">
           <span>
@@ -192,6 +192,7 @@ onBeforeUnmount(() => {
   align-items: center;
   gap: 6px;
   color: var(--page-fg);
+  text-decoration: none;
 }
 
 .sponsor-person img {
