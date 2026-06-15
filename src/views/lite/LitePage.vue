@@ -789,6 +789,7 @@ const handleFloatingAction = (id: string) => {
   line-height: 1.35;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
 }
 
 .resource-action {
@@ -884,6 +885,7 @@ const handleFloatingAction = (id: string) => {
   top: 50%;
   transform: translateY(-50%);
   -webkit-line-clamp: 3;
+  line-clamp: 3;
 }
 
 .lite-page[data-mode='detail'] .links:not(.news-links) > .resource-link .resource-action {
