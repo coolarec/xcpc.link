@@ -64,12 +64,6 @@
           "websiteDescription": "Codeforces 官方命题平台，用于题目准备、数据配置和验题。"
         },
         {
-          "avatarUrl": "https://sua.ac/img/logo.jpg",
-          "websiteUrl": "https://sua.ac/",
-          "websiteTitle": "SUA",
-          "websiteDescription": "程序设计竞赛命题组与竞赛合集入口。"
-        },
-        {
           "avatarUrl": "https://github.com/SZTU-ACM.png",
           "websiteUrl": "https://github.com/SZTU-ACM/AutoCode",
           "websiteTitle": "AutoCode",
@@ -128,6 +122,24 @@
           "websiteUrl": "https://github.com/cn-xcpc-tools/Polygon2DOMjudge",
           "websiteTitle": "Polygon2DOMjudge",
           "websiteDescription": "将 Polygon 题目包转换到 DOMjudge 的工具。"
+        },
+        {
+          "avatarUrl": "https://sua.ac/img/logo.jpg",
+          "websiteUrl": "https://sua.ac/",
+          "websiteTitle": "SUA",
+          "websiteDescription": "追求更好的竞赛体验。专业命题团队，保障赛题质量，追求体验与区分度兼备的高质量竞赛。亦可进行技术支持与其它辅助工作，协助竞赛顺利进行。"
+        },
+        {
+          "avatarUrl": "https://foxops.top/favicon.ico",
+          "websiteUrl": "https://foxops.top/",
+          "websiteTitle": "FoxOps",
+          "websiteDescription": "为编程竞赛保驾护航，致力于江西省内外 XCPC 竞赛的技术运维，为赛事的稳定运行提供专业保障。"
+        },
+        {
+          "avatarUrl": "https://algoux.org/assets/favicon.48d748c3.svg",
+          "websiteUrl": "https://algoux.org/",
+          "websiteTitle": "algoUX",
+          "websiteDescription": "面向算法竞赛工具和资源的体验设计与工具集合。"
         }
       ]
     }
