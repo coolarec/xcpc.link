@@ -10,7 +10,7 @@
       "description": "竞赛报名、队伍注册和教培管理入口。",
       "links": [
         {
-          "avatarUrl": "https://unavatar.io/uep.pintia.cn",
+          "avatarUrl": "/assets/icons/unavatar-io-uep-pintia-cn-0f4b5bca.png",
           "websiteUrl": "https://uep.pintia.cn/dashboard",
           "websiteTitle": "攀拓 UEP",
           "websiteDescription": "攀拓计算机能力测评与教培管理入口。"
@@ -22,7 +22,7 @@
           "websiteDescription": "中国大学生程序设计竞赛报名系统入口。"
         },
         {
-          "avatarUrl": "https://icpc.global/favicon.ico",
+          "avatarUrl": "/assets/icons/icpc-global-favicon-ico-181dcdec.ico",
           "websiteUrl": "https://icpc.global/register",
           "websiteTitle": "ICPC Register",
           "websiteDescription": "ICPC 官方队伍与赛事注册入口。"
@@ -34,49 +34,49 @@
       "description": "命题、题面排版和题目准备时常用的工具入口。",
       "links": [
         {
-          "avatarUrl": "https://unavatar.io/texnique.xyz",
+          "avatarUrl": "/assets/icons/unavatar-io-texnique-xyz-d8457ff0.png",
           "websiteUrl": "https://texnique.xyz/",
           "websiteTitle": "TeXnique",
           "websiteDescription": "在线 LaTeX 公式练习与排版工具。"
         },
         {
-          "avatarUrl": "https://unavatar.io/chumeng.xyz",
+          "avatarUrl": "/assets/icons/unavatar-io-chumeng-xyz-4400f3c7.jpg",
           "websiteUrl": "https://xcpc-statement-generator.netlify.app/",
           "websiteTitle": "XCPC PDF 题面管理工具",
           "websiteDescription": "由 chumeng 开发的用于生成和管理 XCPC PDF 题面的工具。"
         },
         {
-          "avatarUrl": "https://unavatar.io/yuantiji.ac",
+          "avatarUrl": "/assets/icons/unavatar-io-yuantiji-ac-eb585804.ico",
           "websiteUrl": "https://yuantiji.ac/",
           "websiteTitle": "原题机",
           "websiteDescription": "检查题目是否可能撞题或已有相似题的工具。"
         },
         {
-          "avatarUrl": "https://oi-wiki.org/favicon.ico",
+          "avatarUrl": "/assets/icons/oi-wiki-org-favicon-ico-01a153de.ico",
           "websiteUrl": "https://oi-wiki.org/tools/testlib/general/",
           "websiteTitle": "OI Wiki 出题工具",
           "websiteDescription": "查 testlib、数据生成和校验器时很顺手。"
         },
         {
-          "avatarUrl": "https://polygon.codeforces.com/favicon.ico",
+          "avatarUrl": "/assets/icons/polygon-codeforces-com-favicon-ico-c1d89138.ico",
           "websiteUrl": "https://polygon.codeforces.com/",
           "websiteTitle": "Polygon",
           "websiteDescription": "Codeforces 官方命题平台，用于题目准备、数据配置和验题。"
         },
         {
-          "avatarUrl": "https://github.com/SZTU-ACM.png",
+          "avatarUrl": "/assets/icons/github-com-sztu-acm-png-f493b9a0.png",
           "websiteUrl": "https://github.com/SZTU-ACM/AutoCode",
           "websiteTitle": "AutoCode",
           "websiteDescription": "面向 ICPC/CCPC 的 AI 辅助自动化出题与验题系统。"
         },
         {
-          "avatarUrl": "https://github.com/Lumine2024.png",
+          "avatarUrl": "/assets/icons/github-com-lumine2024-png-bfe3ac13.jpg",
           "websiteUrl": "https://github.com/Lumine2024/ICPC-Problem-Creator.skill",
           "websiteTitle": "ICPC-Problem-Creator.skill",
           "websiteDescription": "使用 AI Agent 创造 ICPC 风格题目的技能仓库。"
         },
         {
-          "avatarUrl": "https://www.cnblogs.com/favicon.ico",
+          "avatarUrl": "/assets/icons/cnblogs-com-favicon-ico-ec70fc90.ico",
           "websiteUrl": "https://www.cnblogs.com/frostyice/p/19215603",
           "websiteTitle": "Polygon 教程",
           "websiteDescription": "Polygon 平台命题、配置和出题流程教程。"
@@ -88,55 +88,55 @@
       "description": "搭建 OJ、榜单、验题和比赛资料流转时常用的项目入口。",
       "links": [
         {
-          "avatarUrl": "https://github.com/CSGrandeur.png",
+          "avatarUrl": "/assets/icons/github-com-csgrandeur-png-fd691071.jpg",
           "websiteUrl": "https://github.com/CSGrandeur/CCPCOJ",
           "websiteTitle": "CCPCOJ（CSGOJ）",
           "websiteDescription": "CCPC 赛事相关的在线评测与办赛系统项目。"
         },
         {
-          "avatarUrl": "https://github.com/hydro-dev.png",
+          "avatarUrl": "/assets/icons/github-com-hydro-dev-png-8f5cd6f2.png",
           "websiteUrl": "https://github.com/hydro-dev/Hydro",
           "websiteTitle": "HydroOJ",
           "websiteDescription": "开源在线评测与比赛管理系统。"
         },
         {
-          "avatarUrl": "https://github.com/DOMjudge.png",
+          "avatarUrl": "/assets/icons/github-com-domjudge-png-1ebd09b4.png",
           "websiteUrl": "https://github.com/DOMjudge/domjudge",
           "websiteTitle": "DOMjudge",
           "websiteDescription": "ICPC 风格比赛常用的开源评测与榜单系统。"
         },
         {
-          "avatarUrl": "https://github.com/icpctools.png",
+          "avatarUrl": "/assets/icons/github-com-icpctools-png-2870123c.png",
           "websiteUrl": "https://github.com/icpctools/icpctools",
           "websiteTitle": "icpctools",
           "websiteDescription": "ICPC 比赛运行、榜单展示和数据处理工具集。"
         },
         {
-          "avatarUrl": "https://github.com/cn-xcpc-tools.png",
+          "avatarUrl": "/assets/icons/github-com-cn-xcpc-tools-png-8700e3d8.png",
           "websiteUrl": "https://github.com/cn-xcpc-tools/cn-xcpc-docs",
           "websiteTitle": "cn-xcpc-docs",
           "websiteDescription": "国内 XCPC 办赛、工具和流程文档整理。"
         },
         {
-          "avatarUrl": "https://github.com/cn-xcpc-tools.png",
+          "avatarUrl": "/assets/icons/github-com-cn-xcpc-tools-png-8700e3d8.png",
           "websiteUrl": "https://github.com/cn-xcpc-tools/Polygon2DOMjudge",
           "websiteTitle": "Polygon2DOMjudge",
           "websiteDescription": "将 Polygon 题目包转换到 DOMjudge 的工具。"
         },
         {
-          "avatarUrl": "https://sua.ac/img/logo.jpg",
+          "avatarUrl": "/assets/icons/sua-ac-img-logo-jpg-872610ae.jpg",
           "websiteUrl": "https://sua.ac/",
           "websiteTitle": "SUA",
           "websiteDescription": "追求更好的竞赛体验。专业命题团队，保障赛题质量，追求体验与区分度兼备的高质量竞赛。亦可进行技术支持与其它辅助工作，协助竞赛顺利进行。"
         },
         {
-          "avatarUrl": "https://foxops.top/favicon.ico",
+          "avatarUrl": "/assets/icons/foxops-top-favicon-ico-bb79ac60.ico",
           "websiteUrl": "https://foxops.top/",
           "websiteTitle": "FoxOps",
           "websiteDescription": "为编程竞赛保驾护航，致力于江西省内外 XCPC 竞赛的技术运维，为赛事的稳定运行提供专业保障。"
         },
         {
-          "avatarUrl": "https://algoux.org/assets/favicon.48d748c3.svg",
+          "avatarUrl": "/assets/icons/algoux-org-assets-favicon-48d748c3-svg-56b30c65.svg",
           "websiteUrl": "https://algoux.org/",
           "websiteTitle": "algoUX",
           "websiteDescription": "面向算法竞赛工具和资源的体验设计与工具集合。"

@@ -5,19 +5,19 @@
   "direction": "left",
   "cards": [
     {
-      "avatarUrl": "https://acmer.info/favicon.ico",
+      "avatarUrl": "/assets/icons/acmer-info-favicon-ico-4de589f5.ico",
       "websiteUrl": "https://acmer.info/",
       "websiteTitle": "ACMer.info",
       "websiteDescription": "一个致力于服务算法竞赛选手的导航站。"
     },
     {
-      "avatarUrl": "https://www.algowiki.cn/favicon.svg",
+      "avatarUrl": "/assets/icons/algowiki-cn-favicon-svg-c9a2708e.svg",
       "websiteUrl": "https://www.algowiki.cn/",
       "websiteTitle": "AlgoWiki",
       "websiteDescription": "AlgoWiki是以打造一个开源、热爱、互助、友善为基础的公益性质的Wiki信息平台。"
     },
     {
-      "avatarUrl": "https://ab.algoux.cn/dist/favicon_mac.ico",
+      "avatarUrl": "/assets/icons/ab-algoux-cn-dist-favicon-mac-ico-3d38a793.ico",
       "websiteUrl": "https://ab.algoux.cn/",
       "websiteTitle": "Algo Bootstrap",
       "websiteDescription": "为编程初学者而生，一键配置现代的 C++、Python 和 VS Code 编程环境"

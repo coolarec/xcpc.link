@@ -5,7 +5,7 @@
   "reverse": true,
   "cards": [
     {
-      "avatarUrl": "https://docs.qq.com/favicon.ico",
+      "avatarUrl": "/assets/icons/docs-qq-local.svg",
       "websiteUrl": "https://docs.qq.com/sheet/DT3NRQ3dwekx5d3Jo?tab=BB08J2",
       "websiteTitle": "2025春招ACM内推文档",
       "websiteDescription": "腾讯文档整理的春招 ACM 内推信息表。"
@@ -35,7 +35,7 @@
           "websiteDescription": "适合教培与知识整理的算法卡片工具。"
         },
         {
-          "avatarUrl": "https://cnoi.mrpython.top/favicon.svg",
+          "avatarUrl": "/assets/icons/cnoi-mrpython-top-favicon-svg-12b714c0.svg",
           "websiteUrl": "https://cnoi.mrpython.top/",
           "websiteTitle": "CNOI Statement Generator",
           "websiteDescription": "CSP 题面及版本生成相关的工具。"

@@ -5,6 +5,13 @@ import coachesGallery from './home-galleries/coaches.json'
 import newsData from './home-news.json'
 import type { HeroDockItem, HomeGallerySection, HomeGallerySectionSource, NewsData, SiteLink } from '../../types/home'
 
+const cdnBaseUrl = (import.meta.env.VITE_CDN_BASE_URL || '').replace(/\/+$/, '')
+
+const withCdnBase = (url: string): string => {
+  if (!cdnBaseUrl || !url.startsWith('/assets/')) return url
+  return `${cdnBaseUrl}${url}`
+}
+
 const cloneGalleries = (galleries: HomeGallerySectionSource[]): HomeGallerySectionSource[] =>
   structuredClone(galleries)
 
@@ -29,7 +36,7 @@ const createSiteLink = ({
   websiteTitle,
   websiteDescription,
 }: SiteLink): SiteLink => ({
-  avatarUrl,
+  avatarUrl: withCdnBase(avatarUrl),
   websiteUrl,
   websiteTitle,
   websiteDescription,
@@ -133,4 +140,20 @@ export const fetchHeroPanelEmojis = async (): Promise<string[]> => structuredClo
 
 export const fetchAlgorithmWords = async (): Promise<string[]> => structuredClone(algorithmWords)
 
-export const fetchNewsData = async (): Promise<NewsData> => structuredClone(newsData)
+export const fetchNewsData = async (): Promise<NewsData> => {
+  const clonedNews = structuredClone(newsData)
+  return {
+    redList: clonedNews.redList.map((item) => ({
+      ...item,
+      sourceIcon: withCdnBase(item.sourceIcon),
+    })),
+    blackList: clonedNews.blackList.map((item) => ({
+      ...item,
+      sourceIcon: withCdnBase(item.sourceIcon),
+    })),
+    gossip: clonedNews.gossip.map((item) => ({
+      ...item,
+      sourceIcon: withCdnBase(item.sourceIcon),
+    })),
+  }
+}

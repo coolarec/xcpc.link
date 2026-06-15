@@ -7,8 +7,7 @@ import './assets/styles/global.scss'
 createApp(App).use(createPinia()).use(router).mount('#app')
 
 if ('serviceWorker' in navigator) {
-  const serviceWorkerUrl = `${import.meta.env.BASE_URL}icon-cache-sw.js`
-  navigator.serviceWorker.register(serviceWorkerUrl, { scope: import.meta.env.BASE_URL }).catch((error) => {
+  navigator.serviceWorker.register('/icon-cache-sw.js', { scope: '/' }).catch((error) => {
     console.warn('Failed to register icon cache service worker:', error)
   })
 }
