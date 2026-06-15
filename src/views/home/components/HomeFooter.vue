@@ -16,12 +16,11 @@
     </div>
     <p class="cdn-credit">
       <span>
-        Thanks to
+        CDN & Opt by algoUX
         <a class="cdn-provider" href="https://algoux.org/" target="_blank" rel="noreferrer">
           <img src="/assets/icons/algoux-mark.svg" alt="" width="28" height="18" loading="lazy" />
           <span>algoUX</span>
         </a>
-        for CDN and optimization services.
       </span>
     </p>
   </footer>
