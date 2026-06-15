@@ -1,6 +1,7 @@
 <template>
   <footer class="home-footer">
     <div class="sponsor-line" aria-label="Sponsored by CoolArec and bLue">
+      <span class="sponsor-heart" aria-hidden="true">♥</span>
       <span>Sponsored by</span>
       <span class="sponsor-person">
         <img src="/assets/icons/sponsor-coolarec.png" alt="" width="22" height="22" loading="lazy" />
@@ -8,11 +9,21 @@
       </span>
       <span class="sponsor-separator">&amp;</span>
       <span class="sponsor-person">
-        <img src="/assets/icons/sponsor-blue.svg" alt="" width="22" height="22" loading="lazy" />
-        <span>bLue</span>
+        <img src="/assets/icons/sponsor-blue-dreamerblue.png" alt="" width="22" height="22" loading="lazy" />
+        <span>dreamerbLue</span>
       </span>
-      <span class="sponsor-heart" aria-hidden="true">♥</span>
+
     </div>
+    <p class="cdn-credit">
+      <span>
+        Thanks to
+        <a class="cdn-provider" href="https://algoux.org/" target="_blank" rel="noreferrer">
+          <img src="/assets/icons/algoux-mark.svg" alt="" width="28" height="18" loading="lazy" />
+          <span>algoUX</span>
+        </a>
+        for CDN and optimization services.
+      </span>
+    </p>
   </footer>
 </template>
 
@@ -66,5 +77,40 @@
   color: #ff3b30;
   font-size: 15px;
   line-height: 1;
+}
+
+.cdn-credit {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.cdn-credit img {
+  width: 28px;
+  height: 18px;
+  display: inline-block;
+  object-fit: contain;
+  vertical-align: middle;
+}
+
+.cdn-credit a {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.cdn-credit a:hover {
+  text-decoration: underline;
+}
+
+.cdn-provider {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  vertical-align: middle;
 }
 </style>

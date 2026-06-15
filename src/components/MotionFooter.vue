@@ -67,7 +67,6 @@ onBeforeUnmount(() => {
       <span>AWESOME XCPC</span>
       <div class="footer-copy">
         <strong>Building the ACM universe, together.</strong>
-        <p>QQ 群 876103138</p>
         <div class="sponsor-line" aria-label="Sponsored by CoolArec and bLue">
           <span>Sponsored by</span>
           <span class="sponsor-person">
@@ -76,10 +75,20 @@ onBeforeUnmount(() => {
           </span>
           <span class="sponsor-separator">&amp;</span>
           <span class="sponsor-person">
-            <img src="/assets/icons/sponsor-blue.svg" alt="" width="28" height="28" loading="lazy" />
+            <img src="/assets/icons/sponsor-blue-dreamerblue.png" alt="" width="28" height="28" loading="lazy" />
             <span>bLue</span>
           </span>
         </div>
+        <p class="cdn-credit">
+          <span>
+            Thanks to
+            <a class="cdn-provider" href="https://algoux.org/" target="_blank" rel="noreferrer">
+              <img src="/assets/icons/algoux-mark.svg" alt="" width="28" height="18" loading="lazy" />
+              <span>algoUX</span>
+            </a>
+            for CDN and optimization services.
+          </span>
+        </p>
       </div>
     </div>
   </footer>
@@ -197,6 +206,37 @@ onBeforeUnmount(() => {
   color: var(--muted-fg);
 }
 
+.cdn-credit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.cdn-credit img {
+  width: 28px;
+  height: 18px;
+  display: inline-block;
+  object-fit: contain;
+  vertical-align: middle;
+}
+
+.cdn-credit a {
+  color: var(--page-fg);
+  text-decoration: none;
+}
+
+.cdn-credit a:hover {
+  text-decoration: underline;
+}
+
+.cdn-provider {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  vertical-align: middle;
+}
+
 @media (max-width: 860px) {
   .motion-footer {
     min-height: 30svh;
@@ -218,6 +258,10 @@ onBeforeUnmount(() => {
   }
 
   .sponsor-line {
+    justify-content: flex-start;
+  }
+
+  .cdn-credit {
     justify-content: flex-start;
   }
 }

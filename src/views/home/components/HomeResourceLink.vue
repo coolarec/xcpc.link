@@ -102,7 +102,7 @@ const emit = defineEmits<{
   width: 100%;
   height: 100%;
   display: block;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .resource-copy {
