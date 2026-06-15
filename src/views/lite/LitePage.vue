@@ -336,7 +336,7 @@ const handleFloatingAction = (id: string) => {
         >
           <header class="category-header">
             <div>
-              <p>XCPC Board</p>
+              <p>XCPC News</p>
               <h2>圈内播报</h2>
             </div>
             <span>{{ getNewsCount() }}</span>
