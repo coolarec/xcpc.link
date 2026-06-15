@@ -4,7 +4,7 @@
       <span class="sponsor-heart" aria-hidden="true">♥</span>
       <span>Sponsored by</span>
       <span class="sponsor-person">
-        <img src="/assets/icons/sponsor-coolarec.png" alt="" width="22" height="22" loading="lazy" />
+        <img src="/assets/icons/sponsor-coolarec-desktop.png" alt="" width="22" height="22" loading="lazy" />
         <span>CoolArec</span>
       </span>
       <span class="sponsor-separator">&amp;</span>

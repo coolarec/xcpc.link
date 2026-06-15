@@ -33,7 +33,6 @@ const emit = defineEmits<{
     @blur="emit('hide-tooltip')"
   >
     <span class="favicon" aria-hidden="true">
-      <span>{{ link.websiteTitle.charAt(0) }}</span>
       <img
         v-if="link.avatarUrl"
         :src="link.avatarUrl"
@@ -43,6 +42,7 @@ const emit = defineEmits<{
         loading="lazy"
         @error="emit('icon-error', $event)"
       />
+      <span v-else>{{ link.websiteTitle.charAt(0) }}</span>
     </span>
 
     <span class="resource-copy">

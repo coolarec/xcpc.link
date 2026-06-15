@@ -11,13 +11,13 @@
       "websiteDescription": "ICPC 各区域赛的近期赛程入口，可提前看到参赛队伍英文名。"
     },
     {
-      "avatarUrl": "",
+      "avatarUrl": "/assets/icons/ccpc-official-logo.png",
       "websiteUrl": "https://ccpc.io/rules/369",
       "websiteTitle": "CCPC 名额分配规则",
       "websiteDescription": "CCPC 规则与相关说明入口。"
     },
     {
-      "avatarUrl": "",
+      "avatarUrl": "/assets/icons/icpc-global-favicon-ico-181dcdec.ico",
       "websiteUrl": "https://icpc.pku.edu.cn/",
       "websiteTitle": "ICPC 北京总部",
       "websiteDescription": "ICPC 北京总部官方网站入口，会不定时更新教练论坛，各区域赛安排等情况。"
@@ -377,7 +377,7 @@
           "websiteDescription": "Universal Cup 历史榜单与成绩归档入口。"
         },
         {
-          "avatarUrl": "/assets/icons/rank-thusaac-local.svg",
+          "avatarUrl": "/assets/icons/rank-thusaac-com-favicon-png.png",
           "websiteUrl": "https://rank.thusaac.com/",
           "websiteTitle": "CSP 榜单",
           "websiteDescription": "CSP 相关榜单与成绩查询入口。"

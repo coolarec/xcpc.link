@@ -70,7 +70,7 @@ onBeforeUnmount(() => {
         <div class="sponsor-line" aria-label="Sponsored by CoolArec and bLue">
           <span>Sponsored by</span>
           <span class="sponsor-person">
-            <img src="/assets/icons/sponsor-coolarec.png" alt="" width="28" height="28" loading="lazy" />
+            <img src="/assets/icons/sponsor-coolarec-desktop.png" alt="" width="28" height="28" loading="lazy" />
             <span>CoolArec</span>
           </span>
           <span class="sponsor-separator">&amp;</span>

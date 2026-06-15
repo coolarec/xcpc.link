@@ -37,7 +37,11 @@ const handleAvatarLoad = (event: Event): void => {
 
     <!-- Header area -->
     <div class="card-header">
-      <div class="link-avatar-shell" :data-fallback="websiteTitle.charAt(0)">
+      <div
+        class="link-avatar-shell"
+        :data-fallback="websiteTitle.charAt(0)"
+        :data-has-avatar="avatarUrl ? 'true' : undefined"
+      >
         <img
           v-if="avatarUrl"
           class="link-avatar"
@@ -145,6 +149,10 @@ const handleAvatarLoad = (event: Event): void => {
 
 .link-avatar-shell[data-avatar-loaded='true']::before {
   opacity: 0;
+}
+
+.link-avatar-shell[data-has-avatar='true']::before {
+  content: none;
 }
 
 .link-avatar-shell[data-avatar-loaded='true'] {

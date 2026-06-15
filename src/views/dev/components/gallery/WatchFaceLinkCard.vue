@@ -126,6 +126,7 @@ const hideFaceHint = () => {
         :data-col="entry.col"
         :data-row="entry.row"
         :data-fallback="entry.item.websiteTitle.charAt(0)"
+        :data-has-avatar="entry.item.avatarUrl ? 'true' : undefined"
         :aria-label="entry.item.websiteTitle"
         :style="{ '--watch-color': entry.color }"
         draggable="false"
@@ -377,6 +378,10 @@ const hideFaceHint = () => {
 
 .watch-icon[data-avatar-loaded='true']::before {
   opacity: 0;
+}
+
+.watch-icon[data-has-avatar='true']::before {
+  content: none;
 }
 
 .watch-icon-image {

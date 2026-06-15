@@ -53,7 +53,6 @@ const newsCount = computed(() => getNewsCount(props.newsData))
 
             <span class="news-source">
               <span class="favicon" aria-hidden="true">
-                <span>{{ item.sourceName.charAt(0) }}</span>
                 <img
                   v-if="item.sourceIcon"
                   :src="item.sourceIcon"
@@ -63,6 +62,7 @@ const newsCount = computed(() => getNewsCount(props.newsData))
                   loading="lazy"
                   @error="emit('icon-error', $event)"
                 />
+                <span v-else>{{ item.sourceName.charAt(0) }}</span>
               </span>
               <span>{{ item.sourceName }}</span>
             </span>
