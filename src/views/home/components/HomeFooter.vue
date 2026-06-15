@@ -10,7 +10,7 @@
       <span class="sponsor-separator">&amp;</span>
       <a class="sponsor-person" href="https://dreamer.blue/" target="_blank" rel="noreferrer">
         <img src="/assets/icons/sponsor-blue-dreamerblue.png" alt="" width="22" height="22" loading="lazy" />
-        <span>dreamerbLue</span>
+        <span>bLue</span>
       </a>
 
     </div>
