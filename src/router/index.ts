@@ -3,8 +3,8 @@ import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 const routes: RouteRecordRaw[] = [
   {
     path: '/dev',
-    name: 'home',
-    component: () => import('../views/home/HomePage.vue'),
+    name: 'dev',
+    component: () => import('../views/dev/DevPage.vue'),
   },
   // {
   //   path: '/library',
@@ -28,8 +28,8 @@ const routes: RouteRecordRaw[] = [
   // },
   {
     path: '/',
-    name: 'lite',
-    component: () => import('../views/lite/LitePage.vue'),
+    name: 'home',
+    component: () => import('../views/home/HomePage.vue'),
   },
 ]
 

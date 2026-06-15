@@ -68,6 +68,18 @@ onBeforeUnmount(() => {
       <div class="footer-copy">
         <strong>Building the ACM universe, together.</strong>
         <p>QQ 群 876103138</p>
+        <div class="sponsor-line" aria-label="Sponsored by CoolArec and bLue">
+          <span>Sponsored by</span>
+          <span class="sponsor-person">
+            <img src="/assets/icons/sponsor-coolarec.png" alt="" width="28" height="28" loading="lazy" />
+            <span>CoolArec</span>
+          </span>
+          <span class="sponsor-separator">&amp;</span>
+          <span class="sponsor-person">
+            <img src="/assets/icons/sponsor-blue.svg" alt="" width="28" height="28" loading="lazy" />
+            <span>bLue</span>
+          </span>
+        </div>
       </div>
     </div>
   </footer>
@@ -155,6 +167,36 @@ onBeforeUnmount(() => {
   text-align: right;
 }
 
+.sponsor-line {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+  color: var(--muted-fg);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.sponsor-person {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--page-fg);
+}
+
+.sponsor-person img {
+  width: 28px;
+  height: 28px;
+  border: 1px solid color-mix(in srgb, var(--page-fg), transparent 84%);
+  border-radius: 999px;
+  object-fit: cover;
+}
+
+.sponsor-separator {
+  color: var(--muted-fg);
+}
+
 @media (max-width: 860px) {
   .motion-footer {
     min-height: 30svh;
@@ -173,6 +215,10 @@ onBeforeUnmount(() => {
   .footer-copy strong,
   .footer-copy p {
     text-align: left;
+  }
+
+  .sponsor-line {
+    justify-content: flex-start;
   }
 }
 </style>

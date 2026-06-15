@@ -64,7 +64,7 @@ const heroDockItems: HeroDockItem[] = [
   { label: '学生教练', glyph: 'C', icon: 'users' },
   { label: '出题人', glyph: 'P', icon: 'pen' },
   { label: '榜单', glyph: 'R', icon: 'trophy' },
-  { label: 'Lite', glyph: 'L', icon: 'lite', to: '/lite' },
+  { label: 'Home', glyph: 'H', icon: 'lite', to: '/' },
 ]
 
 const heroPanelEmojis: string[] = ['🏆', '💻', '🧠', '🧩', '🥇', '⏱️']
