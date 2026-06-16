@@ -70,6 +70,12 @@
           "websiteDescription": "面向 ICPC/CCPC 的 AI 辅助自动化出题与验题系统。"
         },
         {
+          "avatarUrl": "https://github.com/greenthree/ProbHub-skill/raw/main/logo.svg",
+          "websiteUrl": "https://github.com/greenthree/ProbHub-skill",
+          "websiteTitle": "ProbHub-skill",
+          "websiteDescription": "面向 ProbHub 出题流程的技能仓库。"
+        },
+        {
           "avatarUrl": "/assets/icons/github-com-lumine2024-png-bfe3ac13.jpg",
           "websiteUrl": "https://github.com/Lumine2024/ICPC-Problem-Creator.skill",
           "websiteTitle": "ICPC-Problem-Creator.skill",
