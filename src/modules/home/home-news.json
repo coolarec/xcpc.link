@@ -11,6 +11,12 @@
       "sourceName": "知乎",
       "sourceIcon": "/assets/icons/static-zhihu-com-heifetz-favicon-ico-d55c2937.ico",
       "sourceUrl": "https://www.zhihu.com/question/2012528096838984086/answer/2026404016737797458"
+    },
+    {
+      "text": "如何评价 2025 ICPC 南京站？",
+      "sourceName": "知乎",
+      "sourceIcon": "/assets/icons/static-zhihu-com-heifetz-favicon-ico-d55c2937.ico",
+      "sourceUrl": "https://www.zhihu.com/question/1963739083760199356"
     }
   ],
   "blackList": [
@@ -51,6 +57,12 @@
       "sourceName": "哔哩哔哩",
       "sourceIcon": "/assets/icons/bilibili-com-favicon-ico-2681561e.ico",
       "sourceUrl": "https://www.bilibili.com/video/BV12LE26WEeg/"
+    },
+    {
+      "text": "从夯到拉锐评2025赛季ICPC/CCPC各赛站体验",
+      "sourceName": "哔哩哔哩",
+      "sourceIcon": "/assets/icons/bilibili-com-favicon-ico-2681561e.ico",
+      "sourceUrl": "https://www.bilibili.com/video/BV12XfiBfEhG"
     }
   ]
 }
