@@ -233,24 +233,6 @@
           "websiteDescription": "翻译工具。"
         },
         {
-          "avatarUrl": "/assets/icons/latexlive-com-assets-header-logo-dal0xod2-png-bb54d49c.png",
-          "websiteUrl": "https://www.latexlive.com/",
-          "websiteTitle": "LaTeX Live",
-          "websiteDescription": "在线 LaTeX 公式工具。"
-        },
-        {
-          "avatarUrl": "/assets/icons/texpage-com-favicon-ico-7d38581b.ico",
-          "websiteUrl": "https://www.texpage.com/",
-          "websiteTitle": "texpage",
-          "websiteDescription": "在线 LaTeX 工具。"
-        },
-        {
-          "avatarUrl": "/assets/icons/cn-overleaf-com-favicon-ico-609bfc99.ico",
-          "websiteUrl": "https://cn.overleaf.com/",
-          "websiteTitle": "overleaf",
-          "websiteDescription": "协作式在线 LaTeX 编辑器。"
-        },
-        {
           "avatarUrl": "/assets/icons/csacademy-com-favicon-ico-24900305.png",
           "websiteUrl": "https://csacademy.com/app/graph_editor/",
           "websiteTitle": "graph editor",
