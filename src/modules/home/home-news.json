@@ -31,6 +31,12 @@
       "sourceName": "知乎",
       "sourceIcon": "/assets/icons/static-zhihu-com-heifetz-favicon-ico-d55c2937.ico",
       "sourceUrl": "https://www.zhihu.com/question/2046904998865458100"
+    },
+    {
+      "text": "如何评价2023年ICPC合肥区域赛？",
+      "sourceName": "知乎",
+      "sourceIcon": "/assets/icons/static-zhihu-com-heifetz-favicon-ico-d55c2937.ico",
+      "sourceUrl": "https://www.zhihu.com/question/629714089"
     }
   ],
   "gossip": [
@@ -39,6 +45,12 @@
       "sourceName": "知乎",
       "sourceIcon": "/assets/icons/static-zhihu-com-heifetz-favicon-ico-d55c2937.ico",
       "sourceUrl": "https://www.zhihu.com/question/2038334179197309561/answer/2042605332992721454"
+    },
+    {
+      "text": "谁是封榜王？ICPC/CCPC 封榜过题数盘点 2025-2026赛季",
+      "sourceName": "哔哩哔哩",
+      "sourceIcon": "/assets/icons/bilibili-com-favicon-ico-2681561e.ico",
+      "sourceUrl": "https://www.bilibili.com/video/BV12LE26WEeg/"
     }
   ]
 }

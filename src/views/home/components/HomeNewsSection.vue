@@ -232,7 +232,7 @@ const newsCount = computed(() => getNewsCount(props.newsData))
   place-items: center;
   overflow: hidden;
   border: 1px solid var(--line);
-  border-radius: 999px;
+  border-radius: 6px;
   background: var(--surface);
   color: var(--muted);
   font-size: 11px;
@@ -245,7 +245,7 @@ const newsCount = computed(() => getNewsCount(props.newsData))
   width: 100%;
   height: 100%;
   display: block;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .news-source > span:last-child {
