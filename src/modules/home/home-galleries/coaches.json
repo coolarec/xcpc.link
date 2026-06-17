@@ -91,7 +91,7 @@
           "avatarUrl": "https://github.com/greenthree/ProbHub-skill/raw/main/logo.svg",
           "websiteUrl": "https://github.com/greenthree/ProbHub-skill",
           "websiteTitle": "ProbHub-skill",
-          "websiteDescription": "算法竞赛出题自动化 skill（个人出题习惯），支持完善题面、构造数据、组卷用 typ 编译 PDF 和生成 DOMjudge 题目包。"
+          "websiteDescription": "算法竞赛出题自动化 skill ,支持完善题面、构造数据、组卷用 typ 编译 PDF 和生成 DOMjudge 题目包。"
         },
         {
           "avatarUrl": "/assets/icons/github-com-lumine2024-png-bfe3ac13.jpg",
