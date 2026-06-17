@@ -1,0 +1,20 @@
+{
+  "name": "XCPC Link",
+  "short_name": "XCPC Link",
+  "description": "面向算法竞赛选手、教练和出题人的 XCPC/ICPC/CCPC 资源导航。",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f5f5f7",
+  "theme_color": "#1d1d1f",
+  "lang": "zh-CN",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "64x64",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "productivity", "utilities"]
+}

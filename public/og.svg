@@ -1,0 +1,26 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#F5F5F7"/>
+  <rect x="72" y="68" width="1056" height="494" rx="44" fill="#FFFFFF"/>
+  <rect x="73" y="69" width="1054" height="492" rx="43" stroke="#000000" stroke-opacity="0.08" stroke-width="2"/>
+  <g transform="translate(112 112)">
+    <rect x="0" y="0" width="120" height="120" rx="24" fill="#1D1D1F"/>
+    <path d="M41.25 30H78.75V84.375L60 71.25L41.25 84.375V30Z" fill="white"/>
+    <circle cx="50.625" cy="40.313" r="4.125" fill="#007AFF"/>
+    <circle cx="60" cy="40.313" r="4.125" fill="#FFCC00"/>
+    <circle cx="69.375" cy="40.313" r="4.125" fill="#FF3B30"/>
+    <path d="M50.625 52.5H69.375" stroke="#34C759" stroke-width="7.5" stroke-linecap="round"/>
+  </g>
+  <text x="112" y="306" fill="#1D1D1F" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="86" font-weight="800" letter-spacing="0">XCPC Link</text>
+  <text x="112" y="374" fill="#515154" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="34" font-weight="600" letter-spacing="0">算法竞赛资源导航</text>
+  <text x="112" y="446" fill="#6E6E73" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="26" font-weight="500" letter-spacing="0">OJ 平台 · ICPC/CCPC 赛程 · 榜单工具 · 模板资料 · 竞赛资讯</text>
+  <g transform="translate(112 492)">
+    <rect width="116" height="42" rx="21" fill="#007AFF"/>
+    <text x="58" y="28" text-anchor="middle" fill="white" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" font-weight="700" letter-spacing="0">XCPC</text>
+    <rect x="132" width="116" height="42" rx="21" fill="#FFCC00"/>
+    <text x="190" y="28" text-anchor="middle" fill="#1D1D1F" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" font-weight="700" letter-spacing="0">ICPC</text>
+    <rect x="264" width="116" height="42" rx="21" fill="#FF3B30"/>
+    <text x="322" y="28" text-anchor="middle" fill="white" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" font-weight="700" letter-spacing="0">CCPC</text>
+    <rect x="396" width="116" height="42" rx="21" fill="#34C759"/>
+    <text x="454" y="28" text-anchor="middle" fill="#0B2413" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" font-weight="700" letter-spacing="0">ACM</text>
+  </g>
+</svg>
