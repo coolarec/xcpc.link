@@ -1,0 +1,17 @@
+<svg width="600" height="600" viewBox="0 0 600 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="600" height="600" fill="#F5F5F7"/>
+  <rect x="50" y="50" width="500" height="500" rx="40" fill="#FFFFFF"/>
+  <rect x="51" y="51" width="498" height="498" rx="39" stroke="#000000" stroke-opacity="0.08" stroke-width="2"/>
+  <g transform="translate(110 96)">
+    <rect x="0" y="0" width="128" height="128" rx="26" fill="#1D1D1F"/>
+    <path d="M44 32H84V90L64 76L44 90V32Z" fill="white"/>
+    <circle cx="54" cy="43" r="4.4" fill="#007AFF"/>
+    <circle cx="64" cy="43" r="4.4" fill="#FFCC00"/>
+    <circle cx="74" cy="43" r="4.4" fill="#FF3B30"/>
+    <path d="M54 56H74" stroke="#34C759" stroke-width="8" stroke-linecap="round"/>
+  </g>
+  <text x="110" y="298" fill="#1D1D1F" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="58" font-weight="800" letter-spacing="0">XCPC Link</text>
+  <text x="110" y="356" fill="#515154" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="30" font-weight="700" letter-spacing="0">算法竞赛资源导航</text>
+  <text x="110" y="426" fill="#6E6E73" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="22" font-weight="500" letter-spacing="0">OJ 平台 / 赛程 / 榜单 / 工具</text>
+  <text x="110" y="468" fill="#6E6E73" font-family="Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="22" font-weight="500" letter-spacing="0">模板资料 / 竞赛资讯 / 社区入口</text>
+</svg>
