@@ -47,6 +47,12 @@
   ],
   "gossip": [
     {
+      "text": "网络预选赛安排在2026年9月6日（周日）和9月12日（周六）",
+      "sourceName": "ICPC 北京总部",
+      "sourceIcon": "/assets/icons/icpc-global-favicon-ico-181dcdec.ico",
+      "sourceUrl": "https://icpc.pku.edu.cn/tzgg/a8fd24b90c57484dafc921f17deee908.htm"
+    },
+    {
       "text": "如何评价算法竞赛选手打ACM拿了银牌后找不到工作，发视频声称ACM是一场骗局？",
       "sourceName": "知乎",
       "sourceIcon": "/assets/icons/static-zhihu-com-heifetz-favicon-ico-d55c2937.ico",
