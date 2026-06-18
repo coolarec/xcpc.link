@@ -47,6 +47,12 @@ export interface NewsData {
   gossip: NewsItem[]
 }
 
+export interface TickerBanner {
+  text: string
+  href: string
+  label?: string
+}
+
 export interface HomeGallerySection {
   eyebrow: string
   title: string

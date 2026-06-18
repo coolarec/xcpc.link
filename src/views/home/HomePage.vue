@@ -3,14 +3,16 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import ArtalkComments from '../../components/ArtalkComments.vue'
 import FloatingActionMenu from '../../components/FloatingActionMenu.vue'
 import FloatingPanel from '../../components/FloatingPanel.vue'
+import tickerBanners from '../../modules/home/tickerBanner.json'
 import { useHomeContentStore } from '../../stores/homeContent'
 import { useLitePreferencesStore } from '../../stores/litePreferences'
 import { useThemeStore, type ThemeMode } from '../../stores/theme'
-import type { SiteLink } from '../../types/home'
+import type { SiteLink, TickerBanner } from '../../types/home'
 import HomeDirectory from './components/HomeDirectory.vue'
 import HomeFooter from './components/HomeFooter.vue'
 import HomeHeader from './components/HomeHeader.vue'
 import HomeNewsSection from './components/HomeNewsSection.vue'
+import HomeTickerBanner from './components/HomeTickerBanner.vue'
 import HomeTooltip from './components/HomeTooltip.vue'
 import { getGalleryLinkCount } from './components/homeViewModel'
 
@@ -40,6 +42,7 @@ const themeOptions: Array<{ label: string; value: ThemeMode }> = [
   { label: '日间', value: 'day' },
   { label: '夜间', value: 'night' },
 ]
+const tickerBannerList = tickerBanners as TickerBanner[]
 
 const totalLinks = computed(() =>
   homeContentStore.galleries.reduce((total, gallery) => total + getGalleryLinkCount(gallery), 0),
@@ -153,6 +156,14 @@ const handleFloatingAction = (id: string) => {
         @set-view-mode="litePreferencesStore.setViewMode"
       />
 
+      <div v-if="tickerBannerList.length" class="ticker-banner-list" aria-label="实时通知">
+        <HomeTickerBanner
+          v-for="banner in tickerBannerList"
+          :key="banner.href"
+          :item="banner"
+        />
+      </div>
+
       <main class="directory">
         <HomeDirectory
           :expanded-link-url="expandedLinkUrl"
@@ -248,11 +259,18 @@ const handleFloatingAction = (id: string) => {
   width: min(100% - 32px, 1240px);
   margin: 0 auto;
   padding: 22px 0 48px;
+  display: grid;
+  gap: 10px;
 }
 
 .directory {
   display: grid;
   gap: 10px;
+}
+
+.ticker-banner-list {
+  display: grid;
+  gap: 6px;
 }
 
 @media (max-width: 760px) {
