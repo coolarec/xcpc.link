@@ -303,6 +303,12 @@
           "websiteUrl": "https://patchouli-7.github.io/",
           "websiteTitle": "Codeforces 练习可视化面板",
           "websiteDescription": "预测 CF rating 及绘制历史刷题颜色图。"
+        },
+        {
+          "avatarUrl": "https://github.com/Lhanyu.png",
+          "websiteUrl": "https://github.com/Lhanyu/cf-rating-diary",
+          "websiteTitle": "cf-rating-diary",
+          "websiteDescription": "Codeforces rating 日记，以锐评口吻复盘任意 Codeforces 选手，挖掘有节目效果的名场面。"
         }
       ]
     },
