@@ -203,12 +203,6 @@
           "websiteDescription": "适合算法竞赛的自由剪贴板。"
         },
         {
-          "avatarUrl": "/assets/icons/paste-ubuntu-com-favicon-ico-204d752e.png",
-          "websiteUrl": "https://paste.ubuntu.com/",
-          "websiteTitle": "paste.ubuntu",
-          "websiteDescription": "简洁稳定的代码粘贴板，。"
-        },
-        {
           "avatarUrl": "/assets/icons/paste-nugine-xyz-favicon-ico-8bbbdb23.ico",
           "websiteUrl": "https://paste.nugine.xyz/",
           "websiteTitle": "paste.nugine",
@@ -393,6 +387,12 @@
           "websiteUrl": "https://zzzzzzyt.github.io/xcpc-elo/",
           "websiteTitle": "XCPC ELO",
           "websiteDescription": "由 zzzzzzyt 开发的基于 elo 机制的 XCPC 选手评分与排名工具。（包含省赛，邀请赛及区域赛）"
+        },
+        {
+          "avatarUrl": "",
+          "websiteUrl": "https://junjiecharles.github.io/xcpc-sight",
+          "websiteTitle": "XCPC SIGHT",
+          "websiteDescription": "由俊杰 Charles 维护的赛季 rating 静态站，包含一个赛季的网络赛及区域赛以及牛客、杭电（HDU）多校 rating。"
         },
         {
           "avatarUrl": "/assets/icons/unavatar-io-dasai-lanqiao-cn-6264be6f.png",
