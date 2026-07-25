@@ -121,6 +121,22 @@ describe('home header controls', () => {
     expect(wrapper.emitted('select')?.at(-1)?.[0]).toMatchObject({ label: 'CodeChef' })
   })
 
+  it('scrolls the active result into view during keyboard navigation', async () => {
+    const scrollIntoView = vi.fn()
+    Element.prototype.scrollIntoView = scrollIntoView
+    const wrapper = mount(HomeSearch, {
+      props: { items: searchItems, open: true, disabled: false },
+    })
+    const input = wrapper.find('input[role="combobox"]')
+    await input.setValue('code')
+
+    await input.trigger('keydown', { key: 'ArrowDown' })
+
+    expect(scrollIntoView).toHaveBeenCalledOnce()
+    expect(scrollIntoView).toHaveBeenCalledWith({ block: 'nearest' })
+    expect(wrapper.find('[role="option"][aria-selected="true"]').text()).toContain('CodeChef')
+  })
+
   it('renders website results as native new-tab links', async () => {
     const wrapper = mount(HomeSearch, {
       props: { items: searchItems, open: true, disabled: false },

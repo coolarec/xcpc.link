@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ExternalLink, MapPin, Search, X } from '@lucide/vue'
-import { computed, ref, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import {
   searchHomeItems,
   type HomeLocationSearchItem,
@@ -21,6 +21,7 @@ const emit = defineEmits<{
 
 const query = ref('')
 const activeIndex = ref(-1)
+const searchResultsRef = ref<HTMLElement | null>(null)
 const searchListId = 'home-search-results'
 
 const results = computed(() => searchHomeItems(props.items, query.value))
@@ -59,19 +60,23 @@ const selectItem = (item: HomeSearchItem) => {
   clearSearch()
 }
 
-const moveActiveResult = (offset: number) => {
+const moveActiveResult = async (offset: number) => {
   const itemCount = displayedResults.value.length
   if (!itemCount) return
   activeIndex.value = (activeIndex.value + offset + itemCount) % itemCount
+  await nextTick()
+  searchResultsRef.value
+    ?.querySelector<HTMLElement>('[role="option"][aria-selected="true"]')
+    ?.scrollIntoView?.({ block: 'nearest' })
 }
 
-const handleKeydown = (event: KeyboardEvent) => {
+const handleKeydown = async (event: KeyboardEvent) => {
   if (event.key === 'ArrowDown') {
     event.preventDefault()
-    moveActiveResult(1)
+    await moveActiveResult(1)
   } else if (event.key === 'ArrowUp') {
     event.preventDefault()
-    moveActiveResult(-1)
+    await moveActiveResult(-1)
   } else if (event.key === 'Enter') {
     const item = displayedResults.value[activeIndex.value]
     if (!item) return
@@ -122,6 +127,7 @@ const hideBrokenIcon = (event: Event) => {
     <div
       v-if="open && query.trim()"
       :id="searchListId"
+      ref="searchResultsRef"
       class="search-results"
       role="listbox"
       aria-label="搜索结果"
