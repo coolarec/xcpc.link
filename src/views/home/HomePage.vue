@@ -14,7 +14,11 @@ import HomeHeader from './components/HomeHeader.vue'
 import HomeNewsSection from './components/HomeNewsSection.vue'
 import HomeTickerBanner from './components/HomeTickerBanner.vue'
 import HomeTooltip from './components/HomeTooltip.vue'
-import { getGalleryLinkCount } from './components/homeViewModel'
+import {
+  buildHomeSearchIndex,
+  getGalleryLinkCount,
+  type HomeSearchItem,
+} from './components/homeViewModel'
 
 interface LiteTooltip {
   visible: boolean
@@ -27,6 +31,7 @@ interface LiteTooltip {
 const linkColumnCount = ref(6)
 const showComments = ref(false)
 const expandedLinkUrl = ref<string | null>(null)
+const highlightedSearchTargetId = ref<string | null>(null)
 const tooltip = ref<LiteTooltip>({
   visible: false,
   text: '',
@@ -43,9 +48,14 @@ const themeOptions: Array<{ label: string; value: ThemeMode }> = [
   { label: '夜间', value: 'night' },
 ]
 const tickerBannerList = tickerBanners as TickerBanner[]
+let highlightTimer: number | undefined
 
 const totalLinks = computed(() =>
   homeContentStore.galleries.reduce((total, gallery) => total + getGalleryLinkCount(gallery), 0),
+)
+const searchItems = computed(() => buildHomeSearchIndex(homeContentStore.galleries))
+const isSearchDisabled = computed(() =>
+  homeContentStore.isLoading || Boolean(homeContentStore.loadError) || searchItems.value.length === 0,
 )
 
 const hideBrokenIcon = (event: Event) => {
@@ -111,6 +121,7 @@ onMounted(async () => {
 onBeforeUnmount(() => {
   window.removeEventListener('resize', updateLinkColumnCount)
   window.removeEventListener('scroll', hideTooltip)
+  if (highlightTimer) window.clearTimeout(highlightTimer)
 })
 
 watch(() => litePreferencesStore.viewMode, updateLinkColumnCount)
@@ -130,6 +141,29 @@ const handleResourceClick = (link: SiteLink, event: MouseEvent) => {
     event.preventDefault()
     expandedLinkUrl.value = link.websiteUrl
   }
+}
+
+const handleSearchSelect = (item: HomeSearchItem) => {
+  if (item.kind === 'website') {
+    window.open(item.url, '_blank', 'noopener,noreferrer')
+    return
+  }
+
+  const target = document.getElementById(item.id)
+  if (!target) return
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  target.scrollIntoView({
+    behavior: reduceMotion ? 'auto' : 'smooth',
+    block: 'start',
+  })
+
+  if (highlightTimer) window.clearTimeout(highlightTimer)
+  highlightedSearchTargetId.value = item.id
+  highlightTimer = window.setTimeout(() => {
+    highlightedSearchTargetId.value = null
+    highlightTimer = undefined
+  }, 1400)
 }
 
 const handleFloatingAction = (id: string) => {
@@ -152,8 +186,11 @@ const handleFloatingAction = (id: string) => {
         :theme-options="themeOptions"
         :total-links="totalLinks"
         :view-mode="litePreferencesStore.viewMode"
+        :search-items="searchItems"
+        :search-disabled="isSearchDisabled"
         @set-theme="themeStore.setMode"
         @set-view-mode="litePreferencesStore.setViewMode"
+        @select-search="handleSearchSelect"
       />
 
       <div v-if="tickerBannerList.length" class="ticker-banner-list" aria-label="实时通知">
@@ -168,6 +205,7 @@ const handleFloatingAction = (id: string) => {
         <HomeDirectory
           :expanded-link-url="expandedLinkUrl"
           :galleries="homeContentStore.galleries"
+          :highlighted-target-id="highlightedSearchTargetId"
           :is-loading="homeContentStore.isLoading"
           :link-column-count="linkColumnCount"
           :load-error="homeContentStore.loadError"

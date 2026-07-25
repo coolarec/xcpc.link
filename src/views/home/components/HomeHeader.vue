@@ -1,28 +1,61 @@
 <script setup lang="ts">
-import { ArrowRight } from '@lucide/vue'
+import { ArrowRight, Settings } from '@lucide/vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
+import type { LiteViewMode } from '../../../stores/litePreferences'
 import type { ThemeMode } from '../../../stores/theme'
+import HomeSearch from './HomeSearch.vue'
+import HomeSettingsPopover from './HomeSettingsPopover.vue'
+import type { HomeSearchItem } from './homeViewModel'
 
 interface ThemeOption {
   label: string
   value: ThemeMode
 }
 
-defineProps<{
+const props = defineProps<{
   categoryCount: number
   totalLinks: number
   themeMode: ThemeMode
   themeOptions: ThemeOption[]
-  viewMode: 'compact' | 'detail'
+  viewMode: LiteViewMode
+  searchItems: HomeSearchItem[]
+  searchDisabled: boolean
 }>()
 
 const emit = defineEmits<{
   'set-theme': [mode: ThemeMode]
-  'set-view-mode': [mode: 'compact' | 'detail']
+  'set-view-mode': [mode: LiteViewMode]
+  'select-search': [item: HomeSearchItem]
 }>()
+
+const headerRef = ref<HTMLElement | null>(null)
+const activePopover = ref<'search' | 'settings' | null>(null)
+
+const setSearchOpen = (open: boolean) => {
+  activePopover.value = open ? 'search' : null
+}
+
+const toggleSettings = () => {
+  activePopover.value = activePopover.value === 'settings' ? null : 'settings'
+}
+
+const selectSearchItem = (item: HomeSearchItem) => {
+  activePopover.value = null
+  emit('select-search', item)
+}
+
+const closeOnOutsidePointer = (event: PointerEvent) => {
+  if (!headerRef.value?.contains(event.target as Node)) {
+    activePopover.value = null
+  }
+}
+
+onMounted(() => document.addEventListener('pointerdown', closeOnOutsidePointer))
+onBeforeUnmount(() => document.removeEventListener('pointerdown', closeOnOutsidePointer))
 </script>
 
 <template>
-  <header class="page-header">
+  <header ref="headerRef" class="page-header" @keydown.esc="activePopover = null">
     <router-link class="back-link" to="/dev" aria-label="访问 DEV 版">
       <span>DEV 版</span>
       <ArrowRight :size="17" aria-hidden="true" />
@@ -41,41 +74,35 @@ const emit = defineEmits<{
         </div>
       </div>
 
-      <div class="header-actions">
-        <div class="theme-segment" role="radiogroup" aria-label="主题模式">
-          <button
-            v-for="option in themeOptions"
-            :key="option.value"
-            type="button"
-            class="theme-option"
-            :class="{ 'is-active': themeMode === option.value }"
-            role="radio"
-            :aria-checked="themeMode === option.value"
-            @click="emit('set-theme', option.value)"
-          >
-            {{ option.label }}
-          </button>
-        </div>
+      <div class="header-tools">
+        <HomeSearch
+          :items="props.searchItems"
+          :open="activePopover === 'search'"
+          :disabled="props.searchDisabled"
+          @update:open="setSearchOpen"
+          @select="selectSearchItem"
+        />
 
-        <div class="view-switch" role="group" aria-label="显示模式">
+        <div class="settings-anchor">
           <button
             type="button"
-            class="view-button"
-            :class="{ 'is-active': viewMode === 'compact' }"
-            :aria-pressed="viewMode === 'compact'"
-            @click="emit('set-view-mode', 'compact')"
+            class="settings-button"
+            aria-label="打开设置"
+            aria-haspopup="dialog"
+            :aria-expanded="activePopover === 'settings'"
+            @click="toggleSettings"
           >
-            简洁
+            <Settings :size="20" :stroke-width="2.2" aria-hidden="true" />
           </button>
-          <button
-            type="button"
-            class="view-button"
-            :class="{ 'is-active': viewMode === 'detail' }"
-            :aria-pressed="viewMode === 'detail'"
-            @click="emit('set-view-mode', 'detail')"
-          >
-            详细
-          </button>
+
+          <HomeSettingsPopover
+            v-if="activePopover === 'settings'"
+            :theme-mode="themeMode"
+            :theme-options="themeOptions"
+            :view-mode="viewMode"
+            @set-theme="emit('set-theme', $event)"
+            @set-view-mode="emit('set-view-mode', $event)"
+          />
         </div>
       </div>
     </div>
@@ -115,11 +142,12 @@ const emit = defineEmits<{
   gap: 24px;
 }
 
-.header-actions {
-  min-width: 0;
+.header-tools {
+  width: min(48vw, 560px);
+  min-width: 360px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .meta-line {
@@ -184,71 +212,33 @@ const emit = defineEmits<{
   transform: translateY(-3px);
 }
 
-.view-switch {
-  min-height: 42px;
-  box-sizing: border-box;
-  display: inline-grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  padding: 3px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: var(--surface);
+.settings-anchor {
+  position: relative;
+  flex: 0 0 auto;
 }
 
-.theme-segment {
-  min-height: 42px;
-  box-sizing: border-box;
-  display: inline-grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  padding: 3px;
+.settings-button {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  padding: 0;
   border: 1px solid var(--line);
-  border-radius: 999px;
-  background: var(--surface);
-}
-
-.theme-option {
-  box-sizing: border-box;
-  min-width: 58px;
-  min-height: 36px;
-  padding: 0 12px;
-  border: 0;
-  border-radius: 999px;
+  border-radius: 14px;
   color: var(--muted);
-  background: transparent;
-  font: inherit;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
+  background: var(--surface);
+  transition:
+    color 0.18s ease,
+    background-color 0.18s ease,
+    border-color 0.18s ease;
 }
 
-.theme-option:hover,
-.theme-option:focus-visible {
-  color: var(--text);
-}
-
-.theme-option.is-active {
+.settings-button:hover,
+.settings-button:focus-visible,
+.settings-button[aria-expanded='true'] {
   color: var(--text);
   background: var(--surface-hover);
-}
-
-.view-button {
-  box-sizing: border-box;
-  min-width: 64px;
-  min-height: 36px;
-  padding: 0 10px;
-  border: 0;
-  border-radius: 999px;
-  color: var(--muted);
-  background: transparent;
-  font: inherit;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.view-button.is-active {
-  color: var(--text);
-  background: var(--surface-hover);
+  border-color: color-mix(in srgb, var(--text) 18%, transparent);
 }
 
 @media (max-width: 760px) {
@@ -289,27 +279,17 @@ const emit = defineEmits<{
     flex: 0 1 auto;
   }
 
-  .view-switch,
-  .theme-segment {
+  .header-tools {
     width: 100%;
-  }
-
-  .header-actions {
-    width: 100%;
-    display: grid;
-    grid-template-columns: 1fr;
+    min-width: 0;
+    display: flex;
     gap: 8px;
   }
+}
 
-  .theme-segment,
-  .view-switch {
-    min-width: 0;
-  }
-
-  .theme-option,
-  .view-button {
-    min-width: 0;
-    padding-inline: 6px;
+@media (prefers-reduced-motion: reduce) {
+  .settings-button {
+    transition: none;
   }
 }
 </style>

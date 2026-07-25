@@ -2,11 +2,18 @@
 import { computed } from 'vue'
 import type { HomeGallerySection, SiteLink } from '../../../types/home'
 import HomeResourceLink from './HomeResourceLink.vue'
-import { getGalleryGroups, getGalleryLinkCount } from './homeViewModel'
+import {
+  getGalleryGroups,
+  getGalleryLinkCount,
+  getGallerySectionId,
+  getGroupSectionId,
+} from './homeViewModel'
 
 const props = defineProps<{
   expandedLinkUrl: string | null
   gallery: HomeGallerySection
+  galleryIndex: number
+  highlightedTargetId: string | null
   linkColumnCount: number
   viewMode: 'compact' | 'detail'
 }>()
@@ -39,7 +46,11 @@ const forwardShowTooltip = (link: SiteLink, event: MouseEvent | FocusEvent): voi
 </script>
 
 <template>
-  <section class="category-section">
+  <section
+    :id="getGallerySectionId(galleryIndex)"
+    class="category-section"
+    :class="{ 'is-search-highlighted': highlightedTargetId === getGallerySectionId(galleryIndex) }"
+  >
     <header class="category-header">
       <div>
         <p>{{ gallery.eyebrow }}</p>
@@ -49,7 +60,13 @@ const forwardShowTooltip = (link: SiteLink, event: MouseEvent | FocusEvent): voi
     </header>
 
     <div class="group-list">
-      <section v-for="group in groups" :key="group.id" class="link-group">
+      <section
+        v-for="(group, groupIndex) in groups"
+        :id="getGroupSectionId(galleryIndex, groupIndex)"
+        :key="group.id"
+        class="link-group"
+        :class="{ 'is-search-highlighted': highlightedTargetId === getGroupSectionId(galleryIndex, groupIndex) }"
+      >
         <header class="group-header">
           <h3>{{ group.title }}</h3>
           <span>{{ group.links.length }}</span>
@@ -83,6 +100,7 @@ const forwardShowTooltip = (link: SiteLink, event: MouseEvent | FocusEvent): voi
 <style scoped>
 .category-section {
   overflow: hidden;
+  scroll-margin-top: 18px;
   border: 1px solid var(--line);
   border-radius: 18px;
   background: var(--surface);
@@ -128,9 +146,18 @@ const forwardShowTooltip = (link: SiteLink, event: MouseEvent | FocusEvent): voi
 }
 
 .link-group {
+  scroll-margin-top: 18px;
   display: grid;
   grid-template-columns: 132px minmax(0, 1fr);
   border-top: 1px solid var(--line);
+  transition: box-shadow 0.22s ease;
+}
+
+.category-section.is-search-highlighted,
+.link-group.is-search-highlighted {
+  position: relative;
+  z-index: 1;
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--focus) 70%, transparent);
 }
 
 .link-group:first-child {
@@ -232,6 +259,12 @@ const forwardShowTooltip = (link: SiteLink, event: MouseEvent | FocusEvent): voi
   .links,
   .links[data-mode='detail'] {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link-group {
+    transition: none;
   }
 }
 </style>

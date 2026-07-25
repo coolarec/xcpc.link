@@ -5,6 +5,7 @@ import HomeCategorySection from './HomeCategorySection.vue'
 defineProps<{
   expandedLinkUrl: string | null
   galleries: HomeGallerySection[]
+  highlightedTargetId: string | null
   isLoading: boolean
   linkColumnCount: number
   loadError: string
@@ -38,11 +39,13 @@ const forwardShowTooltip = (link: SiteLink, event: MouseEvent | FocusEvent): voi
   </section>
 
   <HomeCategorySection
-    v-for="gallery in galleries"
+    v-for="(gallery, galleryIndex) in galleries"
     v-else
     :key="gallery.title"
     :expanded-link-url="expandedLinkUrl"
     :gallery="gallery"
+    :gallery-index="galleryIndex"
+    :highlighted-target-id="highlightedTargetId"
     :link-column-count="linkColumnCount"
     :view-mode="viewMode"
     @icon-error="emit('icon-error', $event)"
