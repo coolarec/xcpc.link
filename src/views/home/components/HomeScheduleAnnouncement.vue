@@ -32,7 +32,7 @@ onBeforeUnmount(() => {
 <template>
   <section class="schedule-announcement" aria-label="2026 赛季赛程">
     <button class="ticker-banner" type="button" aria-label="查看 2026XCPC 赛程安排" @click="isPreviewOpen = true">
-      <span class="ticker-label">ICPC</span>
+      <span class="ticker-label">XCPC</span>
       <span class="ticker-window">
         <span class="ticker-track">
           <span class="ticker-content">
