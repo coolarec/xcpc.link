@@ -377,6 +377,12 @@
           "websiteDescription": "查询选手 OI 经历与档案。"
         },
         {
+          "avatarUrl": "/assets/icons/awdec-github-io-oi-in-xcpc-favicon-svg-61bc9a16.svg",
+          "websiteUrl": "https://awdec.github.io/OI-in-XCPC/#/",
+          "websiteTitle": "OI-in-XCPC",
+          "websiteDescription": "由 awdec 开发的查找 ACMer 的 OI 经历的网站，选手名右侧有☀️标识的为 OIer。"
+        },
+        {
           "avatarUrl": "/assets/icons/unavatar-io-cpcfinder-com-75d0b59a.png",
           "websiteUrl": "https://cpcfinder.com/",
           "websiteTitle": "cpcfinder",
