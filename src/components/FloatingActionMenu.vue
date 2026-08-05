@@ -90,19 +90,14 @@ const handleAction = (action: FloatingAction) => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 52px;
-  height: 52px;
+  width: 44px;
+  height: 44px;
   padding: 0;
-  border: 0;
-  border-radius: 999px;
-  color: var(--page-fg);
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--page-fg) 7%, transparent), transparent 64%),
-    color-mix(in srgb, var(--panel-bg, var(--card-bg)) 92%, transparent);
-  border: 1px solid var(--soft-line);
-  backdrop-filter: blur(18px) saturate(1.2);
-  -webkit-backdrop-filter: blur(18px) saturate(1.2);
-  box-shadow: var(--dock-shadow);
+  border: 1px solid var(--line, var(--soft-line));
+  border-radius: 8px;
+  color: var(--text, var(--page-fg));
+  background: var(--surface, var(--panel-bg, var(--card-bg)));
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   opacity: 1;
   pointer-events: auto;
   transition:
@@ -126,9 +121,8 @@ const handleAction = (action: FloatingAction) => {
 
 .stack-action:hover {
   transform: translateY(-1px);
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--page-fg) 9%, transparent), transparent 64%),
-    color-mix(in srgb, var(--panel-bg, var(--card-bg)) 88%, transparent);
+  background: var(--surface-hover, var(--surface, var(--panel-bg, var(--card-bg))));
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.14);
 }
 
 .stack-action.is-scroll-action:hover {
@@ -146,10 +140,6 @@ const handleAction = (action: FloatingAction) => {
     gap: 8px;
   }
 
-  .stack-action {
-    width: 44px;
-    height: 44px;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

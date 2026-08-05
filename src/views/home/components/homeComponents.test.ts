@@ -9,8 +9,10 @@ import { useHomeContentStore } from '../../../stores/homeContent'
 import type { ThemeMode } from '../../../stores/theme'
 import type { HomeGallerySection } from '../../../types/home'
 import HomePage from '../HomePage.vue'
+import { seasonScheduleRows } from '../../../modules/home/seasonSchedule'
 import HomeCategorySection from './HomeCategorySection.vue'
 import HomeHeader from './HomeHeader.vue'
+import HomeScheduleAnnouncement from './HomeScheduleAnnouncement.vue'
 import HomeSearch from './HomeSearch.vue'
 import HomeSettingsPopover from './HomeSettingsPopover.vue'
 import type { HomeSearchItem } from './homeViewModel'
@@ -87,9 +89,68 @@ afterEach(() => {
 })
 
 describe('home header controls', () => {
+  it('provides a dedicated compact schedule announcement component', () => {
+    expect(componentExists('./HomeScheduleAnnouncement.vue')).toBe(true)
+  })
+
+  it('keeps the season schedule in a dedicated content module', () => {
+    expect(componentExists('../../../modules/home/seasonSchedule.ts')).toBe(true)
+  })
+
+  it('keeps only ICPC and CCPC events in the schedule preview', () => {
+    expect(seasonScheduleRows.every((row) => row.category === 'ICPC' || row.category === 'CCPC')).toBe(true)
+  })
+
   it('provides dedicated search and settings components', () => {
     expect(componentExists('./HomeSearch.vue')).toBe(true)
     expect(componentExists('./HomeSettingsPopover.vue')).toBe(true)
+  })
+
+  it('renders a schedule announcement instead of an inline table', () => {
+    const wrapper = mount(HomeScheduleAnnouncement, {
+      props: {
+        rows: [
+          { time: '9.6', category: 'ICPC', venue: '', organizer: '线上' },
+          { time: '10.10-11', category: 'ICPC', venue: '西安', organizer: '西北工业大学' },
+        ],
+        credit: 'Schedule compiled by thedyingkai_ (TDK)',
+      },
+    })
+
+    expect(wrapper.find('.ticker-label').text()).toBe('ICPC')
+    expect(wrapper.find('.ticker-track').exists()).toBe(true)
+    expect(wrapper.text()).toContain('点击查看 2026XCPC 赛程安排')
+    expect(wrapper.find('table').exists()).toBe(false)
+  })
+
+  it('opens an enlarged schedule preview from the announcement', async () => {
+    const wrapper = mount(HomeScheduleAnnouncement, {
+      attachTo: document.body,
+      props: {
+        rows: [{ time: '9.6', category: 'ICPC', venue: '', organizer: '线上' }],
+        credit: 'Schedule compiled by thedyingkai_ (TDK)',
+      },
+    })
+
+    await wrapper.get('button[aria-label="查看 2026XCPC 赛程安排"]').trigger('click')
+
+    expect(wrapper.find('[role="dialog"]').exists()).toBe(true)
+  })
+
+  it('closes the enlarged schedule preview with Escape', async () => {
+    const wrapper = mount(HomeScheduleAnnouncement, {
+      attachTo: document.body,
+      props: {
+        rows: [{ time: '9.6', category: 'ICPC', venue: '', organizer: '线上' }],
+        credit: 'Schedule compiled by thedyingkai_ (TDK)',
+      },
+    })
+
+    await wrapper.get('button[aria-label="查看 2026XCPC 赛程安排"]').trigger('click')
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
+    await wrapper.vm.$nextTick()
+
+    expect(wrapper.find('[role="dialog"]').exists()).toBe(false)
   })
 
   it('filters search results and exposes combobox semantics', async () => {
@@ -249,6 +310,7 @@ describe('home header controls', () => {
           HomeDirectory: { template: '<div id="home-category-0"></div>' },
           HomeFooter: true,
           HomeNewsSection: true,
+          HomeScheduleAnnouncement: { template: '<div data-testid="schedule-announcement" />' },
           HomeTickerBanner: true,
           HomeTooltip: true,
           RouterLink: { template: '<a><slot /></a>' },
@@ -256,6 +318,8 @@ describe('home header controls', () => {
       },
     })
     const header = wrapper.findComponent(HomeHeader)
+
+    expect(wrapper.find('[data-testid="schedule-announcement"]').exists()).toBe(true)
 
     expect(header.props('searchItems')).toEqual(expect.arrayContaining([
       expect.objectContaining({ kind: 'category', id: 'home-category-0' }),

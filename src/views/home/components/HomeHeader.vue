@@ -241,7 +241,7 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', closeOnOutside
   border-color: color-mix(in srgb, var(--text) 18%, transparent);
 }
 
-@media (max-width: 760px) {
+@media (max-width: 1100px) {
   .title-row {
     width: 100%;
     min-width: 0;

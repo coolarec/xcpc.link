@@ -3,16 +3,16 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import ArtalkComments from '../../components/ArtalkComments.vue'
 import FloatingActionMenu from '../../components/FloatingActionMenu.vue'
 import FloatingPanel from '../../components/FloatingPanel.vue'
-import tickerBanners from '../../modules/home/tickerBanner.json'
+import { seasonScheduleCredit, seasonScheduleRows } from '../../modules/home/seasonSchedule'
 import { useHomeContentStore } from '../../stores/homeContent'
 import { useLitePreferencesStore } from '../../stores/litePreferences'
 import { useThemeStore, type ThemeMode } from '../../stores/theme'
-import type { SiteLink, TickerBanner } from '../../types/home'
+import type { SiteLink } from '../../types/home'
 import HomeDirectory from './components/HomeDirectory.vue'
 import HomeFooter from './components/HomeFooter.vue'
 import HomeHeader from './components/HomeHeader.vue'
 import HomeNewsSection from './components/HomeNewsSection.vue'
-import HomeTickerBanner from './components/HomeTickerBanner.vue'
+import HomeScheduleAnnouncement from './components/HomeScheduleAnnouncement.vue'
 import HomeTooltip from './components/HomeTooltip.vue'
 import {
   buildHomeSearchIndex,
@@ -47,7 +47,6 @@ const themeOptions: Array<{ label: string; value: ThemeMode }> = [
   { label: '日间', value: 'day' },
   { label: '夜间', value: 'night' },
 ]
-const tickerBannerList = tickerBanners as TickerBanner[]
 let highlightTimer: number | undefined
 
 const totalLinks = computed(() =>
@@ -193,13 +192,7 @@ const handleFloatingAction = (id: string) => {
         @select-search="handleSearchSelect"
       />
 
-      <div v-if="tickerBannerList.length" class="ticker-banner-list" aria-label="实时通知">
-        <HomeTickerBanner
-          v-for="banner in tickerBannerList"
-          :key="banner.href"
-          :item="banner"
-        />
-      </div>
+      <HomeScheduleAnnouncement :rows="seasonScheduleRows" :credit="seasonScheduleCredit" />
 
       <main class="directory">
         <HomeDirectory
