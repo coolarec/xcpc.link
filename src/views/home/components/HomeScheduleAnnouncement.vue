@@ -112,7 +112,7 @@ const activeMonthGridColumns = computed(() => {
   })
 
   return Array.from({ length: 7 }, (_, columnIndex) =>
-    eventColumns.has(columnIndex) ? 'minmax(60px, 1.25fr)' : 'minmax(32px, 0.85fr)',
+    eventColumns.has(columnIndex) ? 'minmax(0, 1.15fr)' : 'minmax(0, 0.9fr)',
   ).join(' ')
 })
 const getEventLabel = (row: SeasonScheduleRow) =>
@@ -558,6 +558,8 @@ onBeforeUnmount(() => {
 .calendar-event-organizer {
   color: var(--secondary);
   font-size: 9px;
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 
 .calendar-event.is-multiday {
@@ -570,9 +572,9 @@ onBeforeUnmount(() => {
   flex: 0 0 auto;
   max-width: 100%;
   overflow: visible;
-  overflow-wrap: normal;
+  overflow-wrap: anywhere;
   text-overflow: clip;
-  white-space: nowrap;
+  white-space: normal;
 }
 
 .schedule-credit {

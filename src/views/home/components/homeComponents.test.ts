@@ -138,6 +138,8 @@ describe('home header controls', () => {
         rows: [
           { startDate: '2026-09-06', category: 'ICPC', venue: '网络赛', organizer: '线上' },
           { startDate: '2026-10-10', endDate: '2026-10-11', category: 'ICPC', venue: '西安', organizer: '西北工业大学' },
+          { startDate: '2027-01-09', endDate: '2027-01-10', category: 'ICPC', venue: '香港', organizer: '香港大学' },
+          { startDate: '2027-01-26', endDate: '2027-01-28', category: 'ICPC', venue: 'ECF（杭州）', organizer: '杭州师范大学（浙江大学）' },
         ],
         credit: 'Schedule compiled by thedyingkai_ (TDK)',
       },
@@ -172,8 +174,18 @@ describe('home header controls', () => {
     expect(wrapper.get('.calendar-grid').attributes('data-horizontal-gutter')).toBe('roomy')
     expect(wrapper.get('.calendar-event').attributes('data-content-flow')).toBe('inline-first')
     expect(wrapper.get('.calendar-weekdays').attributes('style')).toContain(
-      'minmax(32px, 0.85fr) minmax(32px, 0.85fr) minmax(32px, 0.85fr) minmax(32px, 0.85fr) minmax(32px, 0.85fr) minmax(60px, 1.25fr) minmax(60px, 1.25fr)',
+      'minmax(0, 0.9fr) minmax(0, 0.9fr) minmax(0, 0.9fr) minmax(0, 0.9fr) minmax(0, 0.9fr) minmax(0, 1.15fr) minmax(0, 1.15fr)',
     )
+
+    await wrapper.get('button[aria-label="查看下个月"]').trigger('click')
+    await wrapper.get('button[aria-label="查看下个月"]').trigger('click')
+    await wrapper.get('button[aria-label="查看下个月"]').trigger('click')
+
+    expect(wrapper.find('[role="grid"][aria-label="2027年1月赛程"]').exists()).toBe(true)
+    expect(wrapper.get('.calendar-weekdays').attributes('style')).toContain(
+      'minmax(0, 0.9fr) minmax(0, 1.15fr) minmax(0, 1.15fr) minmax(0, 1.15fr) minmax(0, 0.9fr) minmax(0, 1.15fr) minmax(0, 1.15fr)',
+    )
+    expect(wrapper.findAll('.calendar-event-organizer').at(-1)?.text()).toBe('杭州师范大学（浙江大学）')
   })
 
   it('closes the enlarged schedule preview with Escape', async () => {
