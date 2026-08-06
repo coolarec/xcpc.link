@@ -101,6 +101,14 @@ describe('home header controls', () => {
     expect(seasonScheduleRows.every((row) => row.category === 'ICPC' || row.category === 'CCPC')).toBe(true)
   })
 
+  it('labels the three September online qualifiers as 网络赛', () => {
+    expect(seasonScheduleRows.slice(0, 3).map((row) => row.venue)).toEqual([
+      '网络赛',
+      '网络赛',
+      '网络赛',
+    ])
+  })
+
   it('provides dedicated search and settings components', () => {
     expect(componentExists('./HomeSearch.vue')).toBe(true)
     expect(componentExists('./HomeSettingsPopover.vue')).toBe(true)
@@ -110,24 +118,27 @@ describe('home header controls', () => {
     const wrapper = mount(HomeScheduleAnnouncement, {
       props: {
         rows: [
-          { time: '9.6', category: 'ICPC', venue: '', organizer: '线上' },
-          { time: '10.10-11', category: 'ICPC', venue: '西安', organizer: '西北工业大学' },
+          { startDate: '2026-09-06', category: 'ICPC', venue: '网络赛', organizer: '线上' },
+          { startDate: '2026-10-10', endDate: '2026-10-11', category: 'ICPC', venue: '西安', organizer: '西北工业大学' },
         ],
         credit: 'Schedule compiled by thedyingkai_ (TDK)',
       },
     })
 
-    expect(wrapper.find('.ticker-label').text()).toBe('ICPC')
+    expect(wrapper.find('.ticker-label').text()).toBe('XCPC')
     expect(wrapper.find('.ticker-track').exists()).toBe(true)
     expect(wrapper.text()).toContain('点击查看 2026XCPC 赛程安排')
     expect(wrapper.find('table').exists()).toBe(false)
   })
 
-  it('opens an enlarged schedule preview from the announcement', async () => {
+  it('opens the schedule as a monthly calendar and switches months', async () => {
     const wrapper = mount(HomeScheduleAnnouncement, {
       attachTo: document.body,
       props: {
-        rows: [{ time: '9.6', category: 'ICPC', venue: '', organizer: '线上' }],
+        rows: [
+          { startDate: '2026-09-06', category: 'ICPC', venue: '网络赛', organizer: '线上' },
+          { startDate: '2026-10-10', endDate: '2026-10-11', category: 'ICPC', venue: '西安', organizer: '西北工业大学' },
+        ],
         credit: 'Schedule compiled by thedyingkai_ (TDK)',
       },
     })
@@ -135,13 +146,41 @@ describe('home header controls', () => {
     await wrapper.get('button[aria-label="查看 2026XCPC 赛程安排"]').trigger('click')
 
     expect(wrapper.find('[role="dialog"]').exists()).toBe(true)
+    expect(wrapper.find('.schedule-preview-content').attributes('data-density')).toBe('compact')
+    expect(wrapper.find('[role="grid"][aria-label="2026年9月赛程"]').exists()).toBe(true)
+    expect(wrapper.findAll('.calendar-week')).toHaveLength(6)
+    expect(wrapper.find('.schedule-preview-content > .schedule-preview-close').exists()).toBe(true)
+    expect(wrapper.text()).toContain('网络赛')
+    expect(wrapper.find('.calendar-event-venue').text()).toBe('网络赛')
+    expect(wrapper.find('.calendar-event-organizer').text()).toBe('线上')
+    expect(wrapper.find('.calendar-agenda').exists()).toBe(false)
+    expect(wrapper.find('table').exists()).toBe(false)
+
+    await wrapper.get('button[aria-label="查看下个月"]').trigger('click')
+
+    expect(wrapper.find('[role="grid"][aria-label="2026年10月赛程"]').exists()).toBe(true)
+    expect(wrapper.text()).toContain('西安')
+    expect(wrapper.findAll('.calendar-event')).toHaveLength(1)
+    expect(wrapper.get('.calendar-event').attributes('style')).toContain('grid-column: 6 / span 2')
+    expect(wrapper.get('.calendar-event').text()).toContain('西北工业大学')
+    expect(wrapper.get('.calendar-event').attributes('data-mobile-layout')).toBe('wide-wrap')
+    expect(wrapper.findAll('.calendar-week')[2].attributes('style')).toContain(
+      'grid-template-rows: 20px repeat(1, minmax(28px, auto))',
+    )
+    expect(wrapper.findAll('.calendar-week')[2].attributes('style')).toContain('min-height: 48px')
+    expect(wrapper.get('.calendar-grid').attributes('data-column-density')).toBe('adaptive')
+    expect(wrapper.get('.calendar-grid').attributes('data-horizontal-gutter')).toBe('roomy')
+    expect(wrapper.get('.calendar-event').attributes('data-content-flow')).toBe('inline-first')
+    expect(wrapper.get('.calendar-weekdays').attributes('style')).toContain(
+      'minmax(32px, 0.85fr) minmax(32px, 0.85fr) minmax(32px, 0.85fr) minmax(32px, 0.85fr) minmax(32px, 0.85fr) minmax(60px, 1.25fr) minmax(60px, 1.25fr)',
+    )
   })
 
   it('closes the enlarged schedule preview with Escape', async () => {
     const wrapper = mount(HomeScheduleAnnouncement, {
       attachTo: document.body,
       props: {
-        rows: [{ time: '9.6', category: 'ICPC', venue: '', organizer: '线上' }],
+        rows: [{ startDate: '2026-09-06', category: 'ICPC', venue: '网络赛', organizer: '线上' }],
         credit: 'Schedule compiled by thedyingkai_ (TDK)',
       },
     })
