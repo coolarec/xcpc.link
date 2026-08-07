@@ -136,8 +136,10 @@
       display: none;
       place-items: center;
       padding: 24px;
-      background: rgba(5, 7, 13, 0.82);
-      color: #f5f7fb;
+      background: rgba(245, 245, 247, 0.72);
+      color: #1d1d1f;
+      -webkit-backdrop-filter: blur(18px) saturate(1.2);
+      backdrop-filter: blur(18px) saturate(1.2);
     }
 
     #app-load-error.is-visible {
@@ -145,24 +147,57 @@
     }
 
     .app-load-error-dialog {
-      width: min(100%, 460px);
-      padding: 28px;
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      border-radius: 8px;
-      background: #15171d;
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+      width: min(100%, 440px);
+      padding: 26px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow:
+        0 24px 64px rgba(0, 0, 0, 0.18),
+        0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    .app-load-error-heading {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .app-load-error-mark {
+      width: 38px;
+      height: 38px;
+      flex: 0 0 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: #fff1f0;
+      color: #c9342f;
+      font-size: 22px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .app-load-error-kicker {
+      margin: 0 0 5px;
+      color: #86868b;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      line-height: 1.2;
+      text-transform: uppercase;
     }
 
     .app-load-error-dialog h1 {
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
-      font-size: 22px;
+      font-family: "Sora", -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
+      font-size: 20px;
+      font-weight: 700;
       line-height: 1.25;
     }
 
     .app-load-error-dialog p {
-      margin: 14px 0 0;
-      color: rgba(245, 247, 251, 0.74);
+      margin: 0;
+      color: #6e6e73;
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
       font-size: 14px;
       line-height: 1.6;
@@ -170,24 +205,69 @@
     }
 
     .app-load-error-dialog .app-load-error-reason {
-      color: #ff9f8f;
+      margin-top: 20px;
+      padding: 12px 14px;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      border-radius: 10px;
+      background: #f5f5f7;
+      color: #6e6e73;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .app-load-error-contact {
+      margin-top: 14px !important;
     }
 
     .app-load-error-dialog button {
-      min-height: 40px;
+      min-height: 44px;
       margin-top: 22px;
-      padding: 0 16px;
+      padding: 0 18px;
       border: 0;
-      border-radius: 6px;
-      background: #f5f7fb;
-      color: #111318;
+      border-radius: 8px;
+      background: #0071e3;
+      color: #ffffff;
       cursor: pointer;
       font: 700 14px -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+      transition: background-color 0.18s ease, transform 0.18s ease;
     }
 
     .app-load-error-dialog button:hover,
     .app-load-error-dialog button:focus-visible {
-      background: #ffffff;
+      background: #0077ed;
+    }
+
+    .app-load-error-dialog button:active {
+      transform: scale(0.98);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      #app-load-error {
+        background: rgba(0, 0, 0, 0.58);
+        color: #f5f5f7;
+      }
+
+      .app-load-error-dialog {
+        border-color: rgba(255, 255, 255, 0.13);
+        background: rgba(31, 31, 33, 0.96);
+        box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+      }
+
+      .app-load-error-mark {
+        background: rgba(255, 69, 58, 0.16);
+        color: #ff6961;
+      }
+
+      .app-load-error-kicker,
+      .app-load-error-dialog p {
+        color: #a1a1a6;
+      }
+
+      .app-load-error-dialog .app-load-error-reason {
+        border-color: rgba(255, 255, 255, 0.1);
+        background: #1f1f21;
+        color: #a1a1a6;
+      }
     }
 
     body:not(.is-app-visible) #app {
@@ -295,9 +375,15 @@
   </div>
   <div id="app-load-error" aria-hidden="true">
     <section class="app-load-error-dialog" role="alertdialog" aria-modal="true" aria-labelledby="app-load-error-title">
-      <h1 id="app-load-error-title">页面加载失败</h1>
+      <div class="app-load-error-heading">
+        <span class="app-load-error-mark" aria-hidden="true">!</span>
+        <div>
+          <p class="app-load-error-kicker">AWESOME XCPC</p>
+          <h1 id="app-load-error-title">页面加载失败</h1>
+        </div>
+      </div>
       <p id="app-load-error-message" class="app-load-error-reason">错误原因：资源加载失败</p>
-      <p>请刷新页面重试。若问题持续出现，请联系开发者 QQ 3187170085。</p>
+      <p class="app-load-error-contact">请刷新页面重试。若问题持续出现，请联系开发者 QQ 3187170085。</p>
       <button id="app-load-error-refresh" type="button">刷新页面</button>
     </section>
   </div>
