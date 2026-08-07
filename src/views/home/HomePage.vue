@@ -117,6 +117,13 @@ onMounted(async () => {
   await homeContentStore.load().catch(() => undefined)
 })
 
+watch(
+  () => homeContentStore.loadError,
+  (message) => {
+    if (message) window.showAppLoadError?.(message)
+  },
+)
+
 onBeforeUnmount(() => {
   window.removeEventListener('resize', updateLinkColumnCount)
   window.removeEventListener('scroll', hideTooltip)

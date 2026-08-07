@@ -129,6 +129,67 @@
       animation-duration: 0.86s;
     }
 
+    #app-load-error {
+      position: fixed;
+      inset: 0;
+      z-index: 10010;
+      display: none;
+      place-items: center;
+      padding: 24px;
+      background: rgba(5, 7, 13, 0.82);
+      color: #f5f7fb;
+    }
+
+    #app-load-error.is-visible {
+      display: grid;
+    }
+
+    .app-load-error-dialog {
+      width: min(100%, 460px);
+      padding: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 8px;
+      background: #15171d;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+    }
+
+    .app-load-error-dialog h1 {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
+      font-size: 22px;
+      line-height: 1.25;
+    }
+
+    .app-load-error-dialog p {
+      margin: 14px 0 0;
+      color: rgba(245, 247, 251, 0.74);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      overflow-wrap: anywhere;
+    }
+
+    .app-load-error-dialog .app-load-error-reason {
+      color: #ff9f8f;
+    }
+
+    .app-load-error-dialog button {
+      min-height: 40px;
+      margin-top: 22px;
+      padding: 0 16px;
+      border: 0;
+      border-radius: 6px;
+      background: #f5f7fb;
+      color: #111318;
+      cursor: pointer;
+      font: 700 14px -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+    }
+
+    .app-load-error-dialog button:hover,
+    .app-load-error-dialog button:focus-visible {
+      background: #ffffff;
+    }
+
     body:not(.is-app-visible) #app {
       visibility: hidden;
     }
@@ -178,29 +239,6 @@
       text-transform: uppercase;
     }
 
-    .preloader-progress {
-      width: min(42vw, 280px);
-      height: 4px;
-      overflow: hidden;
-      border-radius: 999px;
-      background: rgba(245, 247, 251, 0.14);
-    }
-
-    .preloader-progress span {
-      display: block;
-      width: 100%;
-      height: 100%;
-      border-radius: inherit;
-      background: #f5f7fb;
-      transform-origin: 0% 50%;
-      transform: scaleX(0.08);
-      animation: preloader-progress-half 0.9s ease-out forwards;
-    }
-
-    #app-preloader.is-finishing .preloader-progress span {
-      animation: preloader-progress-done 0.52s ease-in-out forwards;
-    }
-
     @keyframes preloader-pulse {
 
       0%,
@@ -210,26 +248,6 @@
 
       50% {
         transform: scale(1.035);
-      }
-    }
-
-    @keyframes preloader-progress-half {
-      0% {
-        transform: scaleX(0.08);
-      }
-
-      100% {
-        transform: scaleX(0.52);
-      }
-    }
-
-    @keyframes preloader-progress-done {
-      0% {
-        transform: scaleX(0.52);
-      }
-
-      100% {
-        transform: scaleX(1);
       }
     }
 
@@ -251,9 +269,6 @@
         justify-items: center;
       }
 
-      .preloader-progress {
-        width: min(68vw, 260px);
-      }
     }
   </style>
 </head>
@@ -275,11 +290,16 @@
       <div class="preloader-copy">
         <strong>AWESOME XCPC</strong>
         <span>Preparing collection space</span>
-        <div class="preloader-progress" aria-hidden="true">
-          <span></span>
-        </div>
       </div>
     </div>
+  </div>
+  <div id="app-load-error" aria-hidden="true">
+    <section class="app-load-error-dialog" role="alertdialog" aria-modal="true" aria-labelledby="app-load-error-title">
+      <h1 id="app-load-error-title">页面加载失败</h1>
+      <p id="app-load-error-message" class="app-load-error-reason">错误原因：资源加载失败</p>
+      <p>请刷新页面重试。若问题持续出现，请联系开发者 QQ 3187170085。</p>
+      <button id="app-load-error-refresh" type="button">刷新页面</button>
+    </section>
   </div>
   <noscript>
     <main>
@@ -296,7 +316,31 @@
     </main>
   </noscript>
   <div id="app"></div>
-  <script type="module" src="/src/main.ts"></script>
+  <script>
+    window.showAppLoadError = function (reason) {
+      var errorOverlay = document.getElementById('app-load-error');
+      var errorMessage = document.getElementById('app-load-error-message');
+      var preloader = document.getElementById('app-preloader');
+      var message = reason instanceof Error ? reason.message : String(reason || '资源加载失败');
+
+      if (errorMessage) errorMessage.textContent = '错误原因：' + message;
+      if (preloader) preloader.remove();
+      document.body.classList.add('is-app-visible');
+      if (errorOverlay) {
+        errorOverlay.classList.add('is-visible');
+        errorOverlay.setAttribute('aria-hidden', 'false');
+      }
+    };
+
+    document.getElementById('app-load-error-refresh').addEventListener('click', function () {
+      window.location.reload();
+    });
+  </script>
+  <script
+    type="module"
+    src="/src/main.ts"
+    onerror="window.showAppLoadError('应用脚本加载失败，请检查网络后刷新页面。')"
+  ></script>
 </body>
 
 </html>

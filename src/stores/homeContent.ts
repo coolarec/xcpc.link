@@ -3,6 +3,11 @@ import { defineStore } from 'pinia'
 import { fetchHeroDockItems, fetchHomeGalleries, fetchNewsData } from '../modules/home/api'
 import type { HeroDockItem, HomeGallerySection, NewsData } from '../types/home'
 
+const getErrorMessage = (error: unknown): string => {
+  if (error instanceof Error && error.message) return error.message
+  return String(error || '资源加载失败')
+}
+
 export const useHomeContentStore = defineStore('home-content', () => {
   const galleries = ref<HomeGallerySection[]>([])
   const dockItems = ref<HeroDockItem[]>([])
@@ -31,7 +36,7 @@ export const useHomeContentStore = defineStore('home-content', () => {
         newsData.value = news
       })
       .catch((error) => {
-        loadError.value = '资源加载失败'
+        loadError.value = getErrorMessage(error)
         loadPromise = undefined
         throw error
       })
