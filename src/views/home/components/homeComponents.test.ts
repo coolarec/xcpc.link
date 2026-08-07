@@ -109,6 +109,10 @@ describe('home header controls', () => {
     ])
   })
 
+  it('records 成都信息工程大学 as the organizer of the CCPC women contest', () => {
+    expect(seasonScheduleRows.find((row) => row.venue === '女赛（成都）')?.organizer).toBe('成都信息工程大学')
+  })
+
   it('provides dedicated search and settings components', () => {
     expect(componentExists('./HomeSearch.vue')).toBe(true)
     expect(componentExists('./HomeSettingsPopover.vue')).toBe(true)

@@ -14,7 +14,7 @@ export const seasonScheduleRows: SeasonScheduleRow[] = [
   { startDate: '2026-10-17', endDate: '2026-10-18', category: 'ICPC', venue: '沈阳', organizer: '东北大学' },
   { startDate: '2026-10-17', endDate: '2026-10-18', category: 'CCPC', venue: '长春', organizer: '东北师范大学' },
   { startDate: '2026-10-24', endDate: '2026-10-25', category: 'ICPC', venue: '成都', organizer: '电子科技大学' },
-  { startDate: '2026-10-24', endDate: '2026-10-25', category: 'CCPC', venue: '女赛（成都）', organizer: '' },
+  { startDate: '2026-10-24', endDate: '2026-10-25', category: 'CCPC', venue: '女赛（成都）', organizer: '成都信息工程大学' },
   { startDate: '2026-10-31', endDate: '2026-11-01', category: 'ICPC', venue: '武汉', organizer: '武汉大学' },
   { startDate: '2026-11-07', endDate: '2026-11-08', category: 'ICPC', venue: '南京', organizer: '南京航空航天大学' },
   { startDate: '2026-11-07', endDate: '2026-11-08', category: 'CCPC', venue: '荆州', organizer: '长江大学' },
