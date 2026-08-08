@@ -382,12 +382,12 @@ describe('home header controls', () => {
     expect(tickerBanners.map((banner) => banner.props('item'))).toEqual([
       {
         label: '赛战博弈',
-        text: '从夯到拉锐评2025赛季ICPC/CCPC各赛站队伍强度',
+        text: '从夯到拉锐评2025赛季ICPC/CCPC各赛站队伍强度 - 俊杰Charles',
         href: 'https://www.bilibili.com/video/BV1fkPuzJE6t',
       },
       {
         label: '赛战博弈',
-        text: '从夯到拉锐评2025赛季ICPC/CCPC各赛站体验',
+        text: '从夯到拉锐评2025赛季ICPC/CCPC各赛站体验 - 俊杰Charles',
         href: 'https://www.bilibili.com/video/BV12XfiBfEhG',
       },
     ])
