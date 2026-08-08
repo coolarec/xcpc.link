@@ -7,12 +7,13 @@ import { seasonScheduleCredit, seasonScheduleRows } from '../../modules/home/sea
 import { useHomeContentStore } from '../../stores/homeContent'
 import { useLitePreferencesStore } from '../../stores/litePreferences'
 import { useThemeStore, type ThemeMode } from '../../stores/theme'
-import type { SiteLink } from '../../types/home'
+import type { SiteLink, TickerBanner } from '../../types/home'
 import HomeDirectory from './components/HomeDirectory.vue'
 import HomeFooter from './components/HomeFooter.vue'
 import HomeHeader from './components/HomeHeader.vue'
 import HomeNewsSection from './components/HomeNewsSection.vue'
 import HomeScheduleAnnouncement from './components/HomeScheduleAnnouncement.vue'
+import HomeTickerBanner from './components/HomeTickerBanner.vue'
 import HomeTooltip from './components/HomeTooltip.vue'
 import {
   buildHomeSearchIndex,
@@ -46,6 +47,18 @@ const themeOptions: Array<{ label: string; value: ThemeMode }> = [
   { label: '系统', value: 'system' },
   { label: '日间', value: 'day' },
   { label: '夜间', value: 'night' },
+]
+const tickerBanners: TickerBanner[] = [
+  {
+    label: '赛战博弈',
+    text: '从夯到拉锐评2025赛季ICPC/CCPC各赛站队伍强度 - 俊杰Charles',
+    href: 'https://www.bilibili.com/video/BV1fkPuzJE6t',
+  },
+  {
+    label: '赛战博弈',
+    text: '从夯到拉锐评2025赛季ICPC/CCPC各赛站体验 - 俊杰Charles',
+    href: 'https://www.bilibili.com/video/BV12XfiBfEhG',
+  },
 ]
 let highlightTimer: number | undefined
 
@@ -200,6 +213,10 @@ const handleFloatingAction = (id: string) => {
       />
 
       <HomeScheduleAnnouncement :rows="seasonScheduleRows" :credit="seasonScheduleCredit" />
+
+      <div class="ticker-banner-list" aria-label="站内公告">
+        <HomeTickerBanner v-for="item in tickerBanners" :key="item.href" :item="item" />
+      </div>
 
       <main class="directory">
         <HomeDirectory
