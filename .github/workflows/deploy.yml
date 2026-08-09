@@ -1,16 +1,23 @@
-name: Build and Deploy
+name: Build
 
 on:
   push:
     branches:
       - main
+  pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
 
+concurrency:
+  group: build-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
       - name: Checkout repository
@@ -19,21 +26,21 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v5
         with:
-          node-version: 22.12.0
+          node-version: 24
           cache: npm
 
       - name: Install dependencies
         run: npm ci
 
+      - name: Run tests
+        run: npm test -- --run
+
       - name: Build project
         run: npm run build
 
-      - name: Deploy to EdgeOne Makers
-        env:
-          EDGEONE_API_TOKEN: ${{ secrets.EDGEONE_API_TOKEN }}
+      - name: Verify static output
         run: |
-          if [ -z "$EDGEONE_API_TOKEN" ]; then
-            echo "::error::EDGEONE_API_TOKEN secret is not configured."
+          if [ ! -s dist/index.html ]; then
+            echo "::error::dist/index.html was not generated."
             exit 1
           fi
-          npx edgeone makers deploy ./dist -n awesomexcpc -t "$EDGEONE_API_TOKEN" -e production
