@@ -3,6 +3,7 @@ import { nextTick, onMounted, ref, watch } from 'vue'
 import { gsap } from 'gsap'
 import { useRoute } from 'vue-router'
 import { useThemeStore } from './stores/theme'
+import { Analytics } from '@vercel/analytics/vue'
 
 const themeStore = useThemeStore()
 const route = useRoute()
@@ -41,6 +42,7 @@ watch(
       <component :is="Component" :key="route.fullPath" class="route-view" />
     </RouterView>
     <div ref="routeOverlay" class="route-overlay" aria-hidden="true"></div>
+    <Analytics />
   </div>
 </template>
 
