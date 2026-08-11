@@ -4,6 +4,7 @@ import { gsap } from 'gsap'
 import { useRoute } from 'vue-router'
 import { useThemeStore } from './stores/theme'
 import { Analytics } from '@vercel/analytics/vue'
+import { SpeedInsights } from '@vercel/speed-insights/vue'
 
 const themeStore = useThemeStore()
 const route = useRoute()
@@ -43,6 +44,7 @@ watch(
     </RouterView>
     <div ref="routeOverlay" class="route-overlay" aria-hidden="true"></div>
     <Analytics />
+    <SpeedInsights />
   </div>
 </template>
 
