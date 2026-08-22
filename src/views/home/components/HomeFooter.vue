@@ -23,6 +23,14 @@
         </a>
       </span>
     </p>
+    <p class="qq-group">
+      如果你有意见或新想法，欢迎<a
+        href="https://qm.qq.com/q/2CsO3c3ZlS"
+        target="_blank"
+        rel="noreferrer"
+        title="加入 QQ 群 876103138"
+      >联系我们</a>
+    </p>
   </footer>
 </template>
 
@@ -112,5 +120,17 @@
   align-items: center;
   gap: 5px;
   vertical-align: middle;
+}
+
+.qq-group {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.qq-group a {
+  color: var(--text);
+  text-underline-offset: 3px;
 }
 </style>

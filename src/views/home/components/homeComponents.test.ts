@@ -11,6 +11,7 @@ import type { HomeGallerySection } from '../../../types/home'
 import HomePage from '../HomePage.vue'
 import { seasonScheduleRows } from '../../../modules/home/seasonSchedule'
 import HomeCategorySection from './HomeCategorySection.vue'
+import HomeFooter from './HomeFooter.vue'
 import HomeHeader from './HomeHeader.vue'
 import HomeScheduleAnnouncement from './HomeScheduleAnnouncement.vue'
 import HomeSearch from './HomeSearch.vue'
@@ -103,6 +104,17 @@ describe('home header controls', () => {
 
   it('provides a dedicated compact schedule announcement component', () => {
     expect(componentExists('./HomeScheduleAnnouncement.vue')).toBe(true)
+  })
+
+  it('links the footer contact copy to the QQ group', () => {
+    const wrapper = mount(HomeFooter)
+    const contactLink = wrapper.get('.qq-group a')
+
+    expect(wrapper.find('.qq-group').text()).toBe('如果你有意见或新想法，欢迎联系我们')
+    expect(contactLink.text()).toBe('联系我们')
+    expect(contactLink.attributes('href')).toBe('https://qm.qq.com/q/2CsO3c3ZlS')
+    expect(contactLink.attributes('target')).toBe('_blank')
+    expect(contactLink.attributes('rel')).toContain('noreferrer')
   })
 
   it('keeps the season schedule in a dedicated content module', () => {
