@@ -356,6 +356,54 @@ describe('home header controls', () => {
     expect(event.defaultPrevented).toBe(true)
   })
 
+  it('shows a desktop slash shortcut toast and hides it automatically', async () => {
+    vi.useFakeTimers()
+    Object.defineProperty(window, 'matchMedia', {
+      configurable: true,
+      value: vi.fn().mockReturnValue({ matches: true }),
+    })
+    const wrapper = mount(HomeHeader, {
+      props: {
+        categoryCount: 1,
+        totalLinks: 2,
+        themeMode: 'system',
+        themeOptions,
+        viewMode: 'compact',
+        searchItems,
+        searchDisabled: false,
+      },
+    })
+
+    expect(wrapper.find('.search-shortcut-toast').text()).toBe('尝试按下 / 可实现快速搜索')
+
+    vi.advanceTimersByTime(4000)
+    await wrapper.vm.$nextTick()
+
+    expect(wrapper.find('.search-shortcut-toast').exists()).toBe(false)
+    wrapper.unmount()
+  })
+
+  it('does not show the slash shortcut toast on mobile', () => {
+    Object.defineProperty(window, 'matchMedia', {
+      configurable: true,
+      value: vi.fn().mockReturnValue({ matches: false }),
+    })
+    const wrapper = mount(HomeHeader, {
+      props: {
+        categoryCount: 1,
+        totalLinks: 2,
+        themeMode: 'system',
+        themeOptions,
+        viewMode: 'compact',
+        searchItems,
+        searchDisabled: false,
+      },
+    })
+
+    expect(wrapper.find('.search-shortcut-toast').exists()).toBe(false)
+    wrapper.unmount()
+  })
+
   it('offers GitHub star and website submission links instead of the DEV page', () => {
     const wrapper = mount(HomeHeader, {
       props: {

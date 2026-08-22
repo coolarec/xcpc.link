@@ -31,6 +31,8 @@ const emit = defineEmits<{
 const headerRef = ref<HTMLElement | null>(null)
 const searchRef = ref<{ focus: () => void } | null>(null)
 const activePopover = ref<'search' | 'settings' | null>(null)
+const showSearchShortcutToast = ref(false)
+let searchShortcutToastTimer: number | undefined
 
 const setSearchOpen = (open: boolean) => {
   activePopover.value = open ? 'search' : null
@@ -65,21 +67,38 @@ const focusSearchOnSlash = (event: KeyboardEvent) => {
   }
 
   event.preventDefault()
+  showSearchShortcutToast.value = false
   searchRef.value?.focus()
 }
 
 onMounted(() => {
   document.addEventListener('pointerdown', closeOnOutsidePointer)
   document.addEventListener('keydown', focusSearchOnSlash)
+
+  if (window.matchMedia?.('(min-width: 761px) and (pointer: fine)').matches) {
+    showSearchShortcutToast.value = true
+    searchShortcutToastTimer = window.setTimeout(() => {
+      showSearchShortcutToast.value = false
+    }, 2000)
+  }
 })
 onBeforeUnmount(() => {
   document.removeEventListener('pointerdown', closeOnOutsidePointer)
   document.removeEventListener('keydown', focusSearchOnSlash)
+  if (searchShortcutToastTimer !== undefined) {
+    window.clearTimeout(searchShortcutToastTimer)
+  }
 })
 </script>
 
 <template>
   <header ref="headerRef" class="page-header" @keydown.esc="activePopover = null">
+    <Transition name="search-shortcut-toast">
+      <p v-if="showSearchShortcutToast" class="search-shortcut-toast" role="status">
+        尝试按下 <kbd>/</kbd> 可实现快速搜索
+      </p>
+    </Transition>
+
     <p class="community-prompt">
       想给开发者<a
         href="https://github.com/coolarec/xcpc.link"
@@ -148,6 +167,53 @@ onBeforeUnmount(() => {
   display: grid;
   gap: 12px;
   padding: 2px 0 18px;
+}
+
+.search-shortcut-toast {
+  position: fixed;
+  z-index: 120;
+  top: max(16px, env(safe-area-inset-top));
+  left: 50%;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--text);
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.14);
+  font-size: 13px;
+  font-weight: 650;
+  line-height: 1;
+  white-space: nowrap;
+  pointer-events: none;
+  transform: translateX(-50%);
+  backdrop-filter: blur(16px);
+}
+
+.search-shortcut-toast kbd {
+  min-width: 22px;
+  padding: 4px 6px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface-subtle);
+  font: inherit;
+  text-align: center;
+}
+
+.search-shortcut-toast-enter-active,
+.search-shortcut-toast-leave-active {
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+.search-shortcut-toast-enter-from,
+.search-shortcut-toast-leave-to {
+  opacity: 0;
+  transform: translate(-50%, -8px);
 }
 
 .community-prompt {
@@ -331,9 +397,20 @@ onBeforeUnmount(() => {
   }
 }
 
+@media (max-width: 760px), (pointer: coarse) {
+  .search-shortcut-toast {
+    display: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .community-prompt a,
   .settings-button {
+    transition: none;
+  }
+
+  .search-shortcut-toast-enter-active,
+  .search-shortcut-toast-leave-active {
     transition: none;
   }
 }
