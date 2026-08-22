@@ -60,7 +60,7 @@
 | --- | --- | --- | --- |
 | 网站名称 | input | 是 | 页面展示名称 |
 | 网站链接 | input | 是 | 必须是完整的 `http://` 或 `https://` URL |
-| 网站简介 | textarea | 是 | 页面卡片的一句话简介 |
+| 网站简介 | input | 是 | 页面卡片的一句话简介；使用单行输入框，避免 GitHub textarea 显示附件上传区 |
 | 一级分类 | dropdown | 是 | 初学者、算竞高手、学生教练 & 出题人、退役选手 |
 | 目标分组 | input | 否 | 填写已有 `watches[].title`；留空时加入该分类的 `cards` |
 | 图标地址 | input | 否 | 接受已有 `/assets/...` 路径或完整 HTTPS URL；HTTPS 图片会下载到现有 `public/assets/icons/` |

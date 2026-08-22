@@ -856,7 +856,7 @@ body:
       placeholder: 'https://example.com/'
     validations:
       required: true
-  - type: textarea
+  - type: input
     id: website_description
     attributes:
       label: '网站简介'
