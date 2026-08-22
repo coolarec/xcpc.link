@@ -56,3 +56,21 @@ describe('website submission workflow', () => {
     expect(workflow).toContain('public/assets/icons/*')
   })
 })
+
+describe('website submission preview comment workflow', () => {
+  it('comments successful Vercel previews on the source Issue without duplicates', () => {
+    const workflow = readRepositoryFile('.github/workflows/comment-site-preview.yml')
+
+    expect(workflow).toContain('deployment_status:')
+    expect(workflow).toContain('deployments: read')
+    expect(workflow).toContain('pull-requests: read')
+    expect(workflow).toContain('issues: write')
+    expect(workflow).toContain("state !== 'success'")
+    expect(workflow).toContain('^issue\\/([0-9]+)-add-site$')
+    expect(workflow).toContain("previewUrl.protocol !== 'https:'")
+    expect(workflow).toContain('pulls.list')
+    expect(workflow).toContain('site-preview-deployment')
+    expect(workflow).toContain('issues.updateComment')
+    expect(workflow).toContain('issues.createComment')
+  })
+})

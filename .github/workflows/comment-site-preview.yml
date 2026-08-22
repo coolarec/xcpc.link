@@ -1,0 +1,109 @@
+name: Comment website submission preview
+
+on:
+  deployment_status:
+
+permissions:
+  contents: read
+  deployments: read
+  pull-requests: read
+  issues: write
+
+concurrency:
+  group: site-preview-${{ github.event.deployment.ref }}
+  cancel-in-progress: true
+
+jobs:
+  comment-preview:
+    if: github.event.deployment_status.state == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Comment Preview URL on source Issue
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const branch = context.payload.deployment?.ref || ''
+            const branchMatch = branch.match(/^issue\/([0-9]+)-add-site$/)
+            if (!branchMatch) {
+              core.info(`Ignoring deployment for unrelated branch: ${branch || '(empty)'}`)
+              return
+            }
+
+            const issueNumber = Number(branchMatch[1])
+            const state = context.payload.deployment_status?.state
+            if (state !== 'success') {
+              core.info(`Ignoring deployment with state: ${state || '(empty)'}`)
+              return
+            }
+
+            const rawPreviewUrl = context.payload.deployment_status?.environment_url
+              || context.payload.deployment_status?.target_url
+            let previewUrl
+            try {
+              previewUrl = new URL(rawPreviewUrl)
+            } catch {
+              core.info('Ignoring deployment without a valid Preview URL')
+              return
+            }
+            if (previewUrl.protocol !== 'https:') {
+              core.info(`Ignoring non-HTTPS Preview URL: ${previewUrl.href}`)
+              return
+            }
+
+            const { owner, repo } = context.repo
+            const { data: pullRequests } = await github.rest.pulls.list({
+              owner,
+              repo,
+              state: 'open',
+              head: `${owner}:${branch}`,
+              per_page: 10,
+            })
+            const pullRequest = pullRequests.find((candidate) => candidate.head.ref === branch)
+            if (!pullRequest) {
+              core.info(`No open Pull Request found for ${branch}`)
+              return
+            }
+
+            const marker = '<!-- site-preview-deployment -->'
+            const body = [
+              marker,
+              '### Vercel Preview 已就绪',
+              '',
+              `[打开 Preview](${previewUrl.href})`,
+              '',
+              `关联 PR：#${pullRequest.number}`,
+              '',
+              '_此评论会在新的 Preview 部署成功后自动更新。_',
+            ].join('\n')
+
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner,
+              repo,
+              issue_number: issueNumber,
+              per_page: 100,
+            })
+            const existingComment = comments.find((comment) => (
+              comment.user?.login === 'github-actions[bot]'
+              && comment.body?.includes(marker)
+            ))
+
+            if (existingComment) {
+              await github.rest.issues.updateComment({
+                owner,
+                repo,
+                comment_id: existingComment.id,
+                body,
+              })
+              core.info(`Updated Preview comment #${existingComment.id} on Issue #${issueNumber}`)
+            } else {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: issueNumber,
+                body,
+              })
+              core.info(`Created Preview comment on Issue #${issueNumber}`)
+            }

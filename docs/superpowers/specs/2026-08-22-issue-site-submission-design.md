@@ -37,7 +37,8 @@
 7. 工作流在 `issue/<issue-number>-add-site` 分支创建或更新 PR。
 8. PR 正文关联原 Issue，并标注投稿人。
 9. Vercel GitHub Integration 为 PR 创建 Preview Deployment；维护者通过 PR 的 deployment 状态访问预览。
-10. 维护者审核页面效果和数据内容。PR 合并后关闭关联 Issue。
+10. Preview Deployment 成功后，独立工作流把 Preview URL 回写到来源 Issue；后续部署更新同一条评论。
+11. 维护者审核页面效果和数据内容。PR 合并后关闭关联 Issue。
 
 当用户编辑 Issue 时，同一分支和 PR 会被更新，不重复创建 PR。
 
@@ -152,7 +153,10 @@ Preview 环境不配置 `VITE_CDN_BASE_URL` 时，Vercel 从 PR 分支自身读�
 - Vercel 检测 PR 分支；
 - 执行 `npm run build`；
 - 将 Preview Deployment 状态和链接写入 PR；
+- `.github/workflows/comment-site-preview.yml` 监听成功的 `deployment_status`，从 `issue/<编号>-add-site` 分支提取 Issue 编号，并创建或更新一条带 Preview URL 的 Issue 评论；
 - 维护者从 PR 直接访问加入网站后的页面。
+
+Issue 评论带有固定的隐藏标记，重新部署时更新原评论而不是重复发布。工作流只接受 HTTPS Preview URL，并要求对应分支存在开放的 PR。工作流上线之前已经完成的部署不会被追溯处理，需要编辑 Issue 触发新的 PR 更新和 Preview Deployment。
 
 如果仓库尚未连接 Vercel，代码侧仍能正常创建 PR，但不会出现 Preview Deployment。README 中会补充所需的 Vercel 项目设置说明。
 
@@ -164,6 +168,7 @@ Preview 环境不配置 `VITE_CDN_BASE_URL` 时，Vercel 从 PR 分支自身读�
 - 图标下载失败、格式不支持、超过大小限制或目标地址不安全：校验失败，已有 PR 转为草稿，修正 Issue 后复用同一 PR。
 - GitHub Token 权限不足：PR 创建步骤失败，日志指出所需的仓库 Actions 权限。
 - Vercel 构建失败：不影响 PR 创建，失败信息由 Vercel deployment check 展示。
+- Preview 评论工作流收到非投稿分支、非成功状态、非 HTTPS URL 或找不到开放 PR：记录原因并跳过，不修改 Issue。
 
 ## 测试与验收
 
