@@ -38,7 +38,7 @@
 8. PR 正文关联原 Issue，并标注投稿人。
 9. Vercel GitHub Integration 为 PR 创建 Preview Deployment；维护者通过 PR 的 deployment 状态访问预览。
 10. Preview Deployment 成功后，独立工作流把 Preview URL 回写到来源 Issue；后续部署更新同一条评论。
-11. 维护者审核页面效果和数据内容。PR 合并后关闭关联 Issue。
+11. 维护者审核页面效果和数据内容。PR 合并后关闭关联 Issue，并自动删除对应投稿分支。
 
 当用户编辑 Issue 时，同一分支和 PR 会被更新，不重复创建 PR。
 
@@ -144,6 +144,8 @@ Preview 环境不配置 `VITE_CDN_BASE_URL` 时，Vercel 从 PR 分支自身读�
 
 工作流使用 `peter-evans/create-pull-request` 的固定主版本。若脚本校验失败，工作流停止且不修改默认分支，也不创建无效 PR。
 
+`.github/workflows/cleanup-site-issue-branch.yml` 监听 PR 的 `closed` 事件，仅当 PR 已合并、来源仓库是当前仓库且分支名严格符合 `issue/<编号>-add-site` 时删除来源分支。未合并 PR、普通分支和外部 Fork 分支均跳过；分支已被 GitHub 仓库设置提前删除时按成功处理。
+
 ## Vercel 预览
 
 本项目继续使用现有 Vite 构建流程，不新增 Vercel API 代码。仓库需要在 Vercel 中启用 GitHub Integration 和 Pull Request Preview Deployments。
@@ -169,6 +171,7 @@ Issue 评论带有固定的隐藏标记，重新部署时更新原评论而不�
 - GitHub Token 权限不足：PR 创建步骤失败，日志指出所需的仓库 Actions 权限。
 - Vercel 构建失败：不影响 PR 创建，失败信息由 Vercel deployment check 展示。
 - Preview 评论工作流收到非投稿分支、非成功状态、非 HTTPS URL 或找不到开放 PR：记录原因并跳过，不修改 Issue。
+- 分支清理工作流收到未合并 PR、普通分支或外部 Fork：直接跳过；目标分支已不存在：按清理完成处理。
 
 ## 测试与验收
 

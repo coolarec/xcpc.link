@@ -34,3 +34,5 @@ npm run build
 由默认 `GITHUB_TOKEN` 创建的自动 PR 可能不会再次触发仓库内其他 `pull_request` 工作流；Vercel GitHub Integration 的 Preview Deployment 不依赖该重触发机制。如果还需要自动 PR 上运行额外 GitHub Checks，请将工作流的 `GITHUB_TOKEN` 换成具备最小必要权限的 GitHub App 或 PAT secret。
 
 Issue 中的 Preview 评论由 `.github/workflows/comment-site-preview.yml` 监听成功的 `deployment_status` 事件生成。它只处理 `issue/<issue-number>-add-site` 分支，并在后续重新部署时更新已有评论，不会重复刷屏。工作流上线前已经完成的部署不会被追溯处理；编辑对应 Issue 触发一次新的 PR 更新和 Vercel 部署即可生成评论。
+
+投稿 PR 合并后，`.github/workflows/cleanup-site-issue-branch.yml` 会自动删除对应的 `issue/<issue-number>-add-site` 分支。未合并的 PR、普通分支和外部 Fork 分支不会被删除。

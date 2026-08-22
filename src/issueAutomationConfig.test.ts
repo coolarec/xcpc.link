@@ -74,3 +74,18 @@ describe('website submission preview comment workflow', () => {
     expect(workflow).toContain('issues.createComment')
   })
 })
+
+describe('website submission branch cleanup workflow', () => {
+  it('deletes only merged same-repository website submission branches', () => {
+    const workflow = readRepositoryFile('.github/workflows/cleanup-site-issue-branch.yml')
+
+    expect(workflow).toContain('pull_request:')
+    expect(workflow).toContain('types: [closed]')
+    expect(workflow).toContain('contents: write')
+    expect(workflow).toContain('github.event.pull_request.merged == true')
+    expect(workflow).toContain('head.repo.full_name == github.repository')
+    expect(workflow).toContain('^issue\\/[0-9]+-add-site$')
+    expect(workflow).toContain('git.deleteRef')
+    expect(workflow).toContain('heads/${branch}')
+  })
+})
