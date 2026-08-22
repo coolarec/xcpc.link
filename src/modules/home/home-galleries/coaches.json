@@ -26,6 +26,12 @@
           "websiteUrl": "https://icpc.global/register",
           "websiteTitle": "ICPC Register",
           "websiteDescription": "ICPC 官方队伍与赛事注册入口。"
+        },
+        {
+          "avatarUrl": "",
+          "websiteUrl": "https://www.kdocs.cn/l/crFG2exv8gki",
+          "websiteTitle": "PTA 及 ICPC 报名指南",
+          "websiteDescription": "由 PTA 提供的 icpc.global 及 pta 报名指南"
         }
       ]
     },
