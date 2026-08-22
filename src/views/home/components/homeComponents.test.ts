@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import { existsSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { createPinia, setActivePinia } from 'pinia'
 import { mount } from '@vue/test-utils'
@@ -20,6 +20,9 @@ import type { HomeSearchItem } from './homeViewModel'
 
 const componentExists = (filename: string): boolean =>
   existsSync(fileURLToPath(new URL(filename, import.meta.url)))
+
+const componentSource = (filename: string): string =>
+  readFileSync(fileURLToPath(new URL(filename, import.meta.url)), 'utf8')
 
 const searchItems: HomeSearchItem[] = [
   {
@@ -90,6 +93,14 @@ afterEach(() => {
 })
 
 describe('home header controls', () => {
+  it('constrains the desktop title row to the page width', () => {
+    const source = componentSource('./HomeHeader.vue')
+    const titleRowRule = source.match(/\.title-row\s*\{([^}]*)\}/)?.[1]
+
+    expect(titleRowRule).toContain('width: 100%')
+    expect(titleRowRule).toContain('min-width: 0')
+  })
+
   it('provides a dedicated compact schedule announcement component', () => {
     expect(componentExists('./HomeScheduleAnnouncement.vue')).toBe(true)
   })

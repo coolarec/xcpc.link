@@ -153,6 +153,8 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', closeOnOutside
 }
 
 .title-row {
+  width: 100%;
+  min-width: 0;
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
