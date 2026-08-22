@@ -50,12 +50,12 @@ const themeOptions: Array<{ label: string; value: ThemeMode }> = [
 ]
 const tickerBanners: TickerBanner[] = [
   {
-    label: '赛战博弈',
+    label: '赛站博弈',
     text: '从夯到拉锐评2025赛季ICPC/CCPC各赛站队伍强度 - 俊杰Charles',
     href: 'https://www.bilibili.com/video/BV1fkPuzJE6t',
   },
   {
-    label: '赛战博弈',
+    label: '赛站博弈',
     text: '从夯到拉锐评2025赛季ICPC/CCPC各赛站体验 - 俊杰Charles',
     href: 'https://www.bilibili.com/video/BV12XfiBfEhG',
   },
