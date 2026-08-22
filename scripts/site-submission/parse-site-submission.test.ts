@@ -71,6 +71,12 @@ describe('parseSiteSubmission', () => {
     })
   })
 
+  it('preserves hash-routed functional page URLs', () => {
+    const body = completeBody.replace('https://example.com', 'https://example.com/#/tool')
+
+    expect(parseSiteSubmission(body).websiteUrl).toBe('https://example.com/#/tool')
+  })
+
   it('rejects unknown categories', () => {
     expect(() => parseSiteSubmission(completeBody.replace('算竞高手', '友情链接')))
       .toThrow('未知一级分类：友情链接')

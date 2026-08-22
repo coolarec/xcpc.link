@@ -94,6 +94,22 @@ describe('applySiteSubmission', () => {
       .rejects.toThrow('网站链接已存在于 authors.json：https://example.com/')
   })
 
+  it('allows different hash-routed pages on the same origin', async () => {
+    await writeGallery('authors.json', gallery('退役选手', [{
+      avatarUrl: '',
+      websiteUrl: 'https://example.com/#/one',
+      websiteTitle: 'Existing Tool',
+      websiteDescription: 'Existing entry',
+    }]))
+
+    await expect(applySiteSubmission({
+      ...submission,
+      websiteUrl: 'https://example.com/#/two',
+    }, { rootDir })).resolves.toMatchObject({
+      entry: { websiteUrl: 'https://example.com/#/two' },
+    })
+  })
+
   it('preserves two-space JSON formatting and a trailing newline', async () => {
     await applySiteSubmission(submission, { rootDir })
     const content = await readFile(path.join(rootDir, galleryDir, 'beginners.json'), 'utf8')

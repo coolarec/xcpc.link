@@ -298,7 +298,7 @@ Run:
 npm test -- --run scripts/site-submission/parse-site-submission.test.ts
 ```
 
-Expected: 7 tests PASS.
+Expected: 8 tests PASS.
 
 - [ ] **Step 5: Commit the parser unit**
 
@@ -544,7 +544,7 @@ Run:
 npm test -- --run scripts/site-submission/update-gallery.test.ts
 ```
 
-Expected: 5 tests PASS.
+Expected: 6 tests PASS.
 
 - [ ] **Step 5: Commit the gallery updater unit**
 
@@ -732,7 +732,7 @@ Run:
 npm test -- --run scripts/apply-site-issue.test.ts scripts/site-submission/parse-site-submission.test.ts scripts/site-submission/update-gallery.test.ts
 ```
 
-Expected: 15 tests PASS.
+Expected: 17 tests PASS.
 
 - [ ] **Step 5: Commit the CLI unit**
 
@@ -916,7 +916,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
-  issues: read
+  issues: write
 
 concurrency:
   group: site-issue-${{ github.event.issue.number }}
@@ -945,14 +945,36 @@ jobs:
         run: npm ci
 
       - name: Apply website submission
+        id: apply
         run: node scripts/apply-site-issue.mjs
+        continue-on-error: true
         env:
           GITHUB_EVENT_PATH: ${{ github.event_path }}
+
+      - name: Mark stale PR as draft after validation failure
+        if: steps.apply.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH_NAME: issue/${{ github.event.issue.number }}-add-site
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          pr_number="$(gh pr list --state open --head "$BRANCH_NAME" --json number --jq '.[0].number')"
+          if [ -n "$pr_number" ]; then
+            is_draft="$(gh pr view "$pr_number" --json isDraft --jq '.isDraft')"
+            if [ "$is_draft" != "true" ]; then
+              gh pr ready "$pr_number" --undo
+            fi
+            gh pr comment "$pr_number" --body "自动校验失败，已将此 PR 转为草稿。请修正 Issue 内容后重新提交。"
+          else
+            gh issue comment "$ISSUE_NUMBER" --body "自动校验失败，未创建新的 PR。请修正 Issue 内容后重新编辑。"
+          fi
+          exit 1
 
       - name: Run tests
         run: npm test -- --run
 
       - name: Create or update Pull Request
+        id: create_pr
         uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -975,6 +997,18 @@ jobs:
             src/modules/home/home-galleries/advanced.json
             src/modules/home/home-galleries/coaches.json
             src/modules/home/home-galleries/authors.json
+
+      - name: Mark validated Pull Request ready
+        if: steps.create_pr.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ steps.create_pr.outputs.pull-request-number }}
+        run: |
+          pr_number="$PR_NUMBER"
+          is_draft="$(gh pr view "$pr_number" --json isDraft --jq '.isDraft')"
+          if [ "$is_draft" = "true" ]; then
+            gh pr ready "$pr_number"
+          fi
 ```
 
 - [ ] **Step 5: Run configuration and full tests**

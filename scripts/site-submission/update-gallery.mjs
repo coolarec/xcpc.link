@@ -6,7 +6,6 @@ const galleryDirectory = 'src/modules/home/home-galleries'
 
 const normalizeUrlForComparison = (value) => {
   const url = new URL(value)
-  url.hash = ''
   return url.toString()
 }
 

@@ -68,7 +68,6 @@ const normalizeWebsiteUrl = (value) => {
     throw new Error('网站链接只允许使用 http:// 或 https://')
   }
 
-  url.hash = ''
   return url.toString()
 }
 
