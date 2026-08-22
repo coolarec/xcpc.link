@@ -21,8 +21,13 @@ const emit = defineEmits<{
 
 const query = ref('')
 const activeIndex = ref(-1)
+const inputRef = ref<HTMLInputElement | null>(null)
 const searchResultsRef = ref<HTMLElement | null>(null)
 const searchListId = 'home-search-results'
+
+const focusInput = () => inputRef.value?.focus()
+
+defineExpose({ focus: focusInput })
 
 const results = computed(() => searchHomeItems(props.items, query.value))
 const locationResults = computed(() =>
@@ -97,6 +102,7 @@ const hideBrokenIcon = (event: Event) => {
   <div class="home-search">
     <Search class="search-icon" :size="19" :stroke-width="2.2" aria-hidden="true" />
     <input
+      ref="inputRef"
       v-model="query"
       type="search"
       role="combobox"

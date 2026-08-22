@@ -333,6 +333,29 @@ describe('home header controls', () => {
     expect(wrapper.find('[data-testid="settings-popover"]').exists()).toBe(false)
   })
 
+  it('focuses the search box when slash is pressed outside editable fields', async () => {
+    const wrapper = mount(HomeHeader, {
+      attachTo: document.body,
+      props: {
+        categoryCount: 1,
+        totalLinks: 2,
+        themeMode: 'system',
+        themeOptions,
+        viewMode: 'compact',
+        searchItems,
+        searchDisabled: false,
+      },
+    })
+    const searchInput = wrapper.find('input[role="combobox"]').element as HTMLInputElement
+    const event = new KeyboardEvent('keydown', { key: '/', cancelable: true })
+
+    document.dispatchEvent(event)
+    await wrapper.vm.$nextTick()
+
+    expect(document.activeElement).toBe(searchInput)
+    expect(event.defaultPrevented).toBe(true)
+  })
+
   it('offers GitHub star and website submission links instead of the DEV page', () => {
     const wrapper = mount(HomeHeader, {
       props: {

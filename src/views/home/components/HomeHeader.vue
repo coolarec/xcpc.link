@@ -29,6 +29,7 @@ const emit = defineEmits<{
 }>()
 
 const headerRef = ref<HTMLElement | null>(null)
+const searchRef = ref<{ focus: () => void } | null>(null)
 const activePopover = ref<'search' | 'settings' | null>(null)
 
 const setSearchOpen = (open: boolean) => {
@@ -50,8 +51,31 @@ const closeOnOutsidePointer = (event: PointerEvent) => {
   }
 }
 
-onMounted(() => document.addEventListener('pointerdown', closeOnOutsidePointer))
-onBeforeUnmount(() => document.removeEventListener('pointerdown', closeOnOutsidePointer))
+const focusSearchOnSlash = (event: KeyboardEvent) => {
+  if (event.key !== '/' || event.metaKey || event.ctrlKey || event.altKey) return
+
+  const target = event.target
+  if (
+    target instanceof HTMLInputElement ||
+    target instanceof HTMLTextAreaElement ||
+    target instanceof HTMLSelectElement ||
+    (target instanceof HTMLElement && target.isContentEditable)
+  ) {
+    return
+  }
+
+  event.preventDefault()
+  searchRef.value?.focus()
+}
+
+onMounted(() => {
+  document.addEventListener('pointerdown', closeOnOutsidePointer)
+  document.addEventListener('keydown', focusSearchOnSlash)
+})
+onBeforeUnmount(() => {
+  document.removeEventListener('pointerdown', closeOnOutsidePointer)
+  document.removeEventListener('keydown', focusSearchOnSlash)
+})
 </script>
 
 <template>
@@ -83,6 +107,7 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', closeOnOutside
 
       <div class="header-tools">
         <HomeSearch
+          ref="searchRef"
           :items="props.searchItems"
           :open="activePopover === 'search'"
           :disabled="props.searchDisabled"
