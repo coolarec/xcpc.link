@@ -5,18 +5,6 @@ export interface SiteLink {
   websiteDescription: string
 }
 
-export interface BackgroundWord {
-  word: string
-  size: string
-  opacity: string
-  repeatDelay: string
-  tone: number
-}
-
-export interface BackgroundRow {
-  words: BackgroundWord[]
-}
-
 export interface HomeGallerySectionSource {
   eyebrow: string
   title: string
@@ -62,16 +50,4 @@ export interface HomeGallerySection {
   cards: SiteLink[]
   watch?: WatchLinksBlock
   watches?: WatchLinksBlock[]
-}
-
-export interface HeroDockItem {
-  label: string
-  glyph: string
-  icon?: 'book' | 'rocket' | 'users' | 'pen' | 'trophy' | 'lite'
-  tooltip?: string
-  to?: string
-}
-
-export interface AsyncVueModule<T> {
-  default: T
 }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ArrowRight, Settings } from '@lucide/vue'
+import { Settings } from '@lucide/vue'
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import type { LiteViewMode } from '../../../stores/litePreferences'
 import type { ThemeMode } from '../../../stores/theme'
@@ -56,10 +56,17 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', closeOnOutside
 
 <template>
   <header ref="headerRef" class="page-header" @keydown.esc="activePopover = null">
-    <router-link class="back-link" to="/dev" aria-label="访问 DEV 版">
-      <span>DEV 版</span>
-      <ArrowRight :size="17" aria-hidden="true" />
-    </router-link>
+    <p class="community-prompt">
+      想给开发者<a
+        href="https://github.com/coolarec/xcpc.link"
+        target="_blank"
+        rel="noopener noreferrer"
+      >点个 star</a> 或者<a
+        href="https://github.com/coolarec/xcpc.link/issues/new?template=add-site.yml"
+        target="_blank"
+        rel="noopener noreferrer"
+      >添加自己的网站</a>？
+    </p>
 
     <div class="title-row">
       <div>
@@ -118,20 +125,30 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', closeOnOutside
   padding: 2px 0 18px;
 }
 
-.back-link {
+.community-prompt {
   width: fit-content;
   min-height: 44px;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  flex-wrap: wrap;
+  gap: 0.32em;
+  margin: 0;
   color: var(--muted);
   font-size: 14px;
   font-weight: 650;
-  text-decoration: none;
 }
 
-.back-link:hover,
-.back-link:focus-visible {
+.community-prompt a {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  color: inherit;
+  text-underline-offset: 3px;
+  transition: color 0.18s ease;
+}
+
+.community-prompt a:hover,
+.community-prompt a:focus-visible {
   color: var(--text);
 }
 
@@ -288,6 +305,7 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', closeOnOutside
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .community-prompt a,
   .settings-button {
     transition: none;
   }

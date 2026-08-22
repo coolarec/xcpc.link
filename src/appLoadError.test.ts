@@ -6,7 +6,6 @@ import { describe, expect, it } from 'vitest'
 
 const indexHtml = readFileSync(fileURLToPath(new URL('../index.html', import.meta.url)), 'utf8')
 const mainSource = readFileSync(fileURLToPath(new URL('./main.ts', import.meta.url)), 'utf8')
-const devPageSource = readFileSync(fileURLToPath(new URL('./views/dev/DevPage.vue', import.meta.url)), 'utf8')
 
 describe('application load failure fallback', () => {
   it('provides a refreshable error dialog with the developer contact', () => {
@@ -20,6 +19,5 @@ describe('application load failure fallback', () => {
     expect(indexHtml).not.toContain('id="app-preloader"')
     expect(indexHtml).not.toContain('body:not(.is-app-visible) #app')
     expect(mainSource).not.toContain('app-preloader')
-    expect(devPageSource).not.toContain('app-preloader')
   })
 })

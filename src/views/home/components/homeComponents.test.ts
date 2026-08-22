@@ -310,6 +310,25 @@ describe('home header controls', () => {
     expect(wrapper.find('[data-testid="settings-popover"]').exists()).toBe(false)
   })
 
+  it('offers GitHub star and website submission links instead of the DEV page', () => {
+    const wrapper = mount(HomeHeader, {
+      props: {
+        categoryCount: 1,
+        totalLinks: 2,
+        themeMode: 'system',
+        themeOptions,
+        viewMode: 'compact',
+        searchItems,
+        searchDisabled: false,
+      },
+    })
+
+    expect(wrapper.text()).toContain('想给开发者点个 star 或者添加自己的网站？')
+    expect(wrapper.find('a[href="https://github.com/coolarec/xcpc.link"]').attributes('target')).toBe('_blank')
+    expect(wrapper.find('a[href="https://github.com/coolarec/xcpc.link/issues/new?template=add-site.yml"]').attributes('target')).toBe('_blank')
+    expect(wrapper.find('a[href="/dev"]').exists()).toBe(false)
+  })
+
   it('adds stable anchors and highlights the selected directory target', () => {
     const wrapper = mount(HomeCategorySection, {
       props: {

@@ -1,7 +1,7 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
-import { fetchHeroDockItems, fetchHomeGalleries, fetchNewsData } from '../modules/home/api'
-import type { HeroDockItem, HomeGallerySection, NewsData } from '../types/home'
+import { fetchHomeGalleries, fetchNewsData } from '../modules/home/api'
+import type { HomeGallerySection, NewsData } from '../types/home'
 
 const getErrorMessage = (error: unknown): string => {
   if (error instanceof Error && error.message) return error.message
@@ -10,7 +10,6 @@ const getErrorMessage = (error: unknown): string => {
 
 export const useHomeContentStore = defineStore('home-content', () => {
   const galleries = ref<HomeGallerySection[]>([])
-  const dockItems = ref<HeroDockItem[]>([])
   const newsData = ref<NewsData | null>(null)
   const isLoading = ref(false)
   const loadError = ref('')
@@ -29,9 +28,8 @@ export const useHomeContentStore = defineStore('home-content', () => {
     isLoading.value = true
     loadError.value = ''
 
-    loadPromise = Promise.all([fetchHeroDockItems(), fetchHomeGalleries(), fetchNewsData()])
-      .then(([dockData, galleryData, news]) => {
-        dockItems.value = dockData
+    loadPromise = Promise.all([fetchHomeGalleries(), fetchNewsData()])
+      .then(([galleryData, news]) => {
         galleries.value = galleryData
         newsData.value = news
       })
@@ -49,7 +47,6 @@ export const useHomeContentStore = defineStore('home-content', () => {
 
   return {
     galleries,
-    dockItems,
     newsData,
     isLoading,
     loadError,

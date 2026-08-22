@@ -1,13 +1,13 @@
 # xcpc.link
 
-Vue 3 + GSAP prototype for a motion-first bookmark site.
+Vue 3 + Vite 实现的 XCPC 算法竞赛资源导航。
 
 ## Current structure
 
-- Fullscreen cursor-driven perspective tilt section with an upper-half ScrambleText algorithm background
-- Pinned panels with overscroll transition from part one into part two
-- Reusable horizontal gallery components for the second section
-- Vue Router scaffold with four placeholder subroutes
+- 单一正式首页，提供分类资源目录、站内搜索、主题和紧凑度设置
+- GitHub Issue Form 投稿网站并自动生成 Pull Request
+- Vercel Pull Request Preview，并把预览地址自动回写到来源 Issue
+- 投稿 PR 合并后自动清理临时分支
 
 ## Commands
 
