@@ -1,0 +1,68 @@
+name: Apply website Issue and create PR
+
+on:
+  issues:
+    types: [opened, edited]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: read
+
+concurrency:
+  group: site-issue-${{ github.event.issue.number }}
+  cancel-in-progress: true
+
+jobs:
+  apply-and-create-pr:
+    if: contains(github.event.issue.labels.*.name, 'data:site')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout default branch
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Apply website submission
+        run: node scripts/apply-site-issue.mjs
+        env:
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
+
+      - name: Run tests
+        run: npm test -- --run
+
+      - name: Create or update Pull Request
+        uses: peter-evans/create-pull-request@v8
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: issue/${{ github.event.issue.number }}-add-site
+          base: ${{ github.event.repository.default_branch }}
+          title: 'feat(data): ${{ github.event.issue.title }}'
+          body: |
+            自动同步来自 Issue #${{ github.event.issue.number }} 的网站投稿。
+
+            投稿人：@${{ github.event.issue.user.login }}
+
+            Vercel GitHub Integration 会在本 PR 上生成 Preview Deployment，合并前请检查页面展示效果。
+
+            Closes #${{ github.event.issue.number }}
+          commit-message: 'feat(data): apply website Issue #${{ github.event.issue.number }}'
+          committer: 'github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>'
+          author: '${{ github.event.issue.user.login }} <${{ github.event.issue.user.id }}+${{ github.event.issue.user.login }}@users.noreply.github.com>'
+          add-paths: |
+            src/modules/home/home-galleries/beginners.json
+            src/modules/home/home-galleries/advanced.json
+            src/modules/home/home-galleries/coaches.json
+            src/modules/home/home-galleries/authors.json

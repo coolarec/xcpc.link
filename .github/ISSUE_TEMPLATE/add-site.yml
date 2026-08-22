@@ -1,0 +1,73 @@
+name: '添加网站'
+description: '提交希望收录到 xcpc.link 的网站'
+title: '[添加网站] '
+labels:
+  - 'data:site'
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢投稿。Issue 提交或编辑后会自动生成对应的数据 Pull Request，维护者会通过 Vercel Preview 检查实际页面效果。
+        网站链接请填写完整的 http:// 或 https:// 地址。目标分组必须与站点现有分组标题完全一致；不填写则添加到该一级分类顶部卡片区。
+  - type: input
+    id: website_title
+    attributes:
+      label: '网站名称'
+      description: '网站在 xcpc.link 中显示的名称'
+      placeholder: '例如：Codeforces'
+    validations:
+      required: true
+  - type: input
+    id: website_url
+    attributes:
+      label: '网站链接'
+      description: '完整的网站主页或功能页链接'
+      placeholder: 'https://example.com/'
+    validations:
+      required: true
+  - type: textarea
+    id: website_description
+    attributes:
+      label: '网站简介'
+      description: '用一句话说明网站用途，建议不超过 80 个汉字'
+    validations:
+      required: true
+  - type: dropdown
+    id: category
+    attributes:
+      label: '一级分类'
+      description: '选择网站最适合展示的人群或场景'
+      options:
+        - 初学者
+        - 算竞高手
+        - 学生教练 & 出题人
+        - 退役选手
+    validations:
+      required: true
+  - type: input
+    id: target_group
+    attributes:
+      label: '目标分组（可选）'
+      description: '填写该分类中已有的分组标题；留空则加入顶部卡片区'
+      placeholder: '例如：OJ 平台'
+    validations:
+      required: false
+  - type: input
+    id: avatar_url
+    attributes:
+      label: '图标地址（可选）'
+      description: '填写 /assets/ 开头的仓库内路径或完整 HTTPS URL；留空时使用无图标样式'
+      placeholder: 'https://example.com/favicon.png'
+    validations:
+      required: false
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: '投稿确认'
+      options:
+        - label: '链接当前可以正常访问'
+          required: true
+        - label: '内容与 XCPC 或算法竞赛相关'
+          required: true
+        - label: '内容不含恶意代码，并允许在本站公开展示'
+          required: true
