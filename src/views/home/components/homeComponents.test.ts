@@ -374,9 +374,12 @@ describe('home header controls', () => {
       },
     })
 
-    expect(wrapper.find('.search-shortcut-toast').text()).toBe('尝试按下 / 可实现快速搜索')
+    await wrapper.vm.$nextTick()
+    const toast = wrapper.find('.search-shortcut-toast')
+    expect(toast.exists()).toBe(true)
+    expect(toast.text()).toBe('尝试按下 / 可实现快速搜索')
 
-    vi.advanceTimersByTime(4000)
+    vi.advanceTimersByTime(2000)
     await wrapper.vm.$nextTick()
 
     expect(wrapper.find('.search-shortcut-toast').exists()).toBe(false)
