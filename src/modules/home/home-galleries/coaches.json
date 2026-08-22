@@ -164,6 +164,12 @@
           "websiteUrl": "https://algoux.org/",
           "websiteTitle": "algoUX",
           "websiteDescription": "面向算法竞赛工具和资源的体验设计与工具集合。"
+        },
+        {
+          "avatarUrl": "/assets/icons/raw-githubusercontent-com-cf823f0400.svg",
+          "websiteUrl": "https://github.com/Farewe1ll/quarto-revealjs-beamer",
+          "websiteTitle": "quarto-revealjs-beamer",
+          "websiteDescription": "为 Quarto Reveal.js 提供高仿 LaTeX Beamer 风格的演示文稿扩展，适合校赛等小型 XCPC 比赛题解。"
         }
       ]
     }
