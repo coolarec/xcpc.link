@@ -12,7 +12,7 @@
 
 - Implement only the “添加网站” submission flow; do not add unrelated Issue templates or a standalone submission backend.
 - Trigger automatic processing on Issue `opened` and `edited` events when the Issue has the `data:site` label.
-- Never execute submitted text, interpolate it into shell commands, or download remote icons.
+- Never execute submitted text or interpolate it into shell commands; remote icons may only be downloaded through the bounded image downloader described in Task 6.
 - Only mutate the four files under `src/modules/home/home-galleries/`.
 - Do not auto-merge generated Pull Requests.
 - Use Node.js 24 in GitHub Actions, matching the existing build workflow.
@@ -37,6 +37,8 @@
 - Create `scripts/apply-site-issue.test.ts`: event integration tests.
 - Create `src/issueAutomationConfig.test.ts`: repository-level assertions for the Issue Form and workflow configuration.
 - Modify `README.md`: document the submission flow, required label, and Vercel preview prerequisite.
+- Create `scripts/site-submission/download-icon.mjs`: safely resolve existing local icon paths or download supported HTTPS images into `public/assets/icons/`.
+- Create `scripts/site-submission/download-icon.test.ts`: cover file signatures, limits, redirects, private addresses, and local path validation.
 
 ---
 
@@ -1054,7 +1056,7 @@ Append this section to `README.md`:
 1. 在 GitHub 仓库中创建 `data:site` 标签，使 Issue Form 可以自动附加工作流路由标签。
 2. 在 Vercel 中连接该 GitHub 仓库并启用 Pull Request Preview Deployments。自动 PR 创建后，Vercel 会把预览状态和链接显示在 PR checks 中。
 
-自动化不会合并 PR、执行投稿文本或下载远程图标。维护者仍需检查数据内容、目标分类和 Vercel 页面预览后再决定是否合并。
+自动化不会合并 PR 或执行投稿文本。维护者仍需检查数据内容、目标分类和 Vercel 页面预览后再决定是否合并。
 ```
 
 - [ ] **Step 2: Run formatting checks, all tests, and the production build**
@@ -1116,3 +1118,33 @@ Expected: all nine checks succeed. If step 1 or 2 is unavailable, local implemen
 - Placeholder scan: no `TBD`, `TODO`, “similar to another task”, or unspecified test-only steps remain.
 - Type consistency: Task 1 exports `SiteSubmission`, `CATEGORY_FILES`, and parser functions consumed by Tasks 2–4; Task 2 exports `applySiteSubmission` consumed by Task 3; Task 3 exports `runSiteIssueEvent` and the workflow invokes the CLI entry point.
 - Scope check: all tasks belong to the single Issue-to-PR website submission subsystem approved in the design; no separate backend or unrelated template is introduced.
+
+---
+
+### Task 6: Download Submitted Icons Into the Existing Icon Directory
+
+**Files:**
+- Create: `scripts/site-submission/download-icon.mjs`
+- Test: `scripts/site-submission/download-icon.test.ts`
+- Modify: `scripts/apply-site-issue.mjs`
+- Modify: `scripts/apply-site-issue.test.ts`
+- Modify: `.github/workflows/issue-to-site-pr.yml`
+- Modify: `.github/ISSUE_TEMPLATE/add-site.yml`
+- Modify: `src/issueAutomationConfig.test.ts`
+- Modify: `README.md`
+
+**Interfaces:**
+- Produce `resolveSubmissionAvatar(avatarUrl, options): Promise<string>`.
+- `options` supports `rootDir`, `fetchImpl`, and `lookupImpl` for isolated tests.
+- Empty input returns `''`; existing safe `/assets/...` input returns unchanged; HTTPS input returns `/assets/icons/<host>-<hash>.<ext>` after writing the file.
+- `runSiteIssueEvent` resolves the avatar before calling `applySiteSubmission`.
+
+- [x] Write failing tests for PNG download, local path validation, hash naming, private IP rejection, redirect revalidation, unsupported formats, and the 1 MiB limit.
+- [x] Run the focused tests and confirm they fail because `download-icon.mjs` does not exist.
+- [x] Implement manual redirect handling, pinned DNS/IP connections, response streaming limits, file-signature detection, and deterministic naming.
+- [x] Run focused tests and confirm they pass.
+- [x] Add a failing event integration assertion that an HTTPS icon becomes a local `/assets/icons/...` path and file.
+- [x] Integrate `resolveSubmissionAvatar` before gallery mutation and make the event integration test pass.
+- [x] Extend the PR `add-paths` allowlist with `public/assets/icons/*` and update configuration tests.
+- [x] Update Issue Form and README wording to explain that HTTPS icons are downloaded into the existing icon directory.
+- [x] Run `npm test -- --run`, `npm run build`, YAML parsing, and `git diff --check`.

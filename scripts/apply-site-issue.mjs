@@ -2,6 +2,7 @@
 
 import { readFile } from 'node:fs/promises'
 import { pathToFileURL } from 'node:url'
+import { resolveSubmissionAvatar } from './site-submission/download-icon.mjs'
 import { parseSiteSubmission } from './site-submission/parse-site-submission.mjs'
 import { applySiteSubmission } from './site-submission/update-gallery.mjs'
 
@@ -16,7 +17,8 @@ export const runSiteIssueEvent = async (event, options = {}) => {
   if (!issue.body?.trim()) throw new Error('Issue 正文为空')
 
   const submission = parseSiteSubmission(issue.body)
-  return applySiteSubmission(submission, options)
+  const avatarUrl = await resolveSubmissionAvatar(submission.avatarUrl, options)
+  return applySiteSubmission({ ...submission, avatarUrl }, options)
 }
 
 const main = async () => {

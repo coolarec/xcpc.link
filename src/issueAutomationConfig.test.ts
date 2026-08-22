@@ -15,6 +15,7 @@ describe('website submission Issue Form', () => {
 
     expect(template).toContain("name: '添加网站'")
     expect(template).toContain("- 'data:site'")
+    expect(template).toContain('HTTPS 图片会自动下载到仓库现有的 public/assets/icons/ 目录')
     for (const label of [
       '网站名称',
       '网站链接',
@@ -51,5 +52,6 @@ describe('website submission workflow', () => {
     for (const fileName of ['beginners.json', 'advanced.json', 'coaches.json', 'authors.json']) {
       expect(workflow).toContain(`src/modules/home/home-galleries/${fileName}`)
     }
+    expect(workflow).toContain('public/assets/icons/*')
   })
 })

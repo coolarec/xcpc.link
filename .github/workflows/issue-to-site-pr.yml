@@ -88,6 +88,7 @@ jobs:
             src/modules/home/home-galleries/advanced.json
             src/modules/home/home-galleries/coaches.json
             src/modules/home/home-galleries/authors.json
+            public/assets/icons/*
 
       - name: Mark validated Pull Request ready
         if: steps.create_pr.outputs.pull-request-number != ''

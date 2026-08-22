@@ -1,7 +1,7 @@
 // @vitest-environment node
 
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises'
+import { mkdtemp, mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { runSiteIssueEvent } from './apply-site-issue.mjs'
@@ -90,5 +90,39 @@ describe('runSiteIssueEvent', () => {
     await expect(runSiteIssueEvent({
       issue: { body: '', labels: [{ name: 'data:site' }] },
     }, { rootDir })).rejects.toThrow('Issue 正文为空')
+  })
+
+  it('downloads an HTTPS icon and stores its local path in gallery data', async () => {
+    const png = Buffer.from(
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=',
+      'base64',
+    )
+    const body = issueBody.replace(
+      '### 图标地址（可选）\n\n_No response_',
+      '### 图标地址（可选）\n\nhttps://icons.example.com/favicon.png',
+    )
+
+    await runSiteIssueEvent({
+      issue: {
+        body,
+        labels: [{ name: 'data:site' }],
+      },
+    }, {
+      rootDir,
+      fetchImpl: async () => new Response(png, {
+        status: 200,
+        headers: { 'content-type': 'image/png' },
+      }),
+      lookupImpl: async () => [{ address: '93.184.216.34', family: 4 }],
+    })
+
+    const updated = JSON.parse(await readFile(
+      path.join(rootDir, galleryDirectory, 'beginners.json'),
+      'utf8',
+    ))
+    const iconFiles = await readdir(path.join(rootDir, 'public/assets/icons'))
+
+    expect(updated.cards[0].avatarUrl).toMatch(/^\/assets\/icons\/icons-example-com-[a-f0-9]{10}\.png$/)
+    expect(iconFiles).toHaveLength(1)
   })
 })
