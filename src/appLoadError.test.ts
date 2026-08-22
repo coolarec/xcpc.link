@@ -8,6 +8,13 @@ const indexHtml = readFileSync(fileURLToPath(new URL('../index.html', import.met
 const mainSource = readFileSync(fileURLToPath(new URL('./main.ts', import.meta.url)), 'utf8')
 
 describe('application load failure fallback', () => {
+  it('lets the build environment resolve the web manifest base URL', () => {
+    expect(indexHtml).toContain('<link rel="manifest" href="/manifest.webmanifest" />')
+    expect(indexHtml).not.toContain('vite-ignore')
+    expect(indexHtml).not.toContain('cdn.xcpc-link.algoux.cn/manifest.webmanifest')
+    expect(indexHtml).not.toContain('href="https://xcpc.link/manifest.webmanifest"')
+  })
+
   it('provides a refreshable error dialog with the developer contact', () => {
     expect(indexHtml).toContain('id="app-load-error"')
     expect(indexHtml).toContain('window.showAppLoadError')
