@@ -105,7 +105,8 @@
 - 每次请求及跳转都拒绝本机、内网、链路本地和保留地址；
 - 最多跟随 3 次跳转，每次跳转重新校验目标；
 - 10 秒超时，最大 1 MiB；
-- 只接受并校验 PNG、JPEG、WebP、ICO 文件签名，拒绝 SVG、HTML 和伪造 Content-Type；
+- PNG、JPEG、WebP、ICO 按文件签名识别；SVG 必须是可解析的静态 SVG，并拒绝脚本、事件属性、动画、外部资源、危险 CSS、DOCTYPE、ENTITY 和 XML 外部处理指令；
+- SVG 只允许内部 `#fragment` 引用，以及 `<image>` 中内嵌的 PNG、JPEG、WebP data URL；
 - 文件名格式为 `<规范化域名>-<内容 SHA-256 前 10 位>.<扩展名>`；
 - 已有 `/assets/...` 路径必须能映射到 `public/assets/...` 内的真实文件，且禁止 `..` 路径穿越。
 
@@ -176,8 +177,8 @@ Preview 环境不配置 `VITE_CDN_BASE_URL` 时，Vercel 从 PR 分支自身读�
 - 拒绝非 HTTP(S) 网站 URL；
 - 拒绝全站重复 URL；
 - 接受空图标和合法图标地址；
-- 将合法 HTTPS PNG/JPEG/WebP/ICO 下载到 `public/assets/icons/` 并返回本地 URL；
-- 拒绝私网地址、危险跳转、SVG/HTML 和超过 1 MiB 的响应；
+- 将合法 HTTPS PNG/JPEG/WebP/ICO 或安全 SVG 下载到 `public/assets/icons/` 并返回本地 URL；
+- 拒绝私网地址、危险跳转、不安全 SVG、HTML 和超过 1 MiB 的响应；
 - 编辑同一 Issue 时工作流复用同一分支名。
 
 完成标准：

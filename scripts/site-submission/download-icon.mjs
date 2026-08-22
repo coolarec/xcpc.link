@@ -3,6 +3,7 @@ import { lookup as dnsLookup } from 'node:dns/promises'
 import { mkdir, realpath, stat, writeFile } from 'node:fs/promises'
 import { isIP } from 'node:net'
 import path from 'node:path'
+import { DOMParser } from '@xmldom/xmldom'
 import { Agent, fetch as undiciFetch } from 'undici'
 
 const MAX_BYTES = 1024 * 1024
@@ -229,6 +230,107 @@ const readLimitedBody = async (response) => {
   return Buffer.concat(chunks.map((chunk) => Buffer.from(chunk)), totalLength)
 }
 
+const forbiddenSvgTags = new Set([
+  'script',
+  'foreignobject',
+  'iframe',
+  'object',
+  'embed',
+  'audio',
+  'video',
+  'canvas',
+  'link',
+  'meta',
+  'animate',
+  'animatemotion',
+  'animatetransform',
+  'discard',
+  'set',
+  'mpath',
+])
+
+const normalizeCssEscapes = (value) => value
+  .replace(/\/\*[\s\S]*?\*\//g, '')
+  .replace(/\\([a-f0-9]{1,6})(?:\r\n|[\t\n\f\r ])?/gi, (_match, codePoint) => {
+    const value = Number.parseInt(codePoint, 16)
+    return value === 0 || value > 0x10ffff ? '\uFFFD' : String.fromCodePoint(value)
+  })
+  .replace(/\\([^\n\r\f])/g, '$1')
+
+const hasUnsafeCssUrl = (value) => {
+  const normalized = normalizeCssEscapes(value)
+  const matches = normalized.matchAll(/url\(\s*(['"]?)(.*?)\1\s*\)/gi)
+  return [...matches].some((match) => !match[2].trim().startsWith('#'))
+}
+
+const hasUnsafeCss = (value) => {
+  const normalized = normalizeCssEscapes(value)
+  return /@import|expression\s*\(|javascript:|vbscript:/i.test(normalized)
+    || hasUnsafeCssUrl(normalized)
+}
+
+const isSafeEmbeddedImage = (value) => /^data:image\/(?:png|jpe?g|webp);base64,/i.test(value)
+
+const validateSvgContent = (content) => {
+  try {
+    const source = new TextDecoder('utf-8', { fatal: true }).decode(content)
+    if (/<!DOCTYPE|<!ENTITY/i.test(source)) throw new Error('unsafe declaration')
+    const withoutXmlDeclaration = source.replace(/^\uFEFF?\s*<\?xml\s+[^?]*\?>/i, '')
+    if (/<\?/.test(withoutXmlDeclaration)) throw new Error('unsafe processing instruction')
+
+    const parseErrors = []
+    const document = new DOMParser({
+      errorHandler: {
+        warning: (message) => parseErrors.push(message),
+        error: (message) => parseErrors.push(message),
+        fatalError: (message) => parseErrors.push(message),
+      },
+    }).parseFromString(source, 'image/svg+xml')
+
+    const root = document.documentElement
+    if (parseErrors.length > 0 || root?.localName?.toLowerCase() !== 'svg') {
+      throw new Error('invalid svg')
+    }
+
+    const elements = [root, ...Array.from(root.getElementsByTagName('*'))]
+    for (const element of elements) {
+      const tagName = element.localName.toLowerCase()
+      if (forbiddenSvgTags.has(tagName)) throw new Error('unsafe element')
+
+      if (tagName === 'style') {
+        const css = element.textContent || ''
+        if (hasUnsafeCss(css)) throw new Error('unsafe style')
+      }
+
+      for (const attribute of Array.from(element.attributes || [])) {
+        const name = attribute.name.toLowerCase()
+        const value = attribute.value.trim()
+        const lowerValue = value.toLowerCase()
+
+        if (name.startsWith('on')) throw new Error('event handler')
+        if (lowerValue.includes('javascript:') || lowerValue.includes('vbscript:')) {
+          throw new Error('unsafe protocol')
+        }
+
+        if (['href', 'xlink:href', 'src'].includes(name)) {
+          const isEmbeddedRasterImage = tagName === 'image' && isSafeEmbeddedImage(value)
+          if (value && !value.startsWith('#') && !isEmbeddedRasterImage) {
+            throw new Error('external reference')
+          }
+        }
+
+        if (name === 'style' && hasUnsafeCss(value)) {
+          throw new Error('unsafe style')
+        }
+
+        if (hasUnsafeCssUrl(value)) throw new Error('external url')
+      }
+    }
+  } catch {
+    throw new Error('SVG 图标包含不安全内容')
+  }
+}
+
 const detectImageExtension = (content) => {
   if (
     content.length >= 8
@@ -247,7 +349,14 @@ const detectImageExtension = (content) => {
     && content[2] === 0x01
     && content[3] === 0x00
   ) return 'ico'
-  throw new Error('仅支持 PNG、JPEG、WebP 或 ICO 图片')
+
+  const textPrefix = content.subarray(0, Math.min(content.length, 1024)).toString('utf8').trimStart()
+  if (textPrefix.startsWith('<')) {
+    validateSvgContent(content)
+    return 'svg'
+  }
+
+  throw new Error('仅支持 PNG、JPEG、WebP、ICO 或安全 SVG 图片')
 }
 
 const normalizedHostname = (hostname) => {
@@ -304,7 +413,7 @@ const downloadRemoteIcon = async ({ avatarUrl, rootDir, fetchImpl, lookupImpl, d
             redirect: 'manual',
             signal: controller.signal,
             dispatcher,
-            headers: { accept: 'image/png,image/jpeg,image/webp,image/x-icon' },
+            headers: { accept: 'image/png,image/jpeg,image/webp,image/x-icon,image/svg+xml' },
           }),
           controller.signal,
         )

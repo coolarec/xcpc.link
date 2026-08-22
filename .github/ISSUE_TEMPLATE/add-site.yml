@@ -9,7 +9,7 @@ body:
       value: |
         感谢投稿。Issue 提交或编辑后会自动生成对应的数据 Pull Request，维护者会通过 Vercel Preview 检查实际页面效果。
         网站链接请填写完整的 http:// 或 https:// 地址。目标分组必须与站点现有分组标题完全一致；不填写则添加到该一级分类顶部卡片区。
-        HTTPS 图片会自动下载到仓库现有的 public/assets/icons/ 目录，并与网站数据一起进入 Pull Request。
+        HTTPS 图片会自动下载到仓库现有的 public/assets/icons/ 目录，并与网站数据一起进入 Pull Request；支持 PNG、JPEG、WebP、ICO 和安全 SVG。
   - type: input
     id: website_title
     attributes:
@@ -57,8 +57,8 @@ body:
     id: avatar_url
     attributes:
       label: '图标地址（可选）'
-      description: '填写已有 /assets/ 路径或完整 HTTPS URL；HTTPS 图片会下载到现有 icons 目录，留空时使用无图标样式'
-      placeholder: 'https://example.com/favicon.png'
+      description: '填写已有 /assets/ 路径或完整 HTTPS URL；支持 PNG、JPEG、WebP、ICO 和安全 SVG，下载后存入现有 icons 目录'
+      placeholder: 'https://example.com/favicon.svg'
     validations:
       required: false
   - type: checkboxes

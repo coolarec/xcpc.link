@@ -1139,9 +1139,9 @@ Expected: all nine checks succeed. If step 1 or 2 is unavailable, local implemen
 - Empty input returns `''`; existing safe `/assets/...` input returns unchanged; HTTPS input returns `/assets/icons/<host>-<hash>.<ext>` after writing the file.
 - `runSiteIssueEvent` resolves the avatar before calling `applySiteSubmission`.
 
-- [x] Write failing tests for PNG download, local path validation, hash naming, private IP rejection, redirect revalidation, unsupported formats, and the 1 MiB limit.
+- [x] Write failing tests for PNG/SVG download, SVG active-content rejection, local path validation, hash naming, private IP rejection, redirect revalidation, unsupported formats, and the 1 MiB limit.
 - [x] Run the focused tests and confirm they fail because `download-icon.mjs` does not exist.
-- [x] Implement manual redirect handling, pinned DNS/IP connections, response streaming limits, file-signature detection, and deterministic naming.
+- [x] Implement manual redirect handling, pinned DNS/IP connections, response streaming limits, raster file-signature detection, static SVG validation, and deterministic naming.
 - [x] Run focused tests and confirm they pass.
 - [x] Add a failing event integration assertion that an HTTPS icon becomes a local `/assets/icons/...` path and file.
 - [x] Integrate `resolveSubmissionAvatar` before gallery mutation and make the event integration test pass.

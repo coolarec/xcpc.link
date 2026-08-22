@@ -111,8 +111,55 @@ describe('resolveSubmissionAvatar', () => {
     })).resolves.toMatch(new RegExp(`\\.${extension}$`))
   })
 
+  it('accepts a safe static SVG by XML content', async () => {
+    const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><path d="M0 0h1v1H0z"/></svg>'
+
+    await expect(resolveSubmissionAvatar('https://images.example.com/icon.svg', {
+      rootDir,
+      fetchImpl: async () => new Response(svg, { headers: { 'content-type': 'image/svg+xml' } }),
+      lookupImpl: publicLookup,
+    })).resolves.toMatch(/^\/assets\/icons\/images-example-com-[a-f0-9]{10}\.svg$/)
+  })
+
+  it('accepts internal SVG paint references and embedded raster images', async () => {
+    const svg = [
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1">',
+      '<defs><linearGradient id="g"><stop offset="1" stop-color="#fff"/></linearGradient></defs>',
+      '<path fill="url(#g)" d="M0 0h1v1H0z"/>',
+      '<image href="data:image/png;base64,iVBORw0KGgo=" width="1" height="1"/>',
+      '</svg>',
+    ].join('')
+
+    await expect(resolveSubmissionAvatar('https://images.example.com/icon.svg', {
+      rootDir,
+      fetchImpl: async () => new Response(svg),
+      lookupImpl: publicLookup,
+    })).resolves.toMatch(/\.svg$/)
+  })
+
+  it.each([
+    '<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script></svg>',
+    '<svg xmlns="http://www.w3.org/2000/svg"><foreignObject><div>bad</div></foreignObject></svg>',
+    '<!DOCTYPE svg [<!ENTITY xxe SYSTEM "file:///etc/passwd">]><svg>&xxe;</svg>',
+    '<svg xmlns="http://www.w3.org/2000/svg"><image href="https://evil.example/a.png"/></svg>',
+    '<svg xmlns="http://www.w3.org/2000/svg" onload="alert(1)"/>',
+    '<svg xmlns="http://www.w3.org/2000/svg"><style>@import "https://evil.example/a.css"</style></svg>',
+    '<svg xmlns="http://www.w3.org/2000/svg"><path fill="url(https://evil.example/a.svg#paint)"/></svg>',
+    '<svg xmlns="http://www.w3.org/2000/svg"><path style="fill:u\\72l(https://evil.example/a.svg#paint)"/></svg>',
+    '<svg xmlns="http://www.w3.org/2000/svg"><use href="data:image/png;base64,iVBORw0KGgo="/></svg>',
+    '<?xml-stylesheet href="https://evil.example/a.css"?><svg xmlns="http://www.w3.org/2000/svg"/>',
+    '<svg xmlns="http://www.w3.org/2000/svg"><path></svg>',
+    '<html></html>',
+  ])('rejects unsafe SVG content: %s', async (svg) => {
+    await expect(resolveSubmissionAvatar('https://images.example.com/icon.svg', {
+      rootDir,
+      fetchImpl: async () => new Response(svg, { headers: { 'content-type': 'image/svg+xml' } }),
+      lookupImpl: publicLookup,
+    })).rejects.toThrow('SVG 图标包含不安全内容')
+  })
+
   it('rejects unsupported or spoofed image content', async () => {
-    const fetchImpl = async () => new Response('<svg></svg>', {
+    const fetchImpl = async () => new Response('not an image', {
       status: 200,
       headers: { 'content-type': 'image/png' },
     })
@@ -121,7 +168,7 @@ describe('resolveSubmissionAvatar', () => {
       rootDir,
       fetchImpl,
       lookupImpl: publicLookup,
-    })).rejects.toThrow('仅支持 PNG、JPEG、WebP 或 ICO 图片')
+    })).rejects.toThrow('仅支持 PNG、JPEG、WebP、ICO 或安全 SVG 图片')
   })
 
   it('rejects non-HTTPS URLs and private or reserved destination addresses', async () => {
