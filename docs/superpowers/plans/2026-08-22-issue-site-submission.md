@@ -298,7 +298,7 @@ Run:
 npm test -- --run scripts/site-submission/parse-site-submission.test.ts
 ```
 
-Expected: 6 tests PASS.
+Expected: 7 tests PASS.
 
 - [ ] **Step 5: Commit the parser unit**
 
@@ -732,7 +732,7 @@ Run:
 npm test -- --run scripts/apply-site-issue.test.ts scripts/site-submission/parse-site-submission.test.ts scripts/site-submission/update-gallery.test.ts
 ```
 
-Expected: 14 tests PASS.
+Expected: 15 tests PASS.
 
 - [ ] **Step 5: Commit the CLI unit**
 
