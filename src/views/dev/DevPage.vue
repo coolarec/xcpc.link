@@ -44,7 +44,6 @@ const showComments = ref(false)
 const isMenuVisible = ref(false)
 
 let context: gsap.Context | undefined
-let removePreloaderListener: (() => void) | undefined
 const homeContentStore = useHomeContentStore()
 const themeStore = useThemeStore()
 const themeOptions: Array<{ label: string; value: ThemeMode }> = [
@@ -99,14 +98,6 @@ const handleFloatingAction = (id: string) => {
   if (id === 'comments') {
     showComments.value = true
   }
-}
-
-const notifyPreloaderReady = () => {
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      window.dispatchEvent(new CustomEvent('app-preloader:ready'))
-    })
-  })
 }
 
 onMounted(async () => {
@@ -216,22 +207,10 @@ onMounted(async () => {
     return () => media.revert()
   }, root)
 
-  const preloader = document.getElementById('app-preloader')
-
-  if (preloader && !preloader.classList.contains('is-hidden')) {
-    const handlePreloaderHidden = () => startHeroMotion()
-    window.addEventListener('app-preloader:hidden', handlePreloaderHidden, { once: true })
-    removePreloaderListener = () => {
-      window.removeEventListener('app-preloader:hidden', handlePreloaderHidden)
-    }
-    notifyPreloaderReady()
-  } else {
-    requestAnimationFrame(startHeroMotion)
-  }
+  requestAnimationFrame(startHeroMotion)
 })
 
 onBeforeUnmount(() => {
-  removePreloaderListener?.()
   context?.revert()
 })
 </script>
