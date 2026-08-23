@@ -369,6 +369,12 @@
           "websiteUrl": "https://acm.hdu.edu.cn/multi_rank/entry/ranklist/index.php",
           "websiteTitle": "杭电多校",
           "websiteDescription": "2026 年杭电多校十场比赛官方总榜单"
+        },
+        {
+          "avatarUrl": "/assets/icons/www-nowcoder-com-d14f15e975.ico",
+          "websiteUrl": "https://ac.nowcoder.com/acm/contest/series-rank/index?seriesKey=26summer",
+          "websiteTitle": "2026牛客暑期多校训练营总榜",
+          "websiteDescription": "总排名按分数最高的5场之和，参赛不足5场的同学，按所有参赛场次的得分之和计算。"
         }
       ]
     },
