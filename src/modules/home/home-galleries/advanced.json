@@ -363,6 +363,12 @@
           "websiteUrl": "https://rank.thusaac.com/",
           "websiteTitle": "CSP 榜单",
           "websiteDescription": "CSP 相关榜单与成绩查询入口。"
+        },
+        {
+          "avatarUrl": "/assets/icons/acm-hdu-edu-cn-cc63dd0528.ico",
+          "websiteUrl": "https://acm.hdu.edu.cn/multi_rank/entry/ranklist/index.php",
+          "websiteTitle": "杭电多校",
+          "websiteDescription": "2026 年杭电多校十场比赛官方总榜单"
         }
       ]
     },
