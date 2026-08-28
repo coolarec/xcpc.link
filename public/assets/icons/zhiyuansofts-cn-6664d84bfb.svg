@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="GoAlgo">
+  <defs>
+    <clipPath id="m3-card"><rect width="512" height="512" rx="140"/></clipPath>
+  </defs>
+
+  <g clip-path="url(#m3-card)">
+    <!-- primary container -->
+    <rect width="512" height="512" fill="#DEE1FF"/>
+    <!-- tonal band -->
+    <path d="M0 512V330c156 26 306-44 512-10v192Z" fill="#C7CDFF"/>
+  </g>
+
+  <!-- code brackets: primary -->
+  <g fill="none" stroke="#3B45C4" stroke-width="42" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M184 140 108 256l76 116"/>
+    <path d="M328 140l76 116-76 116"/>
+  </g>
+
+  <!-- algorithm path: tertiary -->
+  <path d="M228 324 284 188" fill="none" stroke="#00696E" stroke-width="19" stroke-linecap="round"/>
+  <g fill="#00696E">
+    <circle cx="228" cy="324" r="25"/>
+    <circle cx="256" cy="256" r="25"/>
+    <circle cx="284" cy="188" r="25"/>
+  </g>
+</svg>

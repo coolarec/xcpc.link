@@ -279,6 +279,12 @@
           "websiteUrl": "https://visualgo.net/zh/",
           "websiteTitle": "visualgo",
           "websiteDescription": "算法与数据结构可视化。"
+        },
+        {
+          "avatarUrl": "/assets/icons/zhiyuansofts-cn-6664d84bfb.svg",
+          "websiteUrl": "https://algo.zhiyuansofts.cn/",
+          "websiteTitle": "GoAlgo",
+          "websiteDescription": "聚合各大 OJ 提交数据，统计做题总量，生成算法竞赛个人做题画像，辅助选手复盘训练情况。"
         }
       ]
     },
