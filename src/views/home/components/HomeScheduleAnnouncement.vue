@@ -73,6 +73,7 @@ const getCategoryIcon = (category: string) => {
 }
 const getRowKey = (row: SeasonScheduleRow) => `${row.startDate}-${row.category}-${row.venue}`
 const toggleDetail = (row: SeasonScheduleRow) => {
+  if (!window.matchMedia('(max-width: 760px)').matches) return
   const key = getRowKey(row)
   expandedDetails.value[key] = !expandedDetails.value[key]
 }
@@ -394,21 +395,9 @@ onBeforeUnmount(() => {
   white-space: nowrap;
 }
 
-  .schedule-table-row {
-    cursor: pointer;
-  }
-
-  .schedule-table-row:hover {
-    background: var(--surface-hover);
-  }
-
-  .schedule-table-row:has(.schedule-detail-toggle[aria-expanded='true']) {
-    background: var(--surface-hover);
-  }
-
-  .schedule-table-row {
-    border-bottom: 1px solid var(--line);
-  }
+.schedule-table-row {
+  border-bottom: 1px solid var(--line);
+}
 
 .schedule-table-row.is-last-row,
 .schedule-detail-expanded-row:last-child {
