@@ -67,7 +67,7 @@ const getEventSuffix = (row: SeasonScheduleRow) => {
   return `${row.venue}站`
 }
 const getCategoryIcon = (category: string) => {
-  if (category.includes('ICPC')) return '/assets/icons/icpc-foundation-logo.svg'
+  if (category.includes('ICPC') || category.includes('ECF')) return '/assets/icons/icpc-foundation-logo.svg'
   if (category.includes('CCPC')) return '/assets/icons/ccpc-official-logo.png'
   return ''
 }
