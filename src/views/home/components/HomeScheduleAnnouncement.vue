@@ -1,28 +1,7 @@
 <script setup lang="ts">
-import { ChevronLeft, ChevronRight, Maximize2, X } from '@lucide/vue'
+import { ChevronDown, Maximize2, X } from '@lucide/vue'
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import type { SeasonScheduleRow } from '../../../modules/home/seasonSchedule'
-
-interface CalendarDay {
-  day: number | null
-  isoDate: string | null
-  events: SeasonScheduleRow[]
-}
-
-interface CalendarMonth {
-  key: string
-  label: string
-  year: number
-  month: number
-  weeks: CalendarDay[][]
-}
-
-interface CalendarEventSpan {
-  event: SeasonScheduleRow
-  startColumn: number
-  columnSpan: number
-  lane: number
-}
 
 const props = defineProps<{
   rows: SeasonScheduleRow[]
@@ -30,148 +9,75 @@ const props = defineProps<{
 }>()
 
 const isPreviewOpen = ref(false)
-const activeMonthIndex = ref(0)
-const weekdayLabels = ['一', '二', '三', '四', '五', '六', '日']
+const expandedDetails = ref<Record<string, boolean>>({})
 
 const parseDate = (isoDate: string) => {
   const [year, month, day] = isoDate.split('-').map(Number)
   return new Date(year, month - 1, day)
 }
 
-const formatIsoDate = (date: Date) => {
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-  return `${year}-${month}-${day}`
+const getEventDate = (row: SeasonScheduleRow) => row.endDate ?? row.startDate
+const formatEventDate = (row: SeasonScheduleRow) => {
+  const date = parseDate(getEventDate(row))
+  return `${date.getMonth() + 1}月${date.getDate()}日`
 }
 
-const eventDateKeys = (row: SeasonScheduleRow) => {
-  const dates: string[] = []
-  const cursor = parseDate(row.startDate)
-  const end = parseDate(row.endDate ?? row.startDate)
-
-  while (cursor <= end) {
-    dates.push(formatIsoDate(cursor))
-    cursor.setDate(cursor.getDate() + 1)
-  }
-
-  return dates
-}
-
-const calendarMonths = computed<CalendarMonth[]>(() => {
-  if (!props.rows.length) return []
-
-  const eventMap = new Map<string, SeasonScheduleRow[]>()
+const monthGroups = computed(() => {
+  const groups = new Map<string, { key: string; label: string; rows: SeasonScheduleRow[] }>()
   props.rows.forEach((row) => {
-    eventDateKeys(row).forEach((dateKey) => {
-      eventMap.set(dateKey, [...(eventMap.get(dateKey) ?? []), row])
-    })
+    const eventDate = getEventDate(row)
+    const key = eventDate.slice(0, 7)
+    if (!groups.has(key)) {
+      const date = parseDate(eventDate)
+      groups.set(key, { key, label: `${date.getFullYear()}年${date.getMonth() + 1}月`, rows: [] })
+    }
+    groups.get(key)?.rows.push(row)
   })
-
-  const firstDate = parseDate(props.rows.reduce((earliest, row) => row.startDate < earliest ? row.startDate : earliest, props.rows[0].startDate))
-  const lastDate = parseDate(props.rows.reduce((latest, row) => (row.endDate ?? row.startDate) > latest ? (row.endDate ?? row.startDate) : latest, props.rows[0].endDate ?? props.rows[0].startDate))
-  const cursor = new Date(firstDate.getFullYear(), firstDate.getMonth(), 1)
-  const lastMonth = new Date(lastDate.getFullYear(), lastDate.getMonth(), 1)
-  const months: CalendarMonth[] = []
-
-  while (cursor <= lastMonth) {
-    const year = cursor.getFullYear()
-    const month = cursor.getMonth() + 1
-    const leadingEmptyDays = (cursor.getDay() + 6) % 7
-    const daysInMonth = new Date(year, month, 0).getDate()
-    const calendarCellCount = Math.ceil((leadingEmptyDays + daysInMonth) / 7) * 7
-    const days: CalendarDay[] = Array.from({ length: calendarCellCount }, (_, index) => {
-      const day = index - leadingEmptyDays + 1
-      if (day < 1 || day > daysInMonth) return { day: null, isoDate: null, events: [] }
-
-      const isoDate = formatIsoDate(new Date(year, month - 1, day))
-      return { day, isoDate, events: eventMap.get(isoDate) ?? [] }
-    })
-
-    months.push({
-      key: `${year}-${String(month).padStart(2, '0')}`,
-      label: `${year}年${month}月`,
-      year,
-      month,
-      weeks: Array.from({ length: calendarCellCount / 7 }, (_, index) => days.slice(index * 7, index * 7 + 7)),
-    })
-    cursor.setMonth(cursor.getMonth() + 1)
-  }
-
-  return months
+  return [...groups.values()]
 })
 
-const activeMonth = computed(() => calendarMonths.value[activeMonthIndex.value])
-const activeMonthGridColumns = computed(() => {
-  const eventColumns = new Set<number>()
-
-  activeMonth.value?.weeks.forEach((week) => {
-    week.forEach((day, columnIndex) => {
-      if (day.events.length) eventColumns.add(columnIndex)
-    })
-  })
-
-  return Array.from({ length: 7 }, (_, columnIndex) =>
-    eventColumns.has(columnIndex) ? 'minmax(0, 1.15fr)' : 'minmax(0, 0.9fr)',
-  ).join(' ')
-})
-const getEventLabel = (row: SeasonScheduleRow) =>
-  [row.category, row.venue, row.organizer].filter(Boolean).join('，')
-
-const getWeekEventSpans = (week: CalendarDay[]): CalendarEventSpan[] => {
-  const datedDays = week.filter((day) => day.isoDate)
-  const weekStart = datedDays[0]?.isoDate
-  const weekEnd = datedDays.at(-1)?.isoDate
-  if (!weekStart || !weekEnd) return []
-
-  const laneEnds: number[] = []
-
-  return props.rows
-    .filter((event) => event.startDate <= weekEnd && (event.endDate ?? event.startDate) >= weekStart)
-    .map((event) => {
-      const visibleStart = event.startDate < weekStart ? weekStart : event.startDate
-      const eventEnd = event.endDate ?? event.startDate
-      const visibleEnd = eventEnd > weekEnd ? weekEnd : eventEnd
-      const startColumn = week.findIndex((day) => day.isoDate === visibleStart)
-      const endColumn = week.findIndex((day) => day.isoDate === visibleEnd)
-
-      return { event, startColumn, endColumn }
-    })
-    .filter(({ startColumn, endColumn }) => startColumn >= 0 && endColumn >= startColumn)
-    .sort((a, b) => a.startColumn - b.startColumn || b.endColumn - a.endColumn)
-    .map(({ event, startColumn, endColumn }) => {
-      let lane = laneEnds.findIndex((laneEnd) => startColumn > laneEnd)
-      if (lane === -1) lane = laneEnds.length
-      laneEnds[lane] = endColumn
-
-      return {
-        event,
-        startColumn,
-        columnSpan: endColumn - startColumn + 1,
-        lane,
-      }
-    })
-}
-
-const getWeekStyle = (week: CalendarDay[]) => {
-  const laneCount = Math.max(0, ...getWeekEventSpans(week).map((span) => span.lane + 1))
-  return {
-    gridTemplateColumns: activeMonthGridColumns.value,
-    gridTemplateRows: laneCount ? `20px repeat(${laneCount}, minmax(28px, auto))` : 'minmax(48px, auto)',
-    minHeight: '48px',
+const getMonthClass = (row: SeasonScheduleRow) => `month-${getEventDate(row).slice(5, 7)}`
+const getWeekday = (row: SeasonScheduleRow) => ['周日', '周一', '周二', '周三', '周四', '周五', '周六'][parseDate(getEventDate(row)).getDay()]
+const isFirstEventOnDate = (rows: SeasonScheduleRow[], index: number) =>
+  index === 0 || getEventDate(rows[index - 1]) !== getEventDate(rows[index])
+const getEventDateRowSpan = (rows: SeasonScheduleRow[], index: number) => {
+  const date = getEventDate(rows[index])
+  let span = 0
+  let cursor = index
+  while (cursor < rows.length && getEventDate(rows[cursor]) === date) {
+    span += 1
+    if (expandedDetails.value[getRowKey(rows[cursor])] === true) span += 1
+    cursor += 1
   }
+  return span
 }
-
-const showPreviousMonth = () => {
-  activeMonthIndex.value = Math.max(0, activeMonthIndex.value - 1)
+const getDetailColspan = (rows: SeasonScheduleRow[], index: number) => {
+  const date = getEventDate(rows[index])
+  const sameDateCount = rows.filter((row) => getEventDate(row) === date).length
+  return sameDateCount > 1 ? 3 : 4
 }
-
-const showNextMonth = () => {
-  activeMonthIndex.value = Math.min(calendarMonths.value.length - 1, activeMonthIndex.value + 1)
+const getEventName = (row: SeasonScheduleRow) => {
+  if (!row.venue) return row.category
+  if (row.venue === '网络赛' || row.venue.includes('赛')) return `${row.category} ${row.venue}`
+  return `${row.category} ${row.venue}站`
+}
+const getEventSuffix = (row: SeasonScheduleRow) => {
+  if (!row.venue) return ''
+  if (row.venue === '网络赛' || row.venue.includes('赛')) return row.venue
+  return `${row.venue}站`
+}
+const getCategoryIcon = (category: string) => {
+  if (category.includes('ICPC')) return '/assets/icons/icpc-foundation-logo.svg'
+  if (category.includes('CCPC')) return '/assets/icons/ccpc-official-logo.png'
+  return ''
+}
+const getRowKey = (row: SeasonScheduleRow) => `${row.startDate}-${row.category}-${row.venue}`
+const toggleDetail = (row: SeasonScheduleRow) => {
+  const key = getRowKey(row)
+  expandedDetails.value[key] = !expandedDetails.value[key]
 }
 
 const openPreview = () => {
-  activeMonthIndex.value = 0
   isPreviewOpen.value = true
 }
 
@@ -207,90 +113,85 @@ onBeforeUnmount(() => {
       class="schedule-preview"
       role="dialog"
       aria-modal="true"
-      aria-label="2026XCPC 赛程日历预览"
+      aria-label="2026XCPC 赛程列表"
       @click.self="isPreviewOpen = false"
     >
-      <div v-if="activeMonth" class="schedule-preview-content" data-density="compact">
-        <button class="schedule-preview-close" type="button" aria-label="关闭赛程日历预览" @click="isPreviewOpen = false">
-          <X :size="20" :stroke-width="2.25" aria-hidden="true" />
-        </button>
-        <div class="calendar-toolbar">
-          <button
-            class="calendar-nav-button"
-            type="button"
-            aria-label="查看上个月"
-            :disabled="activeMonthIndex === 0"
-            @click="showPreviousMonth"
-          >
-            <ChevronLeft :size="20" aria-hidden="true" />
-          </button>
-          <h2>{{ activeMonth.label }}</h2>
-          <button
-            class="calendar-nav-button"
-            type="button"
-            aria-label="查看下个月"
-            :disabled="activeMonthIndex === calendarMonths.length - 1"
-            @click="showNextMonth"
-          >
-            <ChevronRight :size="20" aria-hidden="true" />
-          </button>
-        </div>
-
-        <div
-          class="calendar-grid"
-          role="grid"
-          :aria-label="`${activeMonth.label}赛程`"
-          data-column-density="adaptive"
-          data-horizontal-gutter="roomy"
-        >
-          <div
-            class="calendar-week calendar-weekdays"
-            :style="{ gridTemplateColumns: activeMonthGridColumns }"
-            role="row"
-          >
-            <span v-for="weekday in weekdayLabels" :key="weekday" role="columnheader">{{ weekday }}</span>
+      <div class="schedule-preview-content" data-density="compact">
+        <header class="schedule-preview-header">
+          <div>
+            <h1>2026 赛季赛程</h1>
           </div>
-          <div
-            v-for="(week, weekIndex) in activeMonth.weeks"
-            :key="weekIndex"
-            class="calendar-week"
-            :style="getWeekStyle(week)"
-            role="row"
-          >
-            <div
-              v-for="(day, dayIndex) in week"
-              :key="day.isoDate ?? `empty-${weekIndex}-${dayIndex}`"
-              class="calendar-day"
-              :class="{ 'is-empty': !day.day, 'has-events': day.events.length > 0 }"
-              :style="{ gridColumn: dayIndex + 1, gridRow: '1 / -1' }"
-              role="gridcell"
-              :aria-label="day.day ? `${activeMonth.month}月${day.day}日` : undefined"
-              :aria-hidden="day.day ? undefined : true"
-            >
-              <span v-if="day.day" class="calendar-day-number">{{ day.day }}</span>
-            </div>
-            <div
-              v-for="span in getWeekEventSpans(week)"
-              :key="`${span.event.startDate}-${span.event.category}-${span.event.venue}`"
-             class="calendar-event"
-              :class="[
-                `is-${span.event.category.toLowerCase()}`,
-                { 'is-multiday': span.columnSpan > 1 },
-              ]"
-              :style="{
-                gridColumn: `${span.startColumn + 1} / span ${span.columnSpan}`,
-                gridRow: span.lane + 2,
-              }"
-              :aria-label="getEventLabel(span.event)"
-              :title="getEventLabel(span.event)"
-              data-mobile-layout="wide-wrap"
-              data-content-flow="inline-first"
-            >
-              <strong>{{ span.event.category }}</strong>
-              <span class="calendar-event-venue">{{ span.event.venue }}</span>
-              <span v-if="span.event.organizer" class="calendar-event-organizer">{{ span.event.organizer }}</span>
-            </div>
-          </div>
+          <button class="schedule-preview-close" type="button" aria-label="关闭赛程列表" @click="isPreviewOpen = false">
+            <X :size="20" :stroke-width="2.25" aria-hidden="true" />
+          </button>
+        </header>
+        <div class="schedule-table-wrap" aria-label="2026XCPC赛程列表">
+          <table class="schedule-table">
+            <colgroup>
+              <col class="schedule-col-weekday">
+              <col class="schedule-col-event">
+              <col class="schedule-col-organizer">
+              <col class="schedule-col-detail">
+            </colgroup>
+            <thead>
+              <tr>
+                <th scope="col">星期</th>
+                <th scope="col">比赛</th>
+                <th scope="col">出题组 / 主办方</th>
+                <th scope="col">详细信息</th>
+              </tr>
+            </thead>
+            <tbody v-for="group in monthGroups" :key="group.key" class="schedule-month-group">
+              <tr class="schedule-month-divider">
+                <th colspan="4" class="schedule-month-title">{{ group.label }}</th>
+              </tr>
+                <template v-for="(row, rowIndex) in group.rows" :key="getRowKey(row)">
+                <tr
+                  class="schedule-table-row"
+                  :class="[getMonthClass(row), { 'is-last-row': rowIndex === group.rows.length - 1 }]"
+                  @click="toggleDetail(row)"
+                >
+                  <td v-if="isFirstEventOnDate(group.rows, rowIndex)" class="schedule-weekday" data-label="星期" :rowspan="getEventDateRowSpan(group.rows, rowIndex)">
+                    {{ getWeekday(row) }}
+                  </td>
+                  <td class="schedule-event" data-label="比赛">
+                    <div class="schedule-event-content">
+                      <span class="schedule-date">{{ formatEventDate(row) }}</span>
+                      <strong class="schedule-event-name">
+                        <img v-if="getCategoryIcon(row.category)" class="schedule-event-icon" :src="getCategoryIcon(row.category)" alt="" aria-hidden="true" />
+                        {{ row.category }}<template v-if="getEventSuffix(row)"> {{ getEventSuffix(row) }}</template>
+                      </strong>
+                    </div>
+                  </td>
+                  <td class="schedule-organizer-cell" data-label="出题组 / 主办方">
+                    <div class="schedule-organizer-content">
+                      <span class="schedule-date schedule-problem-setter">出题组：{{ row.problemSetter || '暂无' }}</span>
+                      <span class="schedule-organizer">主办方：{{ row.organizer || '暂无' }}</span>
+                    </div>
+                  </td>
+                  <td class="schedule-detail-cell" data-label="详细信息">
+                    <div class="schedule-detail-desktop">
+                      <span v-if="row.allocationPlan" class="schedule-allocation">分配：{{ row.allocationPlan }}</span>
+                      <a v-if="row.officialWebsite" class="schedule-detail" :href="row.officialWebsite" target="_blank" rel="noopener noreferrer" @click.stop>官方网站</a>
+                      <span v-if="!row.allocationPlan && !row.officialWebsite" class="schedule-detail">暂无</span>
+                    </div>
+                    <button class="schedule-detail-toggle" type="button" :aria-label="`${expandedDetails[getRowKey(row)] === true ? '收起' : '展开'}${getEventName(row)}详细信息`" :aria-expanded="expandedDetails[getRowKey(row)] === true" @click.stop="toggleDetail(row)">
+                      <ChevronDown :size="15" aria-hidden="true" />
+                    </button>
+                  </td>
+                </tr>
+                <tr v-if="expandedDetails[getRowKey(row)]" class="schedule-detail-expanded-row">
+                  <td :colspan="getDetailColspan(group.rows, rowIndex)">
+                    <div class="schedule-detail-mobile-content">
+                      <span v-if="row.allocationPlan" class="schedule-allocation">分配：{{ row.allocationPlan }}</span>
+                      <a v-if="row.officialWebsite" class="schedule-detail" :href="row.officialWebsite" target="_blank" rel="noopener noreferrer" @click.stop>官方网站</a>
+                      <span v-if="!row.allocationPlan && !row.officialWebsite" class="schedule-detail">暂无</span>
+                    </div>
+                  </td>
+                </tr>
+                </template>
+            </tbody>
+          </table>
         </div>
 
         <p class="schedule-credit">{{ credit }}</p>
@@ -399,183 +300,165 @@ onBeforeUnmount(() => {
   inset: 0;
   display: grid;
   place-items: center;
-  padding: 40px;
-  background: rgba(0, 0, 0, 0.52);
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.66);
+  backdrop-filter: blur(4px);
 }
 
 .schedule-preview-content {
   position: relative;
-  width: min(720px, 100%);
-  max-height: calc(100dvh - 80px);
+  width: min(920px, 100%);
+  max-height: calc(100dvh - 48px);
   overflow: auto;
-  padding: 10px;
-  border-radius: 8px;
+  scrollbar-width: none;
+  padding: 0 16px 14px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
   background: var(--surface);
-  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.24);
+  box-shadow: var(--shadow-card);
 }
 
-.calendar-toolbar {
-  display: grid;
-  grid-template-columns: 44px minmax(0, 1fr) 44px;
+.schedule-preview-header {
+  position: sticky;
+  z-index: 2;
+  top: 0;
+  display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 0 48px 0 0;
-  margin-bottom: 8px;
+  justify-content: space-between;
+  min-height: 52px;
+  margin: 0 -16px 12px;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
 }
 
-.calendar-toolbar h2 {
+.schedule-preview-header h1 {
   margin: 0;
   color: var(--text);
-  font-size: 16px;
-  font-weight: 750;
-  line-height: 1.3;
-  text-align: center;
-}
-
-.calendar-nav-button {
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  color: var(--text);
-  background: var(--surface);
-  cursor: pointer;
-}
-
-.calendar-nav-button:hover:not(:disabled) {
-  background: var(--surface-hover);
-}
-
-.calendar-nav-button:disabled {
-  opacity: 0.35;
-  cursor: default;
-}
-
-.calendar-nav-button:focus-visible {
-  outline: 2px solid var(--focus);
-  outline-offset: 2px;
-}
-
-.calendar-grid {
-  min-width: 0;
-  margin-inline: 18px;
-  overflow: hidden;
-  border-top: 1px solid var(--line);
-  border-left: 1px solid var(--line);
-  color: var(--text);
-}
-
-.calendar-week {
-  position: relative;
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-}
-
-.calendar-weekdays span {
-  min-width: 0;
-  padding: 5px 3px;
-  border-right: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-  color: var(--secondary);
-  background: var(--surface-subtle);
-  font-size: 11px;
-  font-weight: 750;
-  line-height: 1;
-  text-align: center;
-}
-
-.calendar-day {
-  position: relative;
-  z-index: 0;
-  min-width: 0;
-  min-height: 0;
-  padding: 3px;
-  overflow: hidden;
-  border-right: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-  background: var(--surface);
-}
-
-.calendar-day.is-empty {
-  background: var(--surface-subtle);
-}
-
-.calendar-day.has-events {
-  background: color-mix(in srgb, var(--surface) 94%, #007aff 6%);
-}
-
-.calendar-day-number {
-  display: block;
-  margin-bottom: 3px;
-  color: var(--secondary);
-  font-size: 11px;
-  font-variant-numeric: tabular-nums;
-  font-weight: 700;
-  line-height: 1;
-}
-
-.calendar-events {
-  display: grid;
-  gap: 3px;
-}
-
-.calendar-event {
-  position: relative;
-  z-index: 1;
-  min-width: 0;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 2px 5px;
-  align-content: center;
-  padding: 4px 6px;
-  overflow: hidden;
-  border-left: 3px solid #007aff;
-  border-radius: 4px;
-  color: var(--text);
-  background: color-mix(in srgb, var(--surface) 84%, #007aff 16%);
-  font-size: 10px;
+  font-size: 20px;
   line-height: 1.2;
-  margin: 0 2px 3px;
 }
 
-.calendar-event.is-ccpc {
-  border-left-color: #ff3b30;
-  background: color-mix(in srgb, var(--surface) 84%, #ff3b30 16%);
+.schedule-preview-content::-webkit-scrollbar {
+  display: none;
 }
 
-.calendar-event strong,
-.calendar-event span {
-  flex: 0 0 auto;
-  min-width: 0;
-  max-width: 100%;
-  overflow-wrap: normal;
+.schedule-table-wrap {
+  margin-top: 0;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.schedule-month-group + .schedule-month-group { border-top: 0; }
+.schedule-month-title {
+  width: 100% !important;
+  margin: 0;
+  padding: 7px 9px 6px;
+  color: var(--text) !important;
+  background: var(--surface) !important;
+  font-size: 12px !important;
+  font-weight: 750 !important;
+  text-align: left !important;
+}
+
+.schedule-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  color: var(--text);
+  font-size: 12px;
+}
+
+.schedule-col-weekday { width: 9%; }
+.schedule-col-event { width: 32%; }
+.schedule-col-organizer { width: 35%; }
+.schedule-col-detail { width: 24%; }
+
+.schedule-table th,
+.schedule-table td {
+  padding: 5px 6px;
+  border-bottom: 0;
+  text-align: left;
+  vertical-align: top;
+  line-height: 1.25;
+}
+
+.schedule-table th {
+  color: var(--secondary);
+  background: var(--surface-hover);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  font-weight: 700;
   white-space: nowrap;
 }
 
-.calendar-event-organizer {
+  .schedule-table-row {
+    cursor: pointer;
+  }
+
+  .schedule-table-row:hover {
+    background: var(--surface-hover);
+  }
+
+  .schedule-table-row:has(.schedule-detail-toggle[aria-expanded='true']) {
+    background: var(--surface-hover);
+  }
+
+  .schedule-table-row {
+    border-bottom: 1px solid var(--line);
+  }
+
+.schedule-table-row.is-last-row,
+.schedule-detail-expanded-row:last-child {
+  border-bottom: 0;
+}
+
+.schedule-month-divider th {
+  border-bottom: 1px solid var(--line);
+}
+
+.schedule-month-group + .schedule-month-group .schedule-month-divider th {
+  border-top: 1px solid var(--line);
+}
+
+.schedule-weekday { width: 58px; color: var(--secondary); font-weight: 700; white-space: nowrap; vertical-align: top !important; }
+.schedule-event { min-width: 0; }
+.schedule-event-content,
+.schedule-organizer-content,
+.schedule-detail-content { display: grid; gap: 3px; }
+.schedule-detail-toggle,
+.schedule-detail-mobile-content { display: none; }
+.schedule-detail-expanded-row { display: none; }
+.schedule-date { color: var(--secondary); font-variant-numeric: tabular-nums; }
+.schedule-event-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+.schedule-event-icon {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+  object-fit: contain;
+  object-position: center;
+  vertical-align: middle;
+}
+.schedule-organizer-cell,
+.schedule-detail-cell { min-width: 0; }
+.schedule-organizer { color: var(--text); font-size: 13px; font-weight: 700; line-height: 1.35; }
+.schedule-allocation,
+.schedule-detail { color: var(--secondary); font-size: 11px; line-height: 1.4; }
+a.schedule-detail {
   color: var(--secondary);
-  font-size: 9px;
-  overflow-wrap: anywhere;
-  white-space: normal;
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
-.calendar-event.is-multiday {
-  text-align: left;
-}
-
-.calendar-event.is-multiday strong,
-.calendar-event.is-multiday .calendar-event-venue,
-.calendar-event.is-multiday .calendar-event-organizer {
-  flex: 0 0 auto;
-  max-width: 100%;
-  overflow: visible;
-  overflow-wrap: anywhere;
-  text-overflow: clip;
-  white-space: normal;
-}
 
 .schedule-credit {
   margin: 5px 0 0;
@@ -586,16 +469,13 @@ onBeforeUnmount(() => {
 }
 
 .schedule-preview-close {
-  position: absolute;
-  z-index: 1;
-  top: 12px;
-  right: 12px;
+  position: static;
   display: grid;
   place-items: center;
-  width: 44px;
-  height: 44px;
+  width: 32px;
+  height: 32px;
   border: 1px solid var(--line);
-  border-radius: 6px;
+  border-radius: 8px;
   color: var(--text);
   background: var(--surface);
   cursor: pointer;
@@ -618,62 +498,94 @@ onBeforeUnmount(() => {
   }
 
   .schedule-preview {
-    padding: 6px;
-  }
-
-  .schedule-preview-content {
-    width: 90%;
-    max-height: calc(100dvh - 12px);
     padding: 8px;
   }
 
-  .schedule-preview-close {
-    top: 8px;
-    right: 8px;
+  .schedule-preview-content {
+    width: 100%;
+    max-height: calc(100dvh - 12px);
+    padding: 0 8px 10px;
   }
 
-  .calendar-toolbar {
-    margin-bottom: 8px;
+  .schedule-table-wrap {
+    border-radius: 10px;
   }
 
-  .calendar-toolbar h2 {
-    font-size: 15px;
+  .schedule-preview-header {
+    min-height: 52px;
+    margin-inline: -8px;
+    padding: 8px 10px;
   }
 
-  .calendar-day {
-    min-height: 0;
-    padding: 4px 2px;
+  .schedule-preview-header h1 { font-size: 17px; }
+  .schedule-preview-close { width: 32px; height: 32px; }
+
+  .schedule-month-title {
+    padding: 7px 9px 6px;
+    font-size: 12px;
   }
 
-  .calendar-day-number {
-    margin-bottom: 3px;
-    font-size: 10px;
+  .schedule-table { width: 100%; min-width: 0; font-size: 11px; table-layout: fixed; }
+  .schedule-table th,
+  .schedule-table td { padding: 5px 6px; line-height: 1.25; }
+  .schedule-table th { padding: 5px 6px; }
+
+  .schedule-col-weekday { width: 14%; }
+  .schedule-col-event { width: 30%; }
+  .schedule-col-organizer { width: 48%; }
+  .schedule-col-detail { width: 8%; }
+  .schedule-table th:nth-child(4),
+  .schedule-table td:nth-child(4) { display: table-cell; padding: 0; text-align: right; }
+  .schedule-table thead th:nth-child(4) {
+    color: transparent;
+    font-size: 0;
   }
 
-  .calendar-event {
-    gap: 2px 4px;
-    align-self: stretch;
+  .schedule-detail-desktop { display: none; }
+
+  .schedule-detail-toggle {
+    position: absolute;
+    top: 50%;
+    right: 2px;
+    display: inline-flex;
     align-items: center;
-    align-content: center;
-    padding: 4px 3px;
-    border-left-width: 2px;
-    font-size: 9px;
-    line-height: 1.15;
-    text-align: left;
+    gap: 4px;
+    width: 24px;
+    height: 24px;
+    justify-content: center;
+    padding: 0;
+    border: 0;
+    color: var(--secondary);
+    background: transparent;
+    font: inherit;
+    cursor: pointer;
+    transform: translateY(-50%);
   }
 
-  .calendar-event-venue {
-    font-size: 9px;
+  .schedule-detail-toggle svg {
+    transition: transform 0.18s ease;
   }
 
-  .calendar-event-organizer {
-    font-size: 8px;
-    line-height: 1.15;
+  .schedule-detail-toggle[aria-expanded='true'] svg {
+    transform: rotate(180deg);
   }
 
-  .calendar-grid {
-    margin-inline: 10px;
+  .schedule-detail-cell { position: relative; vertical-align: middle !important; }
+
+  .schedule-detail-expanded-row { display: table-row; }
+  .schedule-detail-expanded-row td { padding: 5px 8px !important; background: var(--surface-subtle); }
+
+  .schedule-detail-mobile-content {
+    display: grid;
+    gap: 3px;
+    margin-top: 4px;
   }
+
+  .schedule-event-content,
+  .schedule-organizer-content { gap: 1px; }
+  .schedule-event-name { font-size: 11px; }
+  .schedule-event-icon { width: 12px; height: 12px; flex-basis: 12px; }
+  .schedule-organizer { font-size: 11px; line-height: 1.2; }
 
 }
 
@@ -686,9 +598,7 @@ onBeforeUnmount(() => {
     max-height: calc(100dvh - 8px);
   }
 
-  .calendar-grid {
-    margin-inline: 8px;
-  }
+  .schedule-month-title { padding-inline: 10px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

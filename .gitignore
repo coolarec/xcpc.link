@@ -8,3 +8,6 @@ yarn-error.log*
 pnpm-debug.log*
 .env.production
 .playwright-cli
+output/
+docs/
+.claude/
