@@ -3,7 +3,7 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import ArtalkComments from '../../components/ArtalkComments.vue'
 import FloatingActionMenu from '../../components/FloatingActionMenu.vue'
 import FloatingPanel from '../../components/FloatingPanel.vue'
-import { seasonScheduleCredit, seasonScheduleRows } from '../../modules/home/seasonSchedule'
+import { seasonScheduleRows } from '../../modules/home/seasonSchedule'
 import { useHomeContentStore } from '../../stores/homeContent'
 import { useLitePreferencesStore } from '../../stores/litePreferences'
 import { useThemeStore, type ThemeMode } from '../../stores/theme'
@@ -212,7 +212,7 @@ const handleFloatingAction = (id: string) => {
         @select-search="handleSearchSelect"
       />
 
-      <HomeScheduleAnnouncement :rows="seasonScheduleRows" :credit="seasonScheduleCredit" />
+      <HomeScheduleAnnouncement :rows="seasonScheduleRows" />
 
       <div class="ticker-banner-list" aria-label="站内公告">
         <HomeTickerBanner v-for="item in tickerBanners" :key="item.href" :item="item" />

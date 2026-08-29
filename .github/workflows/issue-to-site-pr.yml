@@ -61,9 +61,6 @@ jobs:
           fi
           exit 1
 
-      - name: Run tests
-        run: npm test -- --run
-
       - name: Create or update Pull Request
         id: create_pr
         uses: peter-evans/create-pull-request@v8

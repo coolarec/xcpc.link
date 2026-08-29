@@ -52,5 +52,3 @@ export const seasonScheduleRows: SeasonScheduleRow[] = [
   },
   { startDate: '2027-01-26', endDate: '2027-01-28', category: 'ECF（杭州）', venue: '', organizer: '杭州师范大学（浙江大学）' },
 ]
-
-export const seasonScheduleCredit = 'Schedule compiled by thedyingkai_ (TDK)'

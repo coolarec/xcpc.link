@@ -5,7 +5,6 @@ import type { SeasonScheduleRow } from '../../../modules/home/seasonSchedule'
 
 const props = defineProps<{
   rows: SeasonScheduleRow[]
-  credit: string
 }>()
 
 const isPreviewOpen = ref(false)
@@ -197,7 +196,6 @@ onBeforeUnmount(() => {
           </table>
         </div>
 
-        <p class="schedule-credit">{{ credit }}</p>
       </div>
     </div>
   </section>
@@ -459,14 +457,6 @@ a.schedule-detail {
   text-underline-offset: 2px;
 }
 
-
-.schedule-credit {
-  margin: 5px 0 0;
-  color: var(--secondary);
-  font-size: 10px;
-  line-height: 1.25;
-  text-align: right;
-}
 
 .schedule-preview-close {
   position: static;
