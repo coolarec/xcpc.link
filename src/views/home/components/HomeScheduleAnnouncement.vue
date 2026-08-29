@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ChevronDown, Maximize2, X } from '@lucide/vue'
+import { ChevronDown, ExternalLink, Maximize2, X } from '@lucide/vue'
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import type { SeasonScheduleRow } from '../../../modules/home/seasonSchedule'
 
@@ -71,6 +71,7 @@ const getCategoryIcon = (category: string) => {
   if (category.includes('CCPC')) return '/assets/icons/ccpc-official-logo.png'
   return ''
 }
+const getAllocationLines = (row: SeasonScheduleRow) => row.allocationPlan?.split('\n') ?? []
 const getRowKey = (row: SeasonScheduleRow) => `${row.startDate}-${row.category}-${row.venue}`
 const toggleDetail = (row: SeasonScheduleRow) => {
   if (!window.matchMedia('(max-width: 760px)').matches) return
@@ -138,7 +139,7 @@ onBeforeUnmount(() => {
               <tr>
                 <th scope="col">星期</th>
                 <th scope="col">比赛</th>
-                <th scope="col">出题组 / 主办方</th>
+                <th scope="col">主办方</th>
                 <th scope="col">详细信息</th>
               </tr>
             </thead>
@@ -164,17 +165,19 @@ onBeforeUnmount(() => {
                       </strong>
                     </div>
                   </td>
-                  <td class="schedule-organizer-cell" data-label="出题组 / 主办方">
+                  <td class="schedule-organizer-cell" data-label="主办方">
                     <div class="schedule-organizer-content">
                       <span class="schedule-date schedule-problem-setter">出题组：{{ row.problemSetter || '暂无' }}</span>
-                      <span class="schedule-organizer">主办方：{{ row.organizer || '暂无' }}</span>
+                      <span class="schedule-organizer">
+                        <a v-if="row.officialWebsite" class="schedule-organizer-link" :href="row.officialWebsite" target="_blank" rel="noopener noreferrer" aria-label="打开官方网站" @click.stop>{{ row.organizer || '暂无' }} <ExternalLink :size="15" :stroke-width="2.25" aria-hidden="true" /></a>
+                        <template v-else>{{ row.organizer || '暂无' }}</template>
+                      </span>
                     </div>
                   </td>
                   <td class="schedule-detail-cell" data-label="详细信息">
                     <div class="schedule-detail-desktop">
-                      <span v-if="row.allocationPlan" class="schedule-allocation">分配：{{ row.allocationPlan }}</span>
-                      <a v-if="row.officialWebsite" class="schedule-detail" :href="row.officialWebsite" target="_blank" rel="noopener noreferrer" @click.stop>官方网站</a>
-                      <span v-if="!row.allocationPlan && !row.officialWebsite" class="schedule-detail">暂无</span>
+                      <span v-if="row.allocationPlan" class="schedule-allocation"><template v-for="(line, lineIndex) in getAllocationLines(row)" :key="line"><template v-if="lineIndex > 0"><br /></template>{{ line }}</template></span>
+                      <span v-if="!row.allocationPlan" class="schedule-detail">暂无</span>
                     </div>
                     <button class="schedule-detail-toggle" type="button" :aria-label="`${expandedDetails[getRowKey(row)] === true ? '收起' : '展开'}${getEventName(row)}详细信息`" :aria-expanded="expandedDetails[getRowKey(row)] === true" @click.stop="toggleDetail(row)">
                       <ChevronDown :size="15" aria-hidden="true" />
@@ -184,9 +187,8 @@ onBeforeUnmount(() => {
                 <tr v-if="expandedDetails[getRowKey(row)]" class="schedule-detail-expanded-row">
                   <td :colspan="getDetailColspan(group.rows, rowIndex)">
                     <div class="schedule-detail-mobile-content">
-                      <span v-if="row.allocationPlan" class="schedule-allocation">分配：{{ row.allocationPlan }}</span>
-                      <a v-if="row.officialWebsite" class="schedule-detail" :href="row.officialWebsite" target="_blank" rel="noopener noreferrer" @click.stop>官方网站</a>
-                      <span v-if="!row.allocationPlan && !row.officialWebsite" class="schedule-detail">暂无</span>
+                      <span v-if="row.allocationPlan" class="schedule-allocation"><template v-for="(line, lineIndex) in getAllocationLines(row)" :key="line"><template v-if="lineIndex > 0"><br /></template>{{ line }}</template></span>
+                      <span v-if="!row.allocationPlan" class="schedule-detail">暂无</span>
                     </div>
                   </td>
                 </tr>
@@ -373,9 +375,9 @@ onBeforeUnmount(() => {
 }
 
 .schedule-col-weekday { width: 9%; }
-.schedule-col-event { width: 32%; }
-.schedule-col-organizer { width: 35%; }
-.schedule-col-detail { width: 24%; }
+.schedule-col-event { width: 24%; }
+.schedule-col-organizer { width: 27%; }
+.schedule-col-detail { width: 40%; }
 
 .schedule-table th,
 .schedule-table td {
@@ -440,6 +442,15 @@ onBeforeUnmount(() => {
 .schedule-organizer-cell,
 .schedule-detail-cell { min-width: 0; }
 .schedule-organizer { color: var(--text); font-size: 13px; font-weight: 700; line-height: 1.35; }
+.schedule-organizer-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: inherit;
+  line-height: 1;
+  vertical-align: -2px;
+  text-decoration: none;
+}
 .schedule-allocation,
 .schedule-detail { color: var(--secondary); font-size: 11px; line-height: 1.4; }
 a.schedule-detail {
