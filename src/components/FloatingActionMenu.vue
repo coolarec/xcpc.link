@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ArrowUp, MessageCircle } from '@lucide/vue'
+import { ArrowUp } from '@lucide/vue'
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import type { Component } from 'vue'
 
@@ -11,7 +11,6 @@ type FloatingAction = {
 
 const actions: FloatingAction[] = [
   { id: 'top', label: '顶部', icon: ArrowUp },
-  { id: 'comments', label: '评论', icon: MessageCircle },
 ]
 
 const showScrollAction = ref(false)

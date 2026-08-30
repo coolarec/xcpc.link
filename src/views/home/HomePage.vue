@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import ArtalkComments from '../../components/ArtalkComments.vue'
 import FloatingActionMenu from '../../components/FloatingActionMenu.vue'
-import FloatingPanel from '../../components/FloatingPanel.vue'
 import { seasonScheduleRows } from '../../modules/home/seasonSchedule'
 import { useHomeContentStore } from '../../stores/homeContent'
 import { useLitePreferencesStore } from '../../stores/litePreferences'
@@ -30,7 +28,6 @@ interface LiteTooltip {
 }
 
 const linkColumnCount = ref(6)
-const showComments = ref(false)
 const expandedLinkUrl = ref<string | null>(null)
 const highlightedSearchTargetId = ref<string | null>(null)
 const tooltip = ref<LiteTooltip>({
@@ -186,13 +183,7 @@ const handleSearchSelect = (item: HomeSearchItem) => {
 }
 
 const handleFloatingAction = (id: string) => {
-  if (id === 'top') {
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
-
-  if (id === 'comments') {
-    showComments.value = true
-  }
+  if (id === 'top') window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 </script>
 
@@ -250,16 +241,6 @@ const handleFloatingAction = (id: string) => {
       :x="tooltip.x"
       :y="tooltip.y"
     />
-
-    <FloatingPanel
-      v-model="showComments"
-      title="评论"
-      eyebrow="AWESOME XCPC"
-      :is-dark="themeStore.isDarkMode"
-      panel-class="comments-panel-shell"
-    >
-      <ArtalkComments :active="showComments" :is-dark="themeStore.isDarkMode" />
-    </FloatingPanel>
 
     <FloatingActionMenu :visible="true" @action="handleFloatingAction" />
   </div>
