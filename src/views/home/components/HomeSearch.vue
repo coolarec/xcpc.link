@@ -339,7 +339,7 @@ input:disabled {
   border: 1px solid var(--line);
   border-radius: 8px;
   color: var(--muted);
-  background: var(--surface-subtle);
+  background: #ffffff;
   font-size: 12px;
   font-weight: 800;
 }

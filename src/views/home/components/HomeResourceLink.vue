@@ -90,7 +90,7 @@ const emit = defineEmits<{
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: 7px;
-  background: var(--surface);
+  background: #ffffff;
   color: var(--muted);
   font-size: 11px;
   font-weight: 800;

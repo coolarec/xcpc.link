@@ -233,7 +233,7 @@ const newsCount = computed(() => getNewsCount(props.newsData))
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: 6px;
-  background: var(--surface);
+  background: #ffffff;
   color: var(--muted);
   font-size: 11px;
   font-weight: 800;
