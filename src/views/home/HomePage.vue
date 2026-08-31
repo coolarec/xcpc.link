@@ -13,6 +13,7 @@ import HomeNewsSection from './components/HomeNewsSection.vue'
 import HomeScheduleAnnouncement from './components/HomeScheduleAnnouncement.vue'
 import HomeTickerBanner from './components/HomeTickerBanner.vue'
 import HomeTooltip from './components/HomeTooltip.vue'
+import SiteMigrationNotice from './components/SiteMigrationNotice.vue'
 import {
   buildHomeSearchIndex,
   getGalleryLinkCount,
@@ -30,6 +31,7 @@ interface LiteTooltip {
 const linkColumnCount = ref(6)
 const expandedLinkUrl = ref<string | null>(null)
 const highlightedSearchTargetId = ref<string | null>(null)
+const showMigrationNotice = ref(true)
 const tooltip = ref<LiteTooltip>({
   visible: false,
   text: '',
@@ -241,6 +243,8 @@ const handleFloatingAction = (id: string) => {
       :x="tooltip.x"
       :y="tooltip.y"
     />
+
+    <SiteMigrationNotice v-if="showMigrationNotice" @confirm="showMigrationNotice = false" />
 
     <FloatingActionMenu :visible="true" @action="handleFloatingAction" />
   </div>
