@@ -48,7 +48,15 @@ export const seasonScheduleRows: SeasonScheduleRow[] = [
     officialWebsite: 'https://icpc.pku.edu.cn/tzgg/7d3cbb4896de4774873be489d780a82b.htm',
     allocationPlan: '容量：336（网络赛250+奖励/外卡86）\n规则：前50名高校各2队，51–200名高校各1队。',
   },
-  { startDate: '2026-12-19', endDate: '2026-12-20', category: 'ICPC', venue: '南昌', organizer: '江西师范大学' },
+  {
+    startDate: '2026-12-19',
+    endDate: '2026-12-20',
+    category: 'ICPC',
+    venue: '南昌',
+    organizer: '江西师范大学',
+    officialWebsite: 'https://icpc.pku.edu.cn/tzgg/b4d55e13589b47d384b6c854702acc86.htm',
+    allocationPlan: '容量：约360（预选赛220+邀请赛100+EC奖励57+激励）\n规则：预选赛1–60名各2个、61–160名各1个；邀请赛银牌各一个。',
+  },
   {
     startDate: '2027-01-09',
     endDate: '2027-01-10',
