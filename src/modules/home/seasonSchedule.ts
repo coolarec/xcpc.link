@@ -34,7 +34,15 @@ export const seasonScheduleRows: SeasonScheduleRow[] = [
   },
   { startDate: '2026-10-24', endDate: '2026-10-25', category: 'CCPC', venue: '女赛', organizer: '成都信息工程大学' },
   { startDate: '2026-10-31', endDate: '2026-11-01', category: 'ICPC', venue: '武汉', organizer: '武汉大学' },
-  { startDate: '2026-11-07', endDate: '2026-11-08', category: 'ICPC', venue: '南京', organizer: '南京航空航天大学' },
+  {
+    startDate: '2026-11-07',
+    endDate: '2026-11-08',
+    category: 'ICPC',
+    venue: '南京',
+    organizer: '南京航空航天大学',
+    officialWebsite: 'https://icpc.pku.edu.cn/tzgg/276a166ac0c34db0af139941fbf2323c.htm',
+    allocationPlan: '容量：约320（预选赛160+多队76+WF30+承办/命题24+境外10+江苏贡献20）\n规则：预选赛前160校各1个；同校≥3队进前500再1个。',
+  },
   { startDate: '2026-11-07', endDate: '2026-11-08', category: 'CCPC', venue: '荆州', organizer: '长江大学' },
   {
     startDate: '2026-11-14',
@@ -74,5 +82,13 @@ export const seasonScheduleRows: SeasonScheduleRow[] = [
     officialWebsite: 'https://icpc.pku.edu.cn/tzgg/374c9f5210bd4ff287068ec82d56dde2.htm',
     allocationPlan: '容量：120（95 内地+20 港澳+5 打星）\n规则：先到先得',
   },
-  { startDate: '2027-01-26', endDate: '2027-01-28', category: 'ECF（杭州）', venue: '', organizer: '杭州师范大学（浙江大学）' },
+  {
+    startDate: '2027-01-26',
+    endDate: '2027-01-28',
+    category: 'ECF（杭州）',
+    venue: '',
+    organizer: '杭州师范大学（浙江大学）',
+    officialWebsite: 'https://icpc.pku.edu.cn/tzgg/109d767bb4464b24a5aa18563b65238e.htm',
+    allocationPlan: '容量：280（区域赛排名240+贡献奖励40以内+激励10以内）\n规则：按各区域赛队伍成绩排名提取名额。',
+  },
 ]
