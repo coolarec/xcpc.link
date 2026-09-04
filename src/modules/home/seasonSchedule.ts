@@ -36,7 +36,15 @@ export const seasonScheduleRows: SeasonScheduleRow[] = [
   { startDate: '2026-10-31', endDate: '2026-11-01', category: 'ICPC', venue: '武汉', organizer: '武汉大学' },
   { startDate: '2026-11-07', endDate: '2026-11-08', category: 'ICPC', venue: '南京', organizer: '南京航空航天大学' },
   { startDate: '2026-11-07', endDate: '2026-11-08', category: 'CCPC', venue: '荆州', organizer: '长江大学' },
-  { startDate: '2026-11-14', endDate: '2026-11-15', category: 'ICPC', venue: '沈阳', organizer: '东北大学' },
+  {
+    startDate: '2026-11-14',
+    endDate: '2026-11-15',
+    category: 'ICPC',
+    venue: '沈阳',
+    organizer: '东北大学',
+    officialWebsite: 'https://icpc.pku.edu.cn/tzgg/2b4f6bc1a27d4b4c91b6b5a4c78f97f3.htm',
+    allocationPlan: '容量：400（网络赛320+贡献50+女队10+省内贡献20）\n规则：网络赛前100校各2个、101–220校各1个。',
+  },
   { startDate: '2026-11-14', endDate: '2026-11-15', category: 'CCPC', venue: '乐山', organizer: '乐山师范学院' },
   { startDate: '2026-11-21', endDate: '2026-11-22', category: 'CCPC', venue: '厦门', organizer: '厦门大学' },
   {
