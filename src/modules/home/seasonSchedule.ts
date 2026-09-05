@@ -33,7 +33,14 @@ export const seasonScheduleRows: SeasonScheduleRow[] = [
     allocationPlan: '容量：320（160 网络赛+ 80 队排 + 贡献/奖励）\n规则：网络赛前 160 各一个，三支队伍500 以内拿到第二个名额',
   },
   { startDate: '2026-10-24', endDate: '2026-10-25', category: 'CCPC', venue: '女赛', organizer: '成都信息工程大学' },
-  { startDate: '2026-10-31', endDate: '2026-11-01', category: 'ICPC', venue: '武汉', organizer: '武汉大学' },
+  {
+    startDate: '2026-10-31',
+    endDate: '2026-11-01',
+    category: 'ICPC',
+    venue: '武汉',
+    organizer: '武汉大学',
+    allocationPlan: '容量：400（网络赛260+主办/命题25+WF 30+武汉邀请赛60）\n规则：网络赛前80名各2队，81–180名各1队；武汉邀请赛校排前60名各1队。',
+  },
   {
     startDate: '2026-11-07',
     endDate: '2026-11-08',
