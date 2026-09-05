@@ -39,6 +39,7 @@ export const seasonScheduleRows: SeasonScheduleRow[] = [
     category: 'ICPC',
     venue: '武汉',
     organizer: '武汉大学',
+    officialWebsite: 'https://icpc.pku.edu.cn/tzgg/35fbb9f94ae841dfbd64bcd332ef4f86.htm',
     allocationPlan: '容量：400（网络赛260+主办/命题25+WF 30+武汉邀请赛60）\n规则：网络赛前80名各2队，81–180名各1队；武汉邀请赛校排前60名各1队。',
   },
   {
