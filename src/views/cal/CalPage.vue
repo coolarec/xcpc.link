@@ -516,8 +516,8 @@ tbody tr:hover { background: var(--surface-hover); }
 .empty-state { margin: 0; padding: 48px; color: var(--cal-muted); text-align: center; }
 .cal-footer { display: grid; gap: 4px; padding: 14px 2px; color: var(--cal-muted); font-size: 12px; line-height: 1.6; }
 .cal-footer p { margin: 0; }
-.reason-backdrop { position: fixed; z-index: 20; inset: 0; display: grid; place-items: center; padding: 20px; background: rgba(0,0,0,.48); backdrop-filter: blur(8px); }
-.reason-dialog { position: relative; width: min(100%, 500px); max-height: calc(100vh - 40px); overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 28px; border: 1px solid var(--cal-line); border-radius: 22px; color: var(--cal-text); background: var(--cal-surface-solid); box-shadow: 0 24px 80px rgba(0,0,0,.3); }
+.reason-backdrop { position: fixed; z-index: 20; inset: 0; display: grid; place-items: center; overflow-y: auto; padding: 20px; background: rgba(0,0,0,.48); backdrop-filter: blur(8px); }
+.reason-dialog { position: relative; box-sizing: border-box; width: min(100%, 500px); max-height: calc(100vh - 40px); max-height: calc(100dvh - 40px); overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; -webkit-overflow-scrolling: touch; scrollbar-width: thin; scrollbar-color: var(--cal-line) transparent; padding: 28px; border: 1px solid var(--cal-line); border-radius: 22px; color: var(--cal-text); background: var(--cal-surface-solid); box-shadow: 0 24px 80px rgba(0,0,0,.3); }
 .scope-dialog { width: min(100%, 680px); max-height: calc(100vh - 40px); overflow-y: auto; }
 .dialog-close { position: absolute; top: 16px; right: 16px; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; color: var(--cal-muted); background: transparent; }
 .dialog-close:hover { color: var(--cal-text); background: var(--cal-bg); }
@@ -614,8 +614,8 @@ tbody tr:hover { background: var(--surface-hover); }
   .total-head, .total-cell { width: 46px; }
   .station-head { min-width: 52px; }
   .quota-button { min-width: 28px; padding: 4px 4px; }
-  .reason-backdrop { padding: 12px; }
-  .reason-dialog { width: 100%; max-height: calc(100vh - 24px); box-sizing: border-box; padding: 22px 18px; border-radius: 18px; }
+  .reason-backdrop { place-items: center; padding: 12px; }
+  .reason-dialog { width: 100%; max-height: calc(100vh - 24px); max-height: calc(100dvh - 24px); padding: 22px 18px; border-radius: 18px; }
   .scope-dialog { max-height: calc(100vh - 24px); }
   .reason-dialog h2 { font-size: 22px; }
   .dialog-close { top: 11px; right: 11px; }
