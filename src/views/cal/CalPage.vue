@@ -525,7 +525,7 @@ tbody tr:hover { background: var(--surface-hover); }
 .dialog-total { display: flex; align-items: baseline; gap: 8px; margin: 18px 0; }
 .dialog-total strong { color: var(--cal-accent); font-family: Sora, sans-serif; font-size: 42px; line-height: 1; }
 .dialog-total span { color: var(--cal-muted); font-size: 13px; }
-.reason-list { display: grid; flex: 1 1 auto; min-height: 0; gap: 10px; overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; -webkit-overflow-scrolling: touch; margin: 0; padding: 16px 0 18px 20px; border-top: 1px solid var(--cal-line); border-bottom: 1px solid var(--cal-line); color: var(--cal-muted); font-size: 14px; line-height: 1.55; scrollbar-width: thin; scrollbar-color: var(--cal-line) transparent; }
+.reason-list { display: grid; flex: 1 1 0; height: 0; min-height: 0; gap: 10px; overflow-y: auto; overscroll-behavior-y: contain; touch-action: pan-y; -webkit-overflow-scrolling: touch; margin: 0; padding: 16px 0 18px 20px; border-top: 1px solid var(--cal-line); border-bottom: 1px solid var(--cal-line); color: var(--cal-muted); font-size: 14px; line-height: 1.55; scrollbar-width: thin; scrollbar-color: var(--cal-line) transparent; }
 .reason-list li::marker { color: var(--cal-accent); }
 .reason-list li.is-matched { color: var(--cal-success); }
 .reason-list li.is-matched::marker { color: var(--cal-success); }
