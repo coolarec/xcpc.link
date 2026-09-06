@@ -134,16 +134,19 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
         </div>
         <div class="cal-title-row">
           <div>
-            <p class="cal-eyebrow">ICPC ASIA EC · 2026 SEASON</p>
             <h1>ICPC 区域赛名额计算</h1>
             <p class="cal-subtitle">按当前网络预选赛校排名，叠加七个赛站公开规则中的确定性名额。</p>
             <button class="scope-trigger" type="button" @click="showScope = true">查看计算口径说明</button>
           </div>
           <div class="cal-summary">
-            <strong>{{ data.schools.length }}</strong>
-            <span>所学校</span>
-            <strong>{{ totalQuota }}</strong>
-            <span>个名额</span>
+            <div class="cal-summary-item">
+              <strong>{{ data.schools.length }}</strong>
+              <span>所学校</span>
+            </div>
+            <div class="cal-summary-item">
+              <strong>{{ totalQuota }}</strong>
+              <span>个名额</span>
+            </div>
           </div>
         </div>
         <div class="cal-toolbar">
@@ -155,10 +158,10 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
         </div>
       </header>
 
-      <section class="rules-strip" aria-label="规则原文">
+      <section class="rules-strip" aria-label="赛站 PDF">
         <template v-for="station in stations" :key="station.key">
           <a :href="station.pdf" target="_blank" rel="noopener noreferrer" class="rule-chip">
-            <FileText :size="15" /> {{ station.name }}规则 PDF
+            <FileText :size="15" /> {{ station.name }} PDF
           </a>
         </template>
       </section>
@@ -179,7 +182,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
               <tr v-for="school in filteredSchools" :key="school.school">
                 <td class="school-cell">
                   <span class="school-index">#{{ school.rank }}</span>
-                  <span>{{ school.school }}</span>
+                  <span class="school-name">{{ school.school }}</span>
                 </td>
                 <td class="total-cell">{{ school.total }}</td>
                 <td v-for="station in stations" :key="station.key" class="quota-cell">
@@ -212,7 +215,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
         <div class="dialog-links">
           <a class="dialog-pdf" :href="selected.station.pdf" target="_blank" rel="noopener noreferrer">
             <FileText :size="17" aria-hidden="true" />
-            <span>查看 {{ selected.station.name }}规则原文 PDF</span>
+            <span>查看 {{ selected.station.name }} PDF</span>
           </a>
           <a v-if="invitationBoardUrl(selected.station.key)" class="dialog-board" :href="invitationBoardUrl(selected.station.key)" target="_blank" rel="noopener noreferrer">
             <ExternalLink :size="17" aria-hidden="true" />
@@ -257,6 +260,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
   --cal-line: rgba(0, 0, 0, 0.09);
   --cal-accent: var(--text);
   min-height: 100vh;
+  overflow-x: hidden;
   color: var(--cal-text);
   background: var(--cal-bg);
   transition: background .2s ease, color .2s ease;
@@ -274,8 +278,9 @@ h1 { margin: 0; font-family: Sora, sans-serif; font-size: clamp(34px, 5vw, 62px)
 .cal-subtitle { margin: 14px 0 0; color: var(--cal-muted); font-size: 15px; }
 .scope-trigger { width: fit-content; margin-top: 9px; padding: 0; border: 0; color: var(--cal-muted); background: transparent; font: inherit; font-size: 13px; font-weight: 700; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; cursor: pointer; }
 .scope-trigger:hover { color: var(--cal-accent); }
-.cal-summary { display: grid; grid-template-columns: auto auto; gap: 2px 10px; align-items: baseline; min-width: 150px; padding: 16px 18px; border: 1px solid var(--cal-line); border-radius: 18px; background: var(--cal-surface); backdrop-filter: blur(14px); }
-.cal-summary strong { font-family: Sora, sans-serif; font-size: 26px; text-align: right; }
+.cal-summary { display: flex; align-items: baseline; gap: 20px; min-width: 150px; padding: 16px 18px; border: 1px solid var(--cal-line); border-radius: 18px; background: var(--cal-surface); backdrop-filter: blur(14px); }
+.cal-summary-item { display: flex; align-items: baseline; gap: 7px; }
+.cal-summary strong { font-family: Sora, sans-serif; font-size: 26px; }
 .cal-summary span { color: var(--cal-muted); font-size: 12px; }
 .cal-search { width: min(420px, 100%); display: flex; align-items: center; gap: 9px; padding: 11px 14px; border: 1px solid var(--cal-line); border-radius: 13px; background: var(--cal-surface-solid); color: var(--cal-muted); }
 .cal-search input { width: 100%; border: 0; outline: 0; color: var(--cal-text); background: transparent; font: inherit; }
@@ -293,7 +298,8 @@ tbody tr:hover { background: var(--surface-hover); }
 .school-head, .school-cell { position: sticky; left: 0; z-index: 2; text-align: left; }
 .school-head { background: var(--cal-surface-solid); }
 .school-cell { min-width: 230px; color: var(--cal-text); background: var(--cal-surface-solid); font-weight: 650; }
-.school-index { display: inline-block; width: 28px; color: var(--cal-muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+.school-index { display: inline-block; width: 34px; color: var(--cal-muted); font-size: 11px; font-variant-numeric: tabular-nums; vertical-align: top; }
+.school-name { overflow-wrap: anywhere; }
 .total-head, .total-cell { border-left: 1px solid var(--cal-line); }
 .total-head { color: var(--cal-accent); }
 .total-cell { color: var(--cal-accent); font-family: Sora, sans-serif; font-size: 16px; font-weight: 800; }
@@ -374,6 +380,55 @@ tbody tr:hover { background: var(--surface-hover); }
 .rules-strip { gap: 6px; }
 .rule-chip { border-radius: 999px; background: var(--cal-surface); }
 .cal-footer { padding-top: 16px; }
-@media (max-width: 760px) { .cal-shell { width: min(100% - 20px, 1240px); padding-top: 16px; } .cal-topline, .cal-title-row, .cal-toolbar { align-items: flex-start; flex-direction: column; } .cal-source-links { width: 100%; justify-content: space-between; } .cal-summary { width: 100%; grid-template-columns: auto auto auto auto; justify-content: start; } .cal-summary strong { text-align: left; } .cal-hint { display: none; } .school-cell { min-width: 190px; } }
-@media (max-width: 520px) { .dialog-links { align-items: flex-start; flex-direction: column; gap: 10px; } }
+@media (max-width: 900px) {
+  .cal-shell { width: min(100% - 24px, 1240px); padding-top: 14px; padding-bottom: 36px; }
+  .cal-header { gap: 16px; padding-bottom: 14px; }
+  .cal-topline { align-items: center; flex-wrap: wrap; gap: 10px 16px; }
+  .cal-source-links { margin-left: auto; gap: 12px; }
+  .cal-title-row { align-items: stretch; flex-direction: column; gap: 16px; }
+  h1 { max-width: 100%; font-size: clamp(30px, 9vw, 42px); line-height: 1.08; letter-spacing: -.045em; }
+  .cal-subtitle { margin-top: 11px; font-size: 14px; line-height: 1.55; }
+  .scope-trigger { margin-top: 8px; font-size: 12px; }
+  .cal-summary { width: 100%; justify-content: space-between; min-width: 0; padding: 13px 15px; }
+  .cal-summary strong { font-size: 23px; }
+  .cal-toolbar { align-items: stretch; flex-direction: column; gap: 10px; }
+  .cal-search { width: 100%; box-sizing: border-box; }
+  .cal-hint { display: none; }
+  .rules-strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin-bottom: 8px; }
+  .rule-chip { justify-content: center; min-width: 0; padding: 7px 4px; font-size: 11px; }
+  .table-card { border-radius: 14px; }
+  .table-scroll { -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
+  table { min-width: 580px; }
+  th, td { padding: 7px 4px; }
+  .school-head { width: 124px; white-space: normal; line-height: 1.35; }
+  .school-cell { width: 124px; min-width: 124px; max-width: 140px; white-space: normal; line-height: 1.35; }
+  .school-index { display: block; width: auto; margin-bottom: 2px; }
+  .total-head, .total-cell { width: 46px; }
+  .station-head { min-width: 52px; }
+  .quota-button { min-width: 28px; padding: 4px 4px; }
+  .reason-backdrop { padding: 12px; }
+  .reason-dialog { width: 100%; max-height: calc(100vh - 24px); box-sizing: border-box; padding: 22px 18px; border-radius: 18px; }
+  .scope-dialog { max-height: calc(100vh - 24px); }
+  .reason-dialog h2 { font-size: 22px; }
+  .dialog-close { top: 11px; right: 11px; }
+  .dialog-total { margin: 15px 0; }
+  .dialog-total strong { font-size: 36px; }
+  .reason-list { font-size: 13px; }
+  .dialog-links { align-items: flex-start; flex-direction: column; gap: 10px; }
+}
+@media (max-width: 520px) {
+  .cal-source-links { width: 100%; justify-content: space-between; margin-left: 0; }
+  .cal-summary { justify-content: flex-start; gap: 18px; }
+  .rules-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .rule-chip { justify-content: center; min-width: 0; }
+  table { min-width: 550px; }
+  .school-head { width: 112px; }
+  .school-cell { width: 112px; min-width: 112px; max-width: 122px; }
+  .total-head, .total-cell { width: 42px; }
+  .station-head { min-width: 48px; }
+  .scope-copy { font-size: 12px; }
+}
+@media (max-width: 360px) {
+  .rules-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 </style>
