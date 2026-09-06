@@ -408,13 +408,13 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
       </footer>
     </div>
 
-    <div v-if="selected" class="reason-backdrop" @click.self="closeReason">
-      <section class="reason-dialog" role="dialog" aria-modal="true" :aria-label="`${selected.school.school}${selected.station.name}名额说明`">
+    <div v-if="selected" class="reason-backdrop" @click.self="closeReason" @touchmove.self.prevent>
+      <section class="reason-dialog" role="dialog" aria-modal="true" :aria-label="`${selected.school.school}${selected.station.name}名额说明`" @touchstart.stop @touchmove.stop>
         <button class="dialog-close" type="button" aria-label="关闭" @click="closeReason"><X :size="20" /></button>
         <p class="dialog-eyebrow">{{ selected.station.name }} · 规则明细</p>
         <h2>{{ selected.school.school }}</h2>
         <div class="dialog-total"><strong>{{ selected.school.allocations[selected.station.key] }}</strong><span>个实际计入名额</span></div>
-        <ul class="reason-list">
+        <ul class="reason-list" @touchmove.stop>
           <li v-for="reason in reasonsFor(selected.school, selected.station)" :key="reason.text" :class="{ 'is-matched': reason.matched }">{{ reason.text }}</li>
         </ul>
         <div class="dialog-links">
@@ -430,8 +430,8 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
       </section>
     </div>
 
-    <div v-if="showScope" class="reason-backdrop" @click.self="closeScope">
-      <section class="reason-dialog scope-dialog" role="dialog" aria-modal="true" aria-label="名额计算口径说明">
+    <div v-if="showScope" class="reason-backdrop" @click.self="closeScope" @touchmove.self.prevent>
+      <section class="reason-dialog scope-dialog" role="dialog" aria-modal="true" aria-label="名额计算口径说明" @touchstart.stop @touchmove.stop>
         <button class="dialog-close" type="button" aria-label="关闭" @click="closeScope"><X :size="20" /></button>
         <p class="dialog-eyebrow">计算口径</p>
         <h2>名额计算说明</h2>
@@ -516,8 +516,8 @@ tbody tr:hover { background: var(--surface-hover); }
 .empty-state { margin: 0; padding: 48px; color: var(--cal-muted); text-align: center; }
 .cal-footer { display: grid; gap: 4px; padding: 14px 2px; color: var(--cal-muted); font-size: 12px; line-height: 1.6; }
 .cal-footer p { margin: 0; }
-.reason-backdrop { position: fixed; z-index: 20; inset: 0; display: grid; place-items: center; overflow-y: auto; padding: 20px; background: rgba(0,0,0,.48); backdrop-filter: blur(8px); }
-.reason-dialog { position: relative; box-sizing: border-box; display: flex; flex-direction: column; width: min(100%, 500px); height: min(720px, calc(100vh - 40px)); height: min(720px, calc(100dvh - 40px)); max-height: calc(100vh - 40px); max-height: calc(100dvh - 40px); min-height: 0; overflow: hidden; overscroll-behavior: contain; touch-action: pan-y; padding: 28px; border: 1px solid var(--cal-line); border-radius: 22px; color: var(--cal-text); background: var(--cal-surface-solid); box-shadow: 0 24px 80px rgba(0,0,0,.3); }
+.reason-backdrop { position: fixed; z-index: 20; inset: 0; display: grid; place-items: center; overflow: hidden; overscroll-behavior: none; padding: 20px; background: rgba(0,0,0,.48); backdrop-filter: blur(8px); }
+.reason-dialog { position: relative; z-index: 1; box-sizing: border-box; display: flex; flex-direction: column; width: min(100%, 500px); height: min(720px, calc(100vh - 40px)); height: min(720px, calc(100dvh - 40px)); max-height: calc(100vh - 40px); max-height: calc(100dvh - 40px); min-height: 0; overflow: hidden; overscroll-behavior: contain; touch-action: pan-y; pointer-events: auto; padding: 28px; border: 1px solid var(--cal-line); border-radius: 22px; color: var(--cal-text); background: var(--cal-surface-solid); box-shadow: 0 24px 80px rgba(0,0,0,.3); }
 .scope-dialog { width: min(100%, 680px); height: auto; max-height: calc(100vh - 40px); max-height: calc(100dvh - 40px); overflow-y: auto; }
 .dialog-close { position: absolute; top: 16px; right: 16px; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; color: var(--cal-muted); background: transparent; }
 .dialog-close:hover { color: var(--cal-text); background: var(--cal-bg); }
@@ -525,7 +525,7 @@ tbody tr:hover { background: var(--surface-hover); }
 .dialog-total { display: flex; align-items: baseline; gap: 8px; margin: 18px 0; }
 .dialog-total strong { color: var(--cal-accent); font-family: Sora, sans-serif; font-size: 42px; line-height: 1; }
 .dialog-total span { color: var(--cal-muted); font-size: 13px; }
-.reason-list { display: grid; flex: 1 1 0; height: 0; min-height: 0; gap: 10px; overflow-y: auto; overscroll-behavior-y: contain; touch-action: pan-y; -webkit-overflow-scrolling: touch; margin: 0; padding: 16px 0 18px 20px; border-top: 1px solid var(--cal-line); border-bottom: 1px solid var(--cal-line); color: var(--cal-muted); font-size: 14px; line-height: 1.55; scrollbar-width: thin; scrollbar-color: var(--cal-line) transparent; }
+.reason-list { position: relative; z-index: 1; display: grid; flex: 1 1 0; height: 0; min-height: 0; gap: 10px; overflow-y: auto; overscroll-behavior-y: contain; touch-action: pan-y; -webkit-overflow-scrolling: touch; margin: 0; padding: 16px 0 18px 20px; border-top: 1px solid var(--cal-line); border-bottom: 1px solid var(--cal-line); color: var(--cal-muted); font-size: 14px; line-height: 1.55; scrollbar-width: thin; scrollbar-color: var(--cal-line) transparent; }
 .reason-list li::marker { color: var(--cal-accent); }
 .reason-list li.is-matched { color: var(--cal-success); }
 .reason-list li.is-matched::marker { color: var(--cal-success); }

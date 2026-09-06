@@ -116,8 +116,9 @@ onBeforeUnmount(() => {
       aria-modal="true"
       aria-label="2026XCPC 赛程列表"
       @click.self="isPreviewOpen = false"
+      @touchmove.self.prevent
     >
-      <div class="schedule-preview-content" data-density="compact">
+      <div class="schedule-preview-content" data-density="compact" @touchstart.stop @touchmove.stop>
         <header class="schedule-preview-header">
           <div>
             <h1>2026 赛季赛程</h1>
@@ -301,6 +302,8 @@ onBeforeUnmount(() => {
   inset: 0;
   display: grid;
   place-items: center;
+  overflow: hidden;
+  touch-action: pan-y;
   padding: 24px;
   background: rgba(0, 0, 0, 0.66);
   backdrop-filter: blur(4px);
@@ -308,9 +311,13 @@ onBeforeUnmount(() => {
 
 .schedule-preview-content {
   position: relative;
+  z-index: 1;
   width: min(920px, 100%);
   max-height: calc(100dvh - 48px);
   overflow: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   padding: 0 16px 14px;
   border: 1px solid var(--line);
