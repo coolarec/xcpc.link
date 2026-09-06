@@ -517,7 +517,7 @@ tbody tr:hover { background: var(--surface-hover); }
 .cal-footer { display: grid; gap: 4px; padding: 14px 2px; color: var(--cal-muted); font-size: 12px; line-height: 1.6; }
 .cal-footer p { margin: 0; }
 .reason-backdrop { position: fixed; z-index: 20; inset: 0; display: grid; place-items: center; padding: 20px; background: rgba(0,0,0,.48); backdrop-filter: blur(8px); }
-.reason-dialog { position: relative; width: min(100%, 500px); padding: 28px; border: 1px solid var(--cal-line); border-radius: 22px; color: var(--cal-text); background: var(--cal-surface-solid); box-shadow: 0 24px 80px rgba(0,0,0,.3); }
+.reason-dialog { position: relative; width: min(100%, 500px); max-height: calc(100vh - 40px); overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 28px; border: 1px solid var(--cal-line); border-radius: 22px; color: var(--cal-text); background: var(--cal-surface-solid); box-shadow: 0 24px 80px rgba(0,0,0,.3); }
 .scope-dialog { width: min(100%, 680px); max-height: calc(100vh - 40px); overflow-y: auto; }
 .dialog-close { position: absolute; top: 16px; right: 16px; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; color: var(--cal-muted); background: transparent; }
 .dialog-close:hover { color: var(--cal-text); background: var(--cal-bg); }
