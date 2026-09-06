@@ -414,9 +414,11 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
         <p class="dialog-eyebrow">{{ selected.station.name }} · 规则明细</p>
         <h2>{{ selected.school.school }}</h2>
         <div class="dialog-total"><strong>{{ selected.school.allocations[selected.station.key] }}</strong><span>个实际计入名额</span></div>
-        <ul class="reason-list" @touchmove.stop>
-          <li v-for="reason in reasonsFor(selected.school, selected.station)" :key="reason.text" :class="{ 'is-matched': reason.matched }">{{ reason.text }}</li>
-        </ul>
+        <div class="reason-list" @touchmove.stop>
+          <ul>
+            <li v-for="reason in reasonsFor(selected.school, selected.station)" :key="reason.text" :class="{ 'is-matched': reason.matched }">{{ reason.text }}</li>
+          </ul>
+        </div>
         <div class="dialog-links">
           <a class="dialog-pdf" :href="selected.station.pdf" target="_blank" rel="noopener noreferrer">
             <FileText :size="17" aria-hidden="true" />
@@ -525,11 +527,13 @@ tbody tr:hover { background: var(--surface-hover); }
 .dialog-total { display: flex; align-items: baseline; gap: 8px; margin: 18px 0; }
 .dialog-total strong { color: var(--cal-accent); font-family: Sora, sans-serif; font-size: 42px; line-height: 1; }
 .dialog-total span { color: var(--cal-muted); font-size: 13px; }
-.reason-list { position: relative; z-index: 1; display: grid; flex: 1 1 0; height: 0; min-height: 0; gap: 10px; overflow-y: auto; overscroll-behavior-y: contain; touch-action: pan-y; -webkit-overflow-scrolling: touch; margin: 0; padding: 16px 0 18px 20px; border-top: 1px solid var(--cal-line); border-bottom: 1px solid var(--cal-line); color: var(--cal-muted); font-size: 14px; line-height: 1.55; scrollbar-width: thin; scrollbar-color: var(--cal-line) transparent; }
+.reason-list { position: relative; z-index: 1; box-sizing: border-box; flex: 1 1 auto; min-height: 0; max-height: 100%; overflow-y: auto; overscroll-behavior-y: contain; touch-action: pan-y; -webkit-overflow-scrolling: touch; margin: 0; padding: 16px 0 18px; border-top: 1px solid var(--cal-line); border-bottom: 1px solid var(--cal-line); color: var(--cal-muted); font-size: 14px; line-height: 1.55; scrollbar-width: thin; scrollbar-color: var(--cal-line) transparent; }
+.reason-list > ul { display: grid; gap: 10px; margin: 0; padding: 0 0 0 20px; align-content: start; }
+.reason-list li { min-width: 0; }
 .reason-list li::marker { color: var(--cal-accent); }
 .reason-list li.is-matched { color: var(--cal-success); }
 .reason-list li.is-matched::marker { color: var(--cal-success); }
-.dialog-links { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-top: 18px; }
+.dialog-links { display: flex; flex: 0 0 auto; align-items: center; justify-content: space-between; gap: 18px; margin-top: 18px; }
 .dialog-pdf, .dialog-board { color: var(--cal-accent); font-size: 13px; font-weight: 700; }
 .dialog-board { display: inline-flex; align-items: center; gap: 7px; text-decoration: none; }
 .dialog-pdf:hover, .dialog-board:hover { color: var(--cal-accent); }
