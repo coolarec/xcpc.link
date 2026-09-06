@@ -34,7 +34,9 @@ const selected = ref<{ school: CalculatedSchool; station: Station } | null>(null
 const showScope = ref(false)
 
 const worldFinalists = new Set(data.meta.specialSchools.worldFinalists)
-const stationHosts = new Set(Object.values(data.meta.specialSchools.stationHosts))
+// 承办高校奖励按第 51 届 EC 全部区域赛承办高校计算；香港站不展示名额列，
+// 但香港大学作为香港站承办高校，仍应在其余七站的承办奖励中计入。
+const stationHosts = new Set([...Object.values(data.meta.specialSchools.stationHosts), '香港大学'])
 const networkSetters = new Set(data.meta.specialSchools.networkSetter.split('、'))
 const xianInvitationSchools = new Set(data.meta.invitationSchools.xianTop100)
 const wuhanInvitationSchools = new Set(data.meta.invitationSchools.wuhanTop60)
@@ -439,7 +441,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
         <h2>名额计算说明</h2>
         <div class="scope-copy">
           <p>计算范围为西安、成都、武汉、南京、沈阳、上海、南昌七个 EC 赛站，不含香港站。学校排名与前 500 队伍数来自 Pintia 当前榜单快照。</p>
-          <p>邀请赛只采用规则正文明确引用的三个榜单：西安邀请赛正式队伍校排前 100、武汉邀请赛正式队伍校排前 60、南昌邀请赛银牌及以上。两场 ICPC 网络赛出题组分别为北京大学、杭州电子科技大学；近届 WF 高校、各站承办高校等 PDF 明确条款一并计入。七份赛站规则 PDF 只写“命题高校”类别，没有公开逐站完整名单，因此不按推测增加其他学校。</p>
+          <p>邀请赛只采用规则正文明确引用的三个榜单：西安邀请赛正式队伍校排前 100、武汉邀请赛正式队伍校排前 60、南昌邀请赛银牌及以上。两场 ICPC 网络赛出题组分别为北京大学、杭州电子科技大学；近届 WF 高校、各站承办高校（含香港站承办高校香港大学）等 PDF 明确条款一并计入。七份赛站规则 PDF 只写“命题高校”类别，没有公开逐站完整名单，因此不按推测增加其他学校。</p>
           <h3>未计入的申请或审核名额</h3>
           <ul>
             <li>西安：专属省赛/区域高校推荐、支持激励及后续空余名额。</li>
@@ -450,7 +452,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
             <li>上海：非大陆高校外卡、上海市赛帮助外卡、二轮外卡及打星队伍。</li>
             <li>南昌：支持与激励名额，以及规则 1–3 发放后的空余名额。</li>
           </ul>
-          <p>上述项目需要后续申请、组委会审核或按规则另行补发，因此不计入当前确定性名额。香港站不参与计算，但规则明确列出的香港高校仍按对应赛站条款保留。</p>
+          <p>上述项目需要后续申请、组委会审核或按规则另行补发，因此不计入当前确定性名额。香港站自身名额不参与计算；香港大学作为香港站承办高校，其承办奖励已计入其他七站，其他香港高校仅按各规则明确条款计入。</p>
         </div>
       </section>
     </div>
