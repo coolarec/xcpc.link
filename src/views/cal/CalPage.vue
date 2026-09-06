@@ -521,7 +521,7 @@ tbody tr:hover { background: var(--surface-hover); }
 .cal-footer { display: grid; gap: 4px; padding: 14px 2px; color: var(--cal-muted); font-size: 12px; line-height: 1.6; }
 .cal-footer p { margin: 0; }
 .reason-backdrop { position: fixed; z-index: 20; inset: 0; display: grid; place-items: center; overflow: hidden; overscroll-behavior: none; padding: 20px; background: rgba(0,0,0,.48); backdrop-filter: blur(8px); }
-.reason-dialog { position: relative; z-index: 1; box-sizing: border-box; display: flex; flex-direction: column; width: min(100%, 500px); height: min(720px, calc(100vh - 40px)); height: min(720px, calc(100dvh - 40px)); max-height: calc(100vh - 40px); max-height: calc(100dvh - 40px); min-height: 0; overflow: hidden; overscroll-behavior: contain; touch-action: pan-y; pointer-events: auto; padding: 28px; border: 1px solid var(--cal-line); border-radius: 22px; color: var(--cal-text); background: var(--cal-surface-solid); box-shadow: 0 24px 80px rgba(0,0,0,.3); }
+.reason-dialog { position: relative; z-index: 1; box-sizing: border-box; display: flex; flex-direction: column; width: min(100%, 500px); height: auto; max-height: calc(100vh - 40px); max-height: calc(100dvh - 40px); min-height: 0; overflow: hidden; overscroll-behavior: contain; touch-action: pan-y; pointer-events: auto; padding: 28px; border: 1px solid var(--cal-line); border-radius: 22px; color: var(--cal-text); background: var(--cal-surface-solid); box-shadow: 0 24px 80px rgba(0,0,0,.3); }
 .scope-dialog { width: min(100%, 680px); height: auto; max-height: calc(100vh - 40px); max-height: calc(100dvh - 40px); overflow-y: auto; }
 .dialog-close { position: absolute; top: 16px; right: 16px; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; color: var(--cal-muted); background: transparent; }
 .dialog-close:hover { color: var(--cal-text); background: var(--cal-bg); }
@@ -529,7 +529,7 @@ tbody tr:hover { background: var(--surface-hover); }
 .dialog-total { display: flex; align-items: baseline; gap: 8px; margin: 18px 0; }
 .dialog-total strong { color: var(--cal-accent); font-family: Sora, sans-serif; font-size: 42px; line-height: 1; }
 .dialog-total span { color: var(--cal-muted); font-size: 13px; }
-.reason-list { position: relative; z-index: 1; box-sizing: border-box; flex: 1 1 auto; min-height: 0; max-height: 100%; overflow-y: auto; overscroll-behavior-y: contain; touch-action: pan-y; -webkit-overflow-scrolling: touch; margin: 0; padding: 16px 0 18px; border-top: 1px solid var(--cal-line); border-bottom: 1px solid var(--cal-line); color: var(--cal-muted); font-size: 14px; line-height: 1.55; scrollbar-width: thin; scrollbar-color: var(--cal-line) transparent; }
+.reason-list { position: relative; z-index: 1; box-sizing: border-box; flex: 0 1 auto; min-height: 0; max-height: min(420px, calc(100dvh - 300px)); overflow-y: auto; overscroll-behavior-y: contain; touch-action: pan-y; -webkit-overflow-scrolling: touch; margin: 0; padding: 16px 0 18px; border-top: 1px solid var(--cal-line); border-bottom: 1px solid var(--cal-line); color: var(--cal-muted); font-size: 14px; line-height: 1.55; scrollbar-width: thin; scrollbar-color: var(--cal-line) transparent; }
 .reason-list > ul { display: grid; gap: 10px; margin: 0; padding: 0 0 0 20px; align-content: start; }
 .reason-list li { min-width: 0; }
 .reason-list li::marker { color: var(--cal-accent); }
@@ -621,13 +621,13 @@ tbody tr:hover { background: var(--surface-hover); }
   .station-head { min-width: 52px; }
   .quota-button { min-width: 28px; padding: 4px 4px; }
   .reason-backdrop { place-items: center; padding: 12px; }
-  .reason-dialog { width: 100%; height: min(720px, calc(100vh - 24px)); height: min(720px, calc(100dvh - 24px)); max-height: calc(100vh - 24px); max-height: calc(100dvh - 24px); padding: 22px 18px; border-radius: 18px; }
+  .reason-dialog { width: 100%; height: auto; max-height: calc(100vh - 24px); max-height: calc(100dvh - 24px); padding: 22px 18px; border-radius: 18px; }
   .scope-dialog { height: auto; max-height: calc(100vh - 24px); max-height: calc(100dvh - 24px); }
   .reason-dialog h2 { font-size: 22px; }
   .dialog-close { top: 11px; right: 11px; }
   .dialog-total { margin: 15px 0; }
   .dialog-total strong { font-size: 36px; }
-  .reason-list { font-size: 13px; }
+  .reason-list { max-height: min(420px, calc(100dvh - 260px)); font-size: 13px; }
   .dialog-links { align-items: flex-start; flex-direction: column; gap: 10px; }
 }
 @media (max-width: 520px) {
