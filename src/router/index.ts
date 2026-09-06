@@ -7,8 +7,8 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/home/HomePage.vue'),
   },
   {
-    path: '/cal',
-    name: 'cal',
+    path: '/quota',
+    name: 'quota',
     component: () => import('../views/cal/CalPage.vue'),
   },
 ]
