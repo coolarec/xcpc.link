@@ -6,6 +6,11 @@ const routes: RouteRecordRaw[] = [
     name: 'home',
     component: () => import('../views/home/HomePage.vue'),
   },
+  {
+    path: '/cal',
+    name: 'cal',
+    component: () => import('../views/cal/CalPage.vue'),
+  },
 ]
 
 const router = createRouter({

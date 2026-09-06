@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Settings } from '@lucide/vue'
 import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { RouterLink } from 'vue-router'
 import type { LiteViewMode } from '../../../stores/litePreferences'
 import type { ThemeMode } from '../../../stores/theme'
 import HomeSearch from './HomeSearch.vue'
@@ -125,6 +126,7 @@ onBeforeUnmount(() => {
       </div>
 
       <div class="header-tools">
+        <RouterLink class="cal-nav-link" to="/cal">名额计算</RouterLink>
         <HomeSearch
           ref="searchRef"
           :items="props.searchItems"
@@ -258,6 +260,28 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+.cal-nav-link {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 13px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: var(--text);
+  background: var(--surface);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 0.18s ease, border-color 0.18s ease;
+}
+
+.cal-nav-link:hover,
+.cal-nav-link:focus-visible {
+  border-color: var(--focus);
+  background: var(--surface-hover);
 }
 
 .meta-line {
