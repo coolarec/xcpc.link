@@ -6,22 +6,114 @@ import { useThemeStore } from '../../stores/theme'
 import data from '../../modules/cal-data.json'
 
 type StationKey = 'xian' | 'chengdu' | 'wuhan' | 'nanjing' | 'shenyang' | 'shanghai' | 'nanchang'
-type School = (typeof data.schools)[number]
+type RawSchool = (typeof data.schools)[number]
+type SchoolFlags = {
+  worldFinalist: boolean
+  host: boolean
+  setter: boolean
+  xianInvitation: boolean
+  wuhanInvitation: boolean
+  nanchangSilver: number
+}
+type AllocationMap = Record<StationKey, number>
+type RuleReason = { text: string; matched: boolean }
+type CalculatedSchool = RawSchool & {
+  flags: SchoolFlags
+  allocations: AllocationMap
+  rawAllocations: AllocationMap
+  total: number
+  cap: number
+}
 type Station = (typeof data.meta.stations)[number] & { key: StationKey }
 
 const themeStore = useThemeStore()
 const stations = data.meta.stations as Station[]
+const stationKeys: StationKey[] = ['xian', 'chengdu', 'wuhan', 'nanjing', 'shenyang', 'shanghai', 'nanchang']
 const search = ref('')
-const selected = ref<{ school: School; station: Station } | null>(null)
+const selected = ref<{ school: CalculatedSchool; station: Station } | null>(null)
 const showScope = ref(false)
+
+const worldFinalists = new Set(data.meta.specialSchools.worldFinalists)
+const stationHosts = new Set(Object.values(data.meta.specialSchools.stationHosts))
+const networkSetters = new Set(data.meta.specialSchools.networkSetter.split('、'))
+const xianInvitationSchools = new Set(data.meta.invitationSchools.xianTop100)
+const wuhanInvitationSchools = new Set(data.meta.invitationSchools.wuhanTop60)
+const nanchangSilverSchools = data.meta.invitationSchools.nanchangSilver
+const shanghaiHost = data.meta.specialSchools.stationHosts.shanghai
+
+const flagsFor = (school: RawSchool): SchoolFlags => ({
+  worldFinalist: worldFinalists.has(school.school),
+  host: stationHosts.has(school.school),
+  setter: networkSetters.has(school.school),
+  xianInvitation: xianInvitationSchools.has(school.school),
+  wuhanInvitation: wuhanInvitationSchools.has(school.school),
+  nanchangSilver: nanchangSilverSchools[school.school as keyof typeof nanchangSilverSchools] ?? 0,
+})
+
+const calculateSchool = (school: RawSchool): CalculatedSchool => {
+  const flags = flagsFor(school)
+  const rank = school.rank
+  const rawAllocations = stationKeys.reduce((result, key) => {
+    let amount = 0
+    const hostReward = flags.host && !(key === 'shanghai' && school.school === shanghaiHost) ? 2 : 0
+    const contributionReward = (flags.worldFinalist ? 1 : 0) + hostReward + (flags.setter ? 2 : 0)
+
+    if (key === 'xian') {
+      if (rank <= 80) amount += 2
+      else if (rank <= 150) amount += 1
+      // 西安规则 5(2)：全国邀请赛、专属省赛、EC 贡献/支持名额合计原则上不超过 2 个。
+      amount += Math.min((flags.xianInvitation ? 1 : 0) + contributionReward, 2)
+    } else if (key === 'chengdu') {
+      if (rank <= 160) amount += 1
+      if (school.top500Teams >= 3) amount += 1
+      amount += contributionReward
+    } else if (key === 'wuhan') {
+      if (rank <= 80) amount += 2
+      else if (rank <= 180) amount += 1
+      if (flags.wuhanInvitation) amount += 1
+      amount += contributionReward
+    } else if (key === 'nanjing') {
+      if (rank <= 160) amount += 1
+      if (school.top500Teams >= 3) amount += 1
+      amount += contributionReward
+    } else if (key === 'shenyang') {
+      if (rank <= 100) amount += 2
+      else if (rank <= 220) amount += 1
+      amount += contributionReward
+    } else if (key === 'shanghai') {
+      if (rank <= 50) amount += 2
+      else if (rank <= 200) amount += 1
+      amount += contributionReward
+    } else if (key === 'nanchang') {
+      if (rank <= 60) amount += 2
+      else if (rank <= 160) amount += 1
+      if (flags.nanchangSilver > 0) amount += 1
+      amount += contributionReward
+    }
+    result[key] = amount
+    return result
+  }, {} as AllocationMap)
+  const cap = flags.worldFinalist || flags.host || flags.setter ? 4 : 3
+  const allocations = stationKeys.reduce((result, key) => {
+    result[key] = Math.min(rawAllocations[key], cap)
+    return result
+  }, {} as AllocationMap)
+  const total = stationKeys.reduce((sum, key) => sum + allocations[key], 0)
+
+  return { ...school, flags, rawAllocations, allocations, total, cap }
+}
+
+const calculatedSchools = computed(() => data.schools
+  .map(calculateSchool)
+  .sort((a, b) => b.total - a.total || a.rank - b.rank))
 
 const filteredSchools = computed(() => {
   const keyword = search.value.trim().toLowerCase()
-  if (!keyword) return data.schools
-  return data.schools.filter((school) => school.school.toLowerCase().includes(keyword))
+  if (!keyword) return calculatedSchools.value
+  return calculatedSchools.value.filter((school) => school.school.toLowerCase().includes(keyword))
 })
 
-const totalQuota = computed(() => data.schools.reduce((sum, school) => sum + school.total, 0))
+const totalQuota = computed(() => calculatedSchools.value.reduce((sum, school) => sum + school.total, 0))
 
 const stationName = (key: StationKey) => stations.find((station) => station.key === key)?.name ?? key
 
@@ -36,7 +128,7 @@ const invitationBoardUrl = (key: StationKey) => {
   return rankId ? `https://rl.algoux.cn/collection/official?rankId=${rankId}` : ''
 }
 
-const reasonsFor = (school: School, station: Station) => {
+const legacyReasonsFor = (school: CalculatedSchool, station: Station) => {
   const key = station.key
   const rank = school.rank
   const reasons: string[] = []
@@ -89,14 +181,127 @@ const reasonsFor = (school: School, station: Station) => {
   if (school.flags.host) reasons.push(`${hostClause[key]}：PDF 明列的本赛站承办高校，获得 2 个名额。`)
   if (school.flags.setter) reasons.push(`${hostClause[key]}：PDF 明列的网络预选赛命题高校，获得 2 个名额。`)
 
-  if (!reasons.length) reasons.push('未命中本页已整理的公开、确定性分配条款。')
+  if (!reasons.length) reasons.push('未符合本页已整理的公开、确定性分配条款。')
   if (school.rawAllocations[key] > school.allocations[key]) {
     reasons.push(`上限说明：原始累计 ${school.rawAllocations[key]} 个，按该站高校上限 ${school.cap} 个截取，实际计入 ${school.allocations[key]} 个。`)
   }
   return reasons
 }
 
-const openReason = (school: School, station: Station) => {
+const ruleLine = (label: string, matched: boolean, hit: string, miss: string): RuleReason => ({
+  matched,
+  text: `${label}：${matched ? hit : miss}`,
+})
+const notCountedLine = (label: string, text: string): RuleReason => ({ matched: false, text: `${label}：${text}` })
+const plainLine = (text: string, matched = false): RuleReason => ({ matched, text })
+
+const reasonsFor = (school: CalculatedSchool, station: Station) => {
+  const key = station.key
+  const rank = school.rank
+  const hostRewardApplies = school.flags.host && !(key === 'shanghai' && school.school === shanghaiHost)
+  const contributionReward = (school.flags.worldFinalist ? 1 : 0) + (hostRewardApplies ? 2 : 0) + (school.flags.setter ? 2 : 0)
+  const rawCap = school.rawAllocations[key]
+  const capDescription = rawCap > school.cap
+    ? `原始累计 ${rawCap} 个，超过高校上限 ${school.cap} 个，实际计入 ${school.allocations[key]} 个。`
+    : `原始累计 ${rawCap} 个，未超过高校上限 ${school.cap} 个，实际计入 ${school.allocations[key]} 个。`
+
+  if (key === 'xian') {
+    const network = rank <= 80 ? 2 : rank <= 150 ? 1 : 0
+    const specialRaw = (school.flags.xianInvitation ? 1 : 0) + contributionReward
+    const specialUsed = Math.min(specialRaw, 2)
+    return [
+      ruleLine('第 1 条（网络预选赛）', network > 0, network === 2 ? `校排 ${rank} ≤ 80，获得 2 个名额。` : `校排 ${rank} 位于 81–150，获得 1 个名额。`, `校排 ${rank} 不在前 150，未获得该条名额。`),
+      ruleLine('第 2 条（西安邀请赛）', school.flags.xianInvitation, '符合正式队伍校排前 100，原始计 1 个；最终受规则 5(2)合计上限影响。', '不在西安邀请赛正式队伍校排前 100。'),
+      ruleLine('第 3(1) 条（近届 WF）', school.flags.worldFinalist, '属于 PDF 明列的近届世界总决赛高校，原始计 1 个；最终受规则 5(2)合计上限影响。', '不属于 PDF 明列的近届世界总决赛高校名单。'),
+      ruleLine('第 3(2) 条（承办高校）', school.flags.host, '属于已整理的 EC 赛站承办高校，原始计 2 个；最终受规则 5(2)合计上限影响。', '不属于已整理的 EC 赛站承办高校名单。'),
+      ruleLine('第 3(2) 条（命题高校）', school.flags.setter, '属于已公开核实的网络预选赛命题高校，原始计 2 个；最终受规则 5(2)合计上限影响。', '不属于已公开核实的网络预选赛命题高校名单。'),
+      notCountedLine('第 4 条（专属省赛/区域高校推荐）', '需要专属省赛或相关高校联系组委会推荐，当前不作推测。'),
+      plainLine(`规则 5(2) 限额：邀请赛、专属省赛与 EC 贡献/支持名额原始合计 ${specialRaw} 个，按 PDF 原则不超过 2 个，实际计入 ${specialUsed} 个。`),
+      plainLine(`规则 5(1) 高校上限：${capDescription}`),
+      notCountedLine('第 6 条（剩余名额/打星）', '规则要求赛后按成绩补发或申请，当前不作推测。'),
+    ]
+  }
+
+  if (key === 'chengdu') {
+    return [
+      ruleLine('第 1 条（网络预选赛）', rank <= 160, `校排 ${rank} ≤ 160，获得 1 个名额。`, `校排 ${rank} 超过 160，未获得该条名额。`),
+      ruleLine('第 2 条（前 500 队伍）', school.top500Teams >= 3, `前 500 队中本校有 ${school.top500Teams} 队，达到 ≥ 3 队，获得 1 个名额。`, `前 500 队中本校有 ${school.top500Teams} 队，未达到 ≥ 3 队。`),
+      ruleLine('第 3 条（近届 WF）', school.flags.worldFinalist, '属于近届世界总决赛中国高校，获得 1 个名额。', '不属于近届世界总决赛中国高校名单。'),
+      ruleLine('第 4 条（承办/命题高校）', school.flags.host || school.flags.setter, `${school.flags.host ? '承办高校 +2' : ''}${school.flags.host && school.flags.setter ? '、' : ''}${school.flags.setter ? '命题高校 +2' : ''}。`, '不属于已整理的承办或命题高校名单。'),
+      notCountedLine('第 5 条（四川省贡献名额）', '需要申请或由组委会另行分配，当前不作推测。'),
+      notCountedLine('剩余名额', '规则要求赛后开放申请，当前不作推测。'),
+      plainLine(`高校上限：${capDescription}`),
+    ]
+  }
+
+  if (key === 'wuhan') {
+    const network = rank <= 80 ? 2 : rank <= 180 ? 1 : 0
+    return [
+      ruleLine('第 1 条（网络预选赛）', network > 0, network === 2 ? `校排 ${rank} ≤ 80，获得 2 个名额。` : `校排 ${rank} 位于 81–180，获得 1 个名额。`, `校排 ${rank} 不在前 180，未获得该条名额。`),
+      ruleLine('第 2 条（主办/命题高校）', school.flags.host || school.flags.setter, `${school.flags.host ? '主办/承办高校 +2' : ''}${school.flags.host && school.flags.setter ? '、' : ''}${school.flags.setter ? '命题高校 +2' : ''}。`, '不属于赛事主办方或命题方高校名单。'),
+      ruleLine('第 3 条（近届 WF）', school.flags.worldFinalist, '属于近届世界总决赛中国高校，获得 1 个名额。', '不属于近届世界总决赛中国高校名单。'),
+      ruleLine('第 4 条（武汉邀请赛）', school.flags.wuhanInvitation, '正式队伍校排前 60，获得 1 个名额。', '不在武汉邀请赛校排前 60。'),
+      notCountedLine('第 5 条（湖北省/武汉大学活动贡献）', '需要报名后申请剩余正式名额，当前不作推测。'),
+      notCountedLine('第 6 条（打星名额）', '非正式参赛名额，规则未给出学校确定性条件。'),
+      plainLine(`高校上限：${capDescription}`),
+    ]
+  }
+
+  if (key === 'nanjing') {
+    return [
+      ruleLine('第 1 条（网络预选赛）', rank <= 160, `校排 ${rank} ≤ 160，获得 1 个名额。`, `校排 ${rank} 超过 160，未获得该条名额。`),
+      ruleLine('第 2 条（前 500 队伍）', school.top500Teams >= 3, `前 500 队中本校有 ${school.top500Teams} 队，达到 ≥ 3 队，获得 1 个名额。`, `前 500 队中本校有 ${school.top500Teams} 队，未达到 ≥ 3 队。`),
+      ruleLine('第 3 条（近届 WF）', school.flags.worldFinalist, '属于近届世界总决赛中国高校，获得 1 个名额。', '不属于近届世界总决赛中国高校名单。'),
+      ruleLine('第 4 条（承办/命题高校）', school.flags.host || school.flags.setter, `${school.flags.host ? '承办高校 +2' : ''}${school.flags.host && school.flags.setter ? '、' : ''}${school.flags.setter ? '命题高校 +2' : ''}。`, '不属于已整理的承办或命题高校名单。'),
+      notCountedLine('第 5 条（非中国大陆高校）', '该类名额需要申请，当前不作地域归属推测。'),
+      notCountedLine('第 6 条（江苏省赛/南航活动贡献）', '需要申请或由组委会分配，当前不作推测。'),
+      notCountedLine('剩余名额', '规则要求赛后开放申请，当前不作推测。'),
+      plainLine(`高校上限：${capDescription}`),
+    ]
+  }
+
+  if (key === 'shenyang') {
+    const network = rank <= 100 ? 2 : rank <= 220 ? 1 : 0
+    return [
+      plainLine(`高校限额：${school.flags.worldFinalist || school.flags.host || school.flags.setter ? '属于 WF/承办/命题高校，上限为 4 个。' : '属于一般高校，上限为 3 个。'}`),
+      ruleLine('网络赛名额 1a/1b', network > 0, network === 2 ? `校排 ${rank} ≤ 100，获得 2 个名额。` : `校排 ${rank} 位于 101–220，获得 1 个名额。`, `校排 ${rank} 超过 220，未获得网络赛名额。`),
+      ruleLine('贡献名额 2a/2b', school.flags.worldFinalist || school.flags.host || school.flags.setter, `${school.flags.worldFinalist ? '近届 WF +1' : ''}${school.flags.worldFinalist && (school.flags.host || school.flags.setter) ? '、' : ''}${school.flags.host ? '承办高校 +2' : ''}${school.flags.host && school.flags.setter ? '、' : ''}${school.flags.setter ? '命题高校 +2' : ''}。`, '不符合近届 WF、承办高校或命题高校条件。'),
+      notCountedLine('女队名额 3', '需要学校申请，且不计入本站高校正式队伍上限，当前不作推测。'),
+      notCountedLine('省内贡献名额 4', '需要申请或由组委会另行分配，当前不作推测。'),
+      notCountedLine('剩余名额/打星队伍', '规则要求报名指南或赛站条件允许后申请，当前不作推测。'),
+      plainLine(`实际计入：${capDescription}`),
+    ]
+  }
+
+  if (key === 'shanghai') {
+    const network = rank <= 50 ? 2 : rank <= 200 ? 1 : 0
+    const hostExcluded = school.school === shanghaiHost && school.flags.host
+    return [
+      ruleLine('正式名额 1(1)/1(2)（网络预选赛）', network > 0, network === 2 ? `校排 ${rank} ≤ 50，获得 2 个名额。` : `校排 ${rank} 位于 51–200，获得 1 个名额。`, `校排 ${rank} 超过 200，未获得网络赛名额。`),
+      ruleLine('奖励和外卡 2(1)（近届 WF）', school.flags.worldFinalist, '参加近三届世界总决赛，获得 1 个奖励名额。', '不属于近三届世界总决赛高校名单。'),
+      ruleLine('奖励和外卡 2(2)（承办/命题）', school.flags.setter || (school.flags.host && !hostExcluded), hostExcluded ? '本校为上海站承办高校，但 PDF 明确“除本校外”，不计承办奖励。' : `${school.flags.host ? '承办高校 +2' : ''}${school.flags.host && school.flags.setter ? '、' : ''}${school.flags.setter ? '命题高校 +2' : ''}。`, hostExcluded ? '本校承办奖励被 PDF 明确排除。' : '不属于已整理的承办或命题高校名单。'),
+      notCountedLine('奖励和外卡 2(3)', '非中国大陆高校外卡需要申请，当前不作地域归属推测。'),
+      notCountedLine('奖励和外卡 2(4)', '上海市赛帮助外卡需要申请，当前不作推测。'),
+      notCountedLine('奖励和外卡 2(5)', '剩余名额作为外卡并由高校申请、组委会审核，当前不作推测。'),
+      plainLine(`正式队伍限额 3：${capDescription} 上海市高校的 4 队例外因榜单未提供完整地域名单，未额外推测。`),
+      notCountedLine('打星队伍', '需要申请并经组委会审核，不计入正式名额。'),
+      plainLine('相关说明：未列事项由上海站组委会解释，页面不据此新增名额。'),
+    ]
+  }
+
+  const network = rank <= 60 ? 2 : rank <= 160 ? 1 : 0
+  return [
+    ruleLine('具体分发 1（网络预选赛）', network > 0, network === 2 ? `校排 ${rank} ≤ 60，获得 2 个名额。` : `校排 ${rank} 位于 61–160，获得 1 个名额。`, `校排 ${rank} 超过 160，未获得该条名额。`),
+    ruleLine('具体分发 2（南昌邀请赛）', school.flags.nanchangSilver > 0, `本校有 ${school.flags.nanchangSilver} 队银牌及以上，获得 1 个名额。`, '不在南昌邀请赛银牌及以上高校名单。'),
+    ruleLine('具体分发 3(1)（近届 WF）', school.flags.worldFinalist, '属于近届世界总决赛高校，获得 1 个名额。', '不属于近届世界总决赛高校名单。'),
+    ruleLine('具体分发 3(2)（承办/命题）', school.flags.host || school.flags.setter, `${school.flags.host ? '承办高校 +2' : ''}${school.flags.host && school.flags.setter ? '、' : ''}${school.flags.setter ? '命题高校 +2' : ''}。`, '不属于已整理的承办或命题高校名单。'),
+    notCountedLine('具体分发 4（支持与激励）', '规则 1–3 发放后如有剩余，可联系组委会申请，当前不作推测。'),
+    plainLine(`其他说明 1（高校上限）：${capDescription}`),
+    notCountedLine('其他说明 2（空余名额）', '按网络预选赛和邀请赛成绩优先补发给尚未获得名额的高校，当前不作推测。'),
+  ]
+}
+
+const openReason = (school: CalculatedSchool, station: Station) => {
   selected.value = { school, station }
 }
 
@@ -140,7 +345,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
           </div>
           <div class="cal-summary">
             <div class="cal-summary-item">
-              <strong>{{ data.schools.length }}</strong>
+              <strong>{{ calculatedSchools.length }}</strong>
               <span>所学校</span>
             </div>
             <div class="cal-summary-item">
@@ -154,7 +359,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
             <Search :size="17" aria-hidden="true" />
             <input v-model="search" type="search" placeholder="搜索学校名称" />
           </label>
-          <span class="cal-hint">点击任意赛站名额查看规则命中说明</span>
+          <span class="cal-hint">点击任意赛站名额查看各条规则说明</span>
         </div>
       </header>
 
@@ -206,11 +411,11 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
     <div v-if="selected" class="reason-backdrop" @click.self="closeReason">
       <section class="reason-dialog" role="dialog" aria-modal="true" :aria-label="`${selected.school.school}${selected.station.name}名额说明`">
         <button class="dialog-close" type="button" aria-label="关闭" @click="closeReason"><X :size="20" /></button>
-        <p class="dialog-eyebrow">{{ selected.station.name }} · 规则命中</p>
+        <p class="dialog-eyebrow">{{ selected.station.name }} · 规则明细</p>
         <h2>{{ selected.school.school }}</h2>
         <div class="dialog-total"><strong>{{ selected.school.allocations[selected.station.key] }}</strong><span>个实际计入名额</span></div>
         <ul class="reason-list">
-          <li v-for="reason in reasonsFor(selected.school, selected.station)" :key="reason">{{ reason }}</li>
+          <li v-for="reason in reasonsFor(selected.school, selected.station)" :key="reason.text" :class="{ 'is-matched': reason.matched }">{{ reason.text }}</li>
         </ul>
         <div class="dialog-links">
           <a class="dialog-pdf" :href="selected.station.pdf" target="_blank" rel="noopener noreferrer">
@@ -232,7 +437,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
         <h2>名额计算说明</h2>
         <div class="scope-copy">
           <p>计算范围为西安、成都、武汉、南京、沈阳、上海、南昌七个 EC 赛站，不含香港站。学校排名与前 500 队伍数来自 Pintia 当前榜单快照。</p>
-          <p>邀请赛只采用规则正文明确引用的三个榜单：西安邀请赛正式队伍校排前 100、武汉邀请赛正式队伍校排前 60、南昌邀请赛银牌及以上。近届 WF 高校、各站承办高校、网络预选赛命题高校（当前公开可核实为北京大学）等 PDF 明确条款一并计入。七份赛站规则 PDF 只写“命题高校”类别，没有公开逐站完整名单，因此不按推测增加其他学校。</p>
+          <p>邀请赛只采用规则正文明确引用的三个榜单：西安邀请赛正式队伍校排前 100、武汉邀请赛正式队伍校排前 60、南昌邀请赛银牌及以上。两场 ICPC 网络赛出题组分别为北京大学、杭州电子科技大学；近届 WF 高校、各站承办高校等 PDF 明确条款一并计入。七份赛站规则 PDF 只写“命题高校”类别，没有公开逐站完整名单，因此不按推测增加其他学校。</p>
           <h3>未计入的申请或审核名额</h3>
           <ul>
             <li>西安：专属省赛/区域高校推荐、支持激励及后续空余名额。</li>
@@ -259,13 +464,14 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
   --cal-muted: #6e6e73;
   --cal-line: rgba(0, 0, 0, 0.09);
   --cal-accent: var(--text);
+  --cal-success: #2f7d32;
   min-height: 100vh;
   overflow-x: hidden;
   color: var(--cal-text);
   background: var(--cal-bg);
   transition: background .2s ease, color .2s ease;
 }
-.cal-page.is-night { --cal-bg: #000; --cal-surface: rgba(20,20,22,.9); --cal-surface-solid: #151517; --cal-text: #f5f5f7; --cal-muted: #a1a1a6; --cal-line: rgba(255,255,255,.13); --cal-accent: var(--text); }
+.cal-page.is-night { --cal-bg: #000; --cal-surface: rgba(20,20,22,.9); --cal-surface-solid: #151517; --cal-text: #f5f5f7; --cal-muted: #a1a1a6; --cal-line: rgba(255,255,255,.13); --cal-accent: var(--text); --cal-success: #7acb7f; }
 .cal-shell { width: min(100% - 32px, 1320px); margin: 0 auto; padding: 22px 0 52px; }
 .cal-header { display: grid; gap: 24px; padding: 4px 0 18px; }
 .cal-topline, .cal-title-row, .cal-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
@@ -321,6 +527,8 @@ tbody tr:hover { background: var(--surface-hover); }
 .dialog-total span { color: var(--cal-muted); font-size: 13px; }
 .reason-list { display: grid; gap: 10px; margin: 0; padding: 16px 0 18px 20px; border-top: 1px solid var(--cal-line); border-bottom: 1px solid var(--cal-line); color: var(--cal-muted); font-size: 14px; line-height: 1.55; }
 .reason-list li::marker { color: var(--cal-accent); }
+.reason-list li.is-matched { color: var(--cal-success); }
+.reason-list li.is-matched::marker { color: var(--cal-success); }
 .dialog-links { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-top: 18px; }
 .dialog-pdf, .dialog-board { color: var(--cal-accent); font-size: 13px; font-weight: 700; }
 .dialog-board { display: inline-flex; align-items: center; gap: 7px; text-decoration: none; }

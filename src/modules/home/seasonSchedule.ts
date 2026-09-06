@@ -11,7 +11,7 @@ export interface SeasonScheduleRow {
 
 export const seasonScheduleRows: SeasonScheduleRow[] = [
   { startDate: '2026-09-06', category: 'ICPC', venue: '网络赛', organizer: '线上', problemSetter: '北京大学' },
-  { startDate: '2026-09-12', category: 'ICPC', venue: '网络赛', organizer: '线上', problemSetter: '杭州师范大学（浙江大学）' },
+  { startDate: '2026-09-12', category: 'ICPC', venue: '网络赛', organizer: '线上', problemSetter: '杭州电子科技大学' },
   { startDate: '2026-09-19', category: 'CCPC', venue: '网络赛', organizer: '线上' },
   {
     startDate: '2026-10-17',
