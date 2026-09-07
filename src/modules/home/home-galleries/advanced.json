@@ -21,6 +21,12 @@
       "websiteUrl": "https://icpc.pku.edu.cn/",
       "websiteTitle": "ICPC 北京总部",
       "websiteDescription": "ICPC 北京总部官方网站入口，会不定时更新教练论坛，各区域赛安排等情况。"
+    },
+    {
+      "avatarUrl": "",
+      "websiteUrl": "https://hkucpc.github.io/icpc-aec-info/",
+      "websiteTitle": "ICPC Asia EC Info",
+      "websiteDescription": "ICPC Asia EC 非官方英文资讯站，主要收录 ICPC 北京总部官网通知公告及赛事信息。"
     }
   ],
   "watches": [
