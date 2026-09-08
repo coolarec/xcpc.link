@@ -419,7 +419,7 @@
           "websiteDescription": "由 zzzzzzyt 开发的基于 elo 机制的 XCPC 选手评分与排名工具。（包含省赛，邀请赛及区域赛）"
         },
         {
-          "avatarUrl": "",
+          "avatarUrl": "/assets/icons/xcpc-sight.svg",
           "websiteUrl": "https://junjiecharles.github.io/xcpc-sight",
           "websiteTitle": "XCPC SIGHT",
           "websiteDescription": "由俊杰 Charles 维护的赛季 rating 静态站，包含一个赛季的网络赛及区域赛以及牛客、杭电（HDU）多校 rating。"
