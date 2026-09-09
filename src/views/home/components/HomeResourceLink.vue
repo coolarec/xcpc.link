@@ -40,6 +40,7 @@ const emit = defineEmits<{
         width="28"
         height="28"
         loading="lazy"
+        decoding="async"
         @error="emit('icon-error', $event)"
       />
       <span v-else>{{ link.websiteTitle.charAt(0) }}</span>

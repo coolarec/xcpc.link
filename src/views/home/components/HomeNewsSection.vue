@@ -60,6 +60,7 @@ const newsCount = computed(() => getNewsCount(props.newsData))
                   width="24"
                   height="24"
                   loading="lazy"
+        decoding="async"
                   @error="emit('icon-error', $event)"
                 />
                 <span v-else>{{ item.sourceName.charAt(0) }}</span>

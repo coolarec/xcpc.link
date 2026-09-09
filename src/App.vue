@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { nextTick, onMounted, ref, watch } from 'vue'
-import { gsap } from 'gsap'
 import { useRoute } from 'vue-router'
 import { useThemeStore } from './stores/theme'
 import { Analytics } from '@vercel/analytics/vue'
@@ -20,19 +19,10 @@ watch(
     await nextTick()
     if (!routeOverlay.value || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
-    gsap.killTweensOf(routeOverlay.value)
-    gsap
-      .timeline()
-      .set(routeOverlay.value, { display: 'block', autoAlpha: 0 })
-      .to(routeOverlay.value, { autoAlpha: 0.82, duration: 0.16, ease: 'power2.out' })
-      .to(routeOverlay.value, {
-        autoAlpha: 0,
-        duration: 0.34,
-        ease: 'power3.out',
-        onComplete: () => {
-          if (routeOverlay.value) routeOverlay.value.style.display = 'none'
-        },
-      })
+    routeOverlay.value.classList.remove('is-transitioning')
+    // Force a reflow so consecutive navigations restart the short CSS transition.
+    void routeOverlay.value.offsetWidth
+    routeOverlay.value.classList.add('is-transitioning')
   },
 )
 </script>
@@ -72,6 +62,17 @@ watch(
   pointer-events: none;
   background: var(--page-bg);
   opacity: 0;
+}
+
+.route-overlay.is-transitioning {
+  display: block;
+  animation: route-fade 0.5s ease-out forwards;
+}
+
+@keyframes route-fade {
+  0% { opacity: 0; }
+  32% { opacity: 0.82; }
+  100% { opacity: 0; display: none; }
 }
 </style>
 

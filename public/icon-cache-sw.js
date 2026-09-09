@@ -39,11 +39,9 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.open(ICON_CACHE_NAME).then(async (cache) => {
       const cached = await cache.match(request)
-      if (cached) {
-        event.waitUntil(fetchAndCache(request, cache).catch(() => undefined))
-        return cached
-      }
-
+      // Icons are immutable content-addressed assets in this project. Serve the
+      // cached copy immediately and only hit the network on a cache miss.
+      if (cached) return cached
       return fetchAndCache(request, cache)
     }),
   )

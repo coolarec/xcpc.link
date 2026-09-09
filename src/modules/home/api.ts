@@ -12,9 +12,6 @@ const withCdnBase = (url: string): string => {
   return `${cdnBaseUrl}${url}`
 }
 
-const cloneGalleries = (galleries: HomeGallerySectionSource[]): HomeGallerySectionSource[] =>
-  structuredClone(galleries)
-
 const fetchBackendGalleries = async (endpoint: string): Promise<HomeGallerySectionSource[]> => {
   const response = await fetch(endpoint)
 
@@ -70,26 +67,25 @@ export const fetchHomeGalleries = async (): Promise<HomeGallerySection[]> => {
     }
   }
 
-  return cloneGalleries([
+  return [
     beginnersGallery,
     advancedGallery,
     coachesGallery,
     authorsGallery,
-  ]).map(normalizeGallery)
+  ].map(normalizeGallery)
 }
 
 export const fetchNewsData = async (): Promise<NewsData> => {
-  const clonedNews = structuredClone(newsData)
   return {
-    redList: clonedNews.redList.map((item) => ({
+    redList: newsData.redList.map((item) => ({
       ...item,
       sourceIcon: withCdnBase(item.sourceIcon),
     })),
-    blackList: clonedNews.blackList.map((item) => ({
+    blackList: newsData.blackList.map((item) => ({
       ...item,
       sourceIcon: withCdnBase(item.sourceIcon),
     })),
-    gossip: clonedNews.gossip.map((item) => ({
+    gossip: newsData.gossip.map((item) => ({
       ...item,
       sourceIcon: withCdnBase(item.sourceIcon),
     })),
