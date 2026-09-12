@@ -431,7 +431,6 @@ onBeforeUnmount(() => {
         <div class="cal-title-row">
           <div>
             <h1>ICPC 区域赛名额计算</h1>
-            <p class="cal-cutoff">数据更新截止到 {{ data.meta.generatedAt }}</p>
             <p class="cal-subtitle">按两场网络预选赛合并校排名，叠加七个赛站公开规则中的确定性名额。</p>
             <button class="scope-trigger" type="button" @click="showScope = true">查看计算口径说明</button>
           </div>
@@ -577,7 +576,6 @@ onBeforeUnmount(() => {
 .cal-source-links { display: flex; gap: 16px; }
 .cal-eyebrow, .dialog-eyebrow { margin: 0 0 8px; color: var(--cal-accent); font-size: 12px; font-weight: 750; letter-spacing: .12em; }
 h1 { margin: 0; font-family: Sora, sans-serif; font-size: clamp(34px, 5vw, 62px); line-height: 1; letter-spacing: -.05em; }
-.cal-cutoff { margin: 12px 0 0; color: var(--cal-text); font-size: 15px; font-weight: 750; }
 .cal-subtitle { margin: 8px 0 0; color: var(--cal-muted); font-size: 15px; }
 .scope-trigger { width: fit-content; margin-top: 9px; padding: 0; border: 0; color: var(--cal-muted); background: transparent; font: inherit; font-size: 13px; font-weight: 700; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; cursor: pointer; }
 .scope-trigger:hover { color: var(--cal-accent); }
@@ -699,7 +697,6 @@ tbody tr:hover { background: var(--surface-hover); }
   .cal-source-links { margin-left: auto; gap: 12px; }
   .cal-title-row { align-items: stretch; flex-direction: column; gap: 16px; }
   h1 { max-width: 100%; font-size: clamp(30px, 9vw, 42px); line-height: 1.08; letter-spacing: -.045em; }
-  .cal-cutoff { margin-top: 10px; font-size: 14px; }
   .cal-subtitle { margin-top: 8px; font-size: 14px; line-height: 1.55; }
   .scope-trigger { margin-top: 8px; font-size: 12px; }
   .cal-summary { width: 100%; justify-content: space-between; min-width: 0; padding: 13px 15px; }
