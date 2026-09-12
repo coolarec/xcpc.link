@@ -37,6 +37,8 @@ const selected = ref<{ school: CalculatedSchool; station: Station } | null>(null
 const showScope = ref(false)
 const schools = ref<RawSchool[]>([])
 const generatedAt = ref('')
+const isLoading = ref(true)
+const loadError = ref('')
 let rankingTimer = 0
 const sortOptions: { key: SortKey; label: string }[] = [
   { key: 'rank', label: '总校排' },
@@ -350,14 +352,26 @@ const refreshRankings = async () => {
   const response = await fetch('/api/network-ranking', { cache: 'no-store' })
   if (!response.ok) throw new Error(`HTTP ${response.status}`)
   const payload = await response.json() as { generatedAt: string; schools: RawSchool[] }
-  if (!Array.isArray(payload.schools) || payload.schools.length === 0) return
+  if (!Array.isArray(payload.schools) || payload.schools.length === 0) {
+    if (schools.value.length === 0) loadError.value = '暂未获取到网络赛排名'
+    return
+  }
   schools.value = payload.schools
   generatedAt.value = payload.generatedAt
+  loadError.value = ''
 }
 
 onMounted(() => {
   document.addEventListener('keydown', onKeydown)
-  const tick = () => { void refreshRankings().catch(() => {}) }
+  const tick = () => {
+    void refreshRankings()
+      .catch(() => {
+        if (schools.value.length === 0) loadError.value = '网络赛排名加载失败'
+      })
+      .finally(() => {
+        isLoading.value = false
+      })
+  }
   tick()
   rankingTimer = window.setInterval(tick, REFRESH_MS)
 })
@@ -427,7 +441,12 @@ onBeforeUnmount(() => {
       </section>
 
       <section class="table-card" aria-label="学校名额列表">
-        <div class="table-scroll">
+        <div v-if="isLoading && schools.length === 0" class="table-state" role="status" aria-live="polite">
+          <span class="spinner" aria-hidden="true"></span>
+          <span>正在获取网络赛排名</span>
+        </div>
+        <p v-else-if="loadError && schools.length === 0" class="table-state" role="alert">{{ loadError }}</p>
+        <div v-else class="table-scroll">
           <table>
             <thead>
               <tr>
@@ -454,7 +473,7 @@ onBeforeUnmount(() => {
             </tbody>
           </table>
         </div>
-        <p v-if="search.trim() && filteredSchools.length === 0" class="empty-state">没有找到匹配的学校。</p>
+        <p v-if="search.trim() && filteredSchools.length === 0 && schools.length > 0" class="empty-state">没有找到匹配的学校。</p>
       </section>
 
       <footer class="cal-footer">
@@ -576,6 +595,30 @@ tbody tr:hover { background: var(--surface-hover); }
 .quota-button:hover, .quota-button:focus-visible { border-color: var(--focus); background: var(--surface-hover); }
 .quota-button.muted { color: var(--cal-muted); border-color: var(--cal-line); background: transparent; }
 .empty-state { margin: 0; padding: 48px; color: var(--cal-muted); text-align: center; }
+.table-state {
+  min-height: 280px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 12px;
+  margin: 0;
+  color: var(--cal-muted);
+  font-weight: 700;
+}
+.spinner {
+  width: 26px;
+  height: 26px;
+  border: 3px solid var(--cal-line);
+  border-top-color: var(--cal-accent);
+  border-radius: 999px;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .spinner { animation: none; }
+}
 .cal-footer { display: grid; gap: 4px; padding: 14px 2px; color: var(--cal-muted); font-size: 12px; line-height: 1.6; }
 .cal-footer p { margin: 0; }
 .reason-backdrop { position: fixed; z-index: 20; inset: 0; display: grid; place-items: center; overflow: hidden; overscroll-behavior: none; padding: 20px; background: rgba(0,0,0,.48); backdrop-filter: blur(8px); }
