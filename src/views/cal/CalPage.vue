@@ -10,6 +10,7 @@ type RawSchool = (typeof data.schools)[number]
 type SchoolFlags = {
   worldFinalist: boolean
   host: boolean
+  host50: boolean
   setter: boolean
   xianInvitation: boolean
   wuhanInvitation: boolean
@@ -43,9 +44,14 @@ const sortOptions: { key: SortKey; label: string }[] = [
 ]
 
 const worldFinalists = new Set(data.meta.specialSchools.worldFinalists)
-// 承办高校奖励按第 51 届 EC 全部区域赛承办高校计算；香港站不展示名额列，
-// 但香港大学作为香港站承办高校，仍应在其余七站的承办奖励中计入。
+// 第 51 届承办奖励按全部 EC 区域赛承办高校计算；香港站不展示名额列，
+// 但香港大学作为第 51 届香港站承办高校，仍计入其余七站。
+// 南京、上海额外奖励第 50 届区域赛/ECF 承办高校：香港科技大学、杭州师范大学、浙江大学等。
 const stationHosts = new Set([...Object.values(data.meta.specialSchools.stationHosts), '香港大学'])
+const stationHosts50 = new Set([
+  ...Object.values(data.meta.specialSchools.stationHosts50),
+  ...data.meta.specialSchools.ecfHosts50,
+])
 const networkSetters = new Set(data.meta.specialSchools.networkSetter.split('、'))
 const xianInvitationSchools = new Set(data.meta.invitationSchools.xianTop100)
 const wuhanInvitationSchools = new Set(data.meta.invitationSchools.wuhanTop60)
@@ -55,18 +61,31 @@ const shanghaiHost = data.meta.specialSchools.stationHosts.shanghai
 const flagsFor = (school: RawSchool): SchoolFlags => ({
   worldFinalist: worldFinalists.has(school.school),
   host: stationHosts.has(school.school),
+  host50: stationHosts50.has(school.school),
   setter: networkSetters.has(school.school),
   xianInvitation: xianInvitationSchools.has(school.school),
   wuhanInvitation: wuhanInvitationSchools.has(school.school),
   nanchangSilver: nanchangSilverSchools[school.school as keyof typeof nanchangSilverSchools] ?? 0,
 })
 
+const hostRewardApplies = (school: { school: string }, flags: Pick<SchoolFlags, 'host' | 'host50'>, key: StationKey) => {
+  if (key === 'shanghai' && school.school === shanghaiHost) return false
+  if (flags.host) return true
+  return Boolean(flags.host50 && (key === 'nanjing' || key === 'shanghai'))
+}
+
+const hostYearText = (flags: Pick<SchoolFlags, 'host' | 'host50'>) => {
+  if (flags.host && flags.host50) return '第 50、51 届'
+  if (flags.host50) return '第 50 届'
+  return '第 51 届'
+}
+
 const calculateSchool = (school: RawSchool): CalculatedSchool => {
   const flags = flagsFor(school)
   const rank = school.rank
   const rawAllocations = stationKeys.reduce((result, key) => {
     let amount = 0
-    const hostReward = flags.host && !(key === 'shanghai' && school.school === shanghaiHost) ? 2 : 0
+    const hostReward = hostRewardApplies(school, flags, key) ? 2 : 0
     const contributionReward = (flags.worldFinalist ? 1 : 0) + hostReward + (flags.setter ? 2 : 0)
 
     if (key === 'xian') {
@@ -218,8 +237,8 @@ const plainLine = (text: string, matched = false): RuleReason => ({ matched, tex
 const reasonsFor = (school: CalculatedSchool, station: Station) => {
   const key = station.key
   const rank = school.rank
-  const hostRewardApplies = school.flags.host && !(key === 'shanghai' && school.school === shanghaiHost)
-  const contributionReward = (school.flags.worldFinalist ? 1 : 0) + (hostRewardApplies ? 2 : 0) + (school.flags.setter ? 2 : 0)
+  const hostApplies = hostRewardApplies(school, school.flags, key)
+  const contributionReward = (school.flags.worldFinalist ? 1 : 0) + (hostApplies ? 2 : 0) + (school.flags.setter ? 2 : 0)
   const rawCap = school.rawAllocations[key]
   const capDescription = rawCap > school.cap
     ? `原始累计 ${rawCap} 个，超过高校上限 ${school.cap} 个，实际计入 ${school.allocations[key]} 个。`
@@ -272,7 +291,7 @@ const reasonsFor = (school: CalculatedSchool, station: Station) => {
       ruleLine('第 1 条（网络预选赛）', rank <= 160, `校排 ${rank} ≤ 160，获得 1 个名额。`, `校排 ${rank} 超过 160，未获得该条名额。`),
       ruleLine('第 2 条（前 500 队伍）', school.top500Teams >= 3, `前 500 队中本校有 ${school.top500Teams} 队，达到 ≥ 3 队，获得 1 个名额。`, `前 500 队中本校有 ${school.top500Teams} 队，未达到 ≥ 3 队。`),
       ruleLine('第 3 条（近届 WF）', school.flags.worldFinalist, '属于近届世界总决赛中国高校，获得 1 个名额。', '不属于近届世界总决赛中国高校名单。'),
-      ruleLine('第 4 条（承办/命题高校）', school.flags.host || school.flags.setter, `${school.flags.host ? '承办高校 +2' : ''}${school.flags.host && school.flags.setter ? '、' : ''}${school.flags.setter ? '命题高校 +2' : ''}。`, '不属于已整理的承办或命题高校名单。'),
+      ruleLine('第 4 条（承办/命题高校）', hostApplies || school.flags.setter, `${hostApplies ? `${hostYearText(school.flags)}承办高校 +2` : ''}${hostApplies && school.flags.setter ? '、' : ''}${school.flags.setter ? '命题高校 +2' : ''}。`, '不属于第 50、51 届承办或命题高校名单。'),
       notCountedLine('第 5 条（非中国大陆高校）', '该类名额需要申请，当前不作地域归属推测。'),
       notCountedLine('第 6 条（江苏省赛/南航活动贡献）', '需要申请或由组委会分配，当前不作推测。'),
       notCountedLine('剩余名额', '规则要求赛后开放申请，当前不作推测。'),
@@ -295,11 +314,11 @@ const reasonsFor = (school: CalculatedSchool, station: Station) => {
 
   if (key === 'shanghai') {
     const network = rank <= 50 ? 2 : rank <= 200 ? 1 : 0
-    const hostExcluded = school.school === shanghaiHost && school.flags.host
+    const hostExcluded = school.school === shanghaiHost
     return [
       ruleLine('正式名额 1(1)/1(2)（网络预选赛）', network > 0, network === 2 ? `校排 ${rank} ≤ 50，获得 2 个名额。` : `校排 ${rank} 位于 51–200，获得 1 个名额。`, `校排 ${rank} 超过 200，未获得网络赛名额。`),
       ruleLine('奖励和外卡 2(1)（近届 WF）', school.flags.worldFinalist, '参加近三届世界总决赛，获得 1 个奖励名额。', '不属于近三届世界总决赛高校名单。'),
-      ruleLine('奖励和外卡 2(2)（承办/命题）', school.flags.setter || (school.flags.host && !hostExcluded), hostExcluded ? '本校为上海站承办高校，但 PDF 明确“除本校外”，不计承办奖励。' : `${school.flags.host ? '承办高校 +2' : ''}${school.flags.host && school.flags.setter ? '、' : ''}${school.flags.setter ? '命题高校 +2' : ''}。`, hostExcluded ? '本校承办奖励被 PDF 明确排除。' : '不属于已整理的承办或命题高校名单。'),
+      ruleLine('奖励和外卡 2(2)（承办/命题）', school.flags.setter || hostApplies, hostExcluded ? '本校为上海站承办高校，但 PDF 明确“除本校外”，不计承办奖励。' : `${hostApplies ? `${hostYearText(school.flags)}承办高校 +2` : ''}${hostApplies && school.flags.setter ? '、' : ''}${school.flags.setter ? '命题高校 +2' : ''}。`, hostExcluded ? '本校承办奖励被 PDF 明确排除。' : '不属于第 50、51 届承办或命题高校名单。'),
       notCountedLine('奖励和外卡 2(3)', '非中国大陆高校外卡需要申请，当前不作地域归属推测。'),
       notCountedLine('奖励和外卡 2(4)', '上海市赛帮助外卡需要申请，当前不作推测。'),
       notCountedLine('奖励和外卡 2(5)', '剩余名额作为外卡并由高校申请、组委会审核，当前不作推测。'),
@@ -478,7 +497,7 @@ onBeforeUnmount(() => {
         <h2>名额计算说明</h2>
         <div class="scope-copy">
           <p>计算范围为西安、成都、武汉、南京、沈阳、上海、南昌七个 EC 赛站，不含香港站。网络赛校排名按两场 Pintia 公开榜单合并：每场只取每校最好队伍作为该校成绩并排名，再将两场校排名归并，同名次时第一场高校排在第二场之前，最后去掉重复高校。前 500 队伍数取两场中该校的较大值。页面按 Pintia 公开榜单快照计算，数据更新截止到该时刻。</p>
-          <p>邀请赛只采用规则正文明确引用的三个榜单：西安邀请赛正式队伍校排前 100、武汉邀请赛正式队伍校排前 60、南昌邀请赛银牌及以上。两场 ICPC 网络赛出题组分别为北京大学、杭州电子科技大学；近届 WF 高校、各站承办高校（含香港站承办高校香港大学）等 PDF 明确条款一并计入。七份赛站规则 PDF 只写“命题高校”类别，没有公开逐站完整名单，因此不按推测增加其他学校。</p>
+          <p>邀请赛只采用规则正文明确引用的三个榜单：西安邀请赛正式队伍校排前 100、武汉邀请赛正式队伍校排前 60、南昌邀请赛银牌及以上。两场 ICPC 网络赛出题组分别为北京大学、杭州电子科技大学；近届 WF 高校、第 51 届各站承办高校（含香港大学）等 PDF 明确条款一并计入。南京、上海还奖励第 50 届区域赛和 ECF 承办高校，香港科技大学、杭州师范大学、浙江大学按此计入这两站。七份赛站规则 PDF 只写“命题高校”类别，没有公开逐站完整名单，因此不按推测增加其他学校。</p>
           <h3>未计入的申请或审核名额</h3>
           <ul>
             <li>西安：专属省赛/区域高校推荐、支持激励及后续空余名额。</li>
@@ -489,7 +508,7 @@ onBeforeUnmount(() => {
             <li>上海：非大陆高校外卡、上海市赛帮助外卡、二轮外卡及打星队伍。</li>
             <li>南昌：支持与激励名额，以及规则 1–3 发放后的空余名额。</li>
           </ul>
-          <p>上述项目需要后续申请、组委会审核或按规则另行补发，因此不计入当前确定性名额。香港站自身名额不参与计算；香港大学作为香港站承办高校，其承办奖励已计入其他七站，其他香港高校仅按各规则明确条款计入。</p>
+          <p>上述项目需要后续申请、组委会审核或按规则另行补发，因此不计入当前确定性名额。香港站自身名额不参与计算；香港大学作为第 51 届香港站承办高校，其承办奖励已计入其他七站；第 50 届香港站承办高校香港科技大学，以及第 50 届 ECF 承办高校杭州师范大学、浙江大学，仅计入南京、上海。</p>
         </div>
       </section>
     </div>
