@@ -8,17 +8,6 @@ const ROUND1_ID = '2094677389171486720'
 const ROUND2_ID = '2097206296647036928'
 const TOP_TEAM_LIMIT = 500
 const LOLLIPOP = '9298cc1a3bcac2a456945faf693e3f26'
-export const NETWORK_RANKING_CACHE_TTL_MS = 30_000
-export const NETWORK_RANKING_CACHE_CONTROL = 'public, s-maxage=30, stale-while-revalidate=60'
-
-let snapshotCache = {
-  key: '',
-  expiresAt: 0,
-  payload: null,
-  inflight: null,
-}
-
-const snapshotCacheKey = (options = {}) => `${options.round1Id || ROUND1_ID}:${options.round2Id || ROUND2_ID}`
 
 const rankingUrl = (competitionId) => `https://pintia.cn/rankings/${competitionId}`
 const rankingApiUrl = (competitionId) => {
@@ -151,6 +140,17 @@ const buildSchools = (boards) => {
   })
 }
 
+const boardMeta = (board) => ({
+  name: board.name,
+  competitionId: board.competitionId,
+  url: rankingUrl(board.competitionId),
+  teams: board.rankings.length,
+  schools: schoolOrder(board.rankings).length,
+})
+
+const rankingNote = (schoolCount, generatedAt) =>
+  `校排名来自两场 ICPC 网络预选赛 Pintia 公开榜单快照，按归并规则合并去重；当前共 ${schoolCount} 所学校。数据更新截止到 ${generatedAt}。`
+
 const updateCalData = (data, boards, generatedAt) => {
   const schools = buildSchools(boards)
   const [round1, round2] = boards
@@ -161,86 +161,45 @@ const updateCalData = (data, boards, generatedAt) => {
   data.meta.pintiaRound2Url = rankingUrl(round2.competitionId)
   data.meta.networkRankings = {
     rule: '每场取每校最好队伍得到校排名，再按归并合并：同名次第一场在前，然后去掉重复高校。',
-    round1: {
-      name: round1.name,
-      competitionId: round1.competitionId,
-      url: rankingUrl(round1.competitionId),
-      teams: round1.rankings.length,
-      schools: schoolOrder(round1.rankings).length,
-    },
-    round2: {
-      name: round2.name,
-      competitionId: round2.competitionId,
-      url: rankingUrl(round2.competitionId),
-      teams: round2.rankings.length,
-      schools: schoolOrder(round2.rankings).length,
-    },
+    round1: boardMeta(round1),
+    round2: boardMeta(round2),
   }
-  data.meta.notes[0] = `校排名来自两场 ICPC 网络预选赛 Pintia 公开榜单快照，按归并规则合并去重；当前共 ${schools.length} 所学校。数据更新截止到 ${generatedAt}。`
+  if (!Array.isArray(data.meta.notes) || data.meta.notes.length === 0) {
+    data.meta.notes = [rankingNote(schools.length, generatedAt)]
+  } else {
+    data.meta.notes[0] = rankingNote(schools.length, generatedAt)
+  }
   return { data, schools }
-}
-
-const boardMeta = (board) => ({
-  name: board.name,
-  competitionId: board.competitionId,
-  url: rankingUrl(board.competitionId),
-  teams: board.rankings.length,
-  schools: schoolOrder(board.rankings).length,
-})
-
-export const fetchNetworkRankingSnapshot = async (options = {}) => {
-  const key = snapshotCacheKey(options)
-  const now = Date.now()
-  if (!options.force) {
-    if (snapshotCache.key === key && snapshotCache.payload && snapshotCache.expiresAt > now) {
-      return snapshotCache.payload
-    }
-    if (snapshotCache.key === key && snapshotCache.inflight) {
-      return snapshotCache.inflight
-    }
-  }
-
-  const inflight = (async () => {
-    const boards = await Promise.all([
-      fetchPublicRanking(options.round1Id || ROUND1_ID),
-      fetchPublicRanking(options.round2Id || ROUND2_ID),
-    ])
-    const payload = {
-      generatedAt: options.generatedAt || shanghaiStamp(),
-      schools: buildSchools(boards),
-      round1: boardMeta(boards[0]),
-      round2: boardMeta(boards[1]),
-    }
-    snapshotCache = {
-      key,
-      expiresAt: Date.now() + NETWORK_RANKING_CACHE_TTL_MS,
-      payload,
-      inflight: null,
-    }
-    return payload
-  })()
-
-  snapshotCache = { ...snapshotCache, key, inflight }
-
-  try {
-    return await inflight
-  } catch (error) {
-    if (snapshotCache.inflight === inflight) snapshotCache.inflight = null
-    throw error
-  }
 }
 
 export const updateNetworkRanking = async (options = {}) => {
   const root = options.root || resolve(dirname(fileURLToPath(import.meta.url)), '..')
   const dataPath = options.dataPath || resolve(root, 'src/modules/cal-data.json')
+  const current = JSON.parse(await readFile(dataPath, 'utf8'))
+  const preserved = {
+    specialSchools: current.meta?.specialSchools,
+    invitationSchools: current.meta?.invitationSchools,
+    invitationRankings: current.meta?.invitationRankings,
+    stations: current.meta?.stations,
+    algouxUrl: current.meta?.algouxUrl,
+    notes: current.meta?.notes?.slice(1) || [],
+  }
+  if (!preserved.specialSchools) {
+    throw new Error('cal-data.json 缺少 meta.specialSchools，拒绝覆盖')
+  }
   const boards = await Promise.all([
     fetchPublicRanking(options.round1Id || ROUND1_ID),
     fetchPublicRanking(options.round2Id || ROUND2_ID),
   ])
-  const current = JSON.parse(await readFile(dataPath, 'utf8'))
   const generatedAt = options.generatedAt || shanghaiStamp()
   const { data, schools } = updateCalData(current, boards, generatedAt)
-  await writeFile(dataPath, `${JSON.stringify(data)}\n`)
+  data.meta.specialSchools = preserved.specialSchools
+  data.meta.invitationSchools = preserved.invitationSchools
+  data.meta.invitationRankings = preserved.invitationRankings
+  data.meta.stations = preserved.stations
+  data.meta.algouxUrl = preserved.algouxUrl
+  data.meta.notes = [data.meta.notes[0], ...preserved.notes]
+  await writeFile(dataPath, `${JSON.stringify(data)}\n`, 'utf8')
   return {
     dataPath,
     generatedAt,
