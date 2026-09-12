@@ -44,8 +44,9 @@ const sortOptions: { key: SortKey; label: string }[] = [
   { key: 'total', label: '总名额' },
 ]
 const specialSchoolLists = [
-  { title: '晋级2025年世界总决赛的高校', schools: data.meta.specialSchools.worldFinalists2025 },
-  { title: '晋级2026年世界总决赛的高校', schools: data.meta.specialSchools.worldFinalists2026 },
+  { title: '晋级2024年世界总决赛的高校（第 48 届）', schools: data.meta.specialSchools.worldFinalists2024 },
+  { title: '晋级2025年世界总决赛的高校（第 49 届）', schools: data.meta.specialSchools.worldFinalists2025 },
+  { title: '晋级2026年世界总决赛的高校（第 50 届）', schools: data.meta.specialSchools.worldFinalists2026 },
   { title: '2026年亚洲区域赛EC承办高校', schools: data.meta.specialSchools.ecHosts2026 },
   { title: '2025年亚洲区域赛EC承办高校', schools: data.meta.specialSchools.ecHosts2025 },
 ]
@@ -540,10 +541,10 @@ onBeforeUnmount(() => {
         <h2>名额计算说明</h2>
         <div class="scope-copy">
           <p>计算范围为西安、成都、武汉、南京、沈阳、上海、南昌七个 EC 赛站，不含香港站。网络赛校排名按两场 Pintia 公开榜单合并：每场只取每校最好队伍作为该校成绩并排名，再将两场校排名归并，同名次时第一场高校排在第二场之前，最后去掉重复高校。前 500 队伍数取两场中该校的较大值。页面按 Pintia 公开榜单快照计算，数据更新截止到该时刻。</p>
-          <template v-for="group in specialSchoolLists" :key="group.title">
-            <h3>{{ group.title }}</h3>
-            <p>{{ group.schools.join('、') }}。</p>
-          </template>
+          <p v-for="group in specialSchoolLists" :key="group.title">
+            <strong>{{ group.title }}</strong>
+            {{ group.schools.join('、') }}。
+          </p>
         </div>
       </section>
     </div>
@@ -639,6 +640,7 @@ tbody tr:hover { background: var(--surface-hover); }
 .scope-copy p { margin: 0 0 12px; }
 .scope-copy p:last-child { margin-bottom: 0; }
 .scope-copy h3 { margin: 20px 0 8px; color: var(--cal-text); font-size: 14px; }
+.scope-copy strong { color: var(--cal-text); font-weight: 750; }
 .scope-copy ul { display: grid; gap: 7px; margin: 0 0 14px; padding-left: 20px; }
 .scope-copy li::marker { color: var(--cal-accent); }
 
