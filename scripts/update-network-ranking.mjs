@@ -8,6 +8,17 @@ const ROUND1_ID = '2094677389171486720'
 const ROUND2_ID = '2097206296647036928'
 const TOP_TEAM_LIMIT = 500
 const LOLLIPOP = '9298cc1a3bcac2a456945faf693e3f26'
+export const NETWORK_RANKING_CACHE_TTL_MS = 30_000
+export const NETWORK_RANKING_CACHE_CONTROL = 'public, s-maxage=30, stale-while-revalidate=60'
+
+let snapshotCache = {
+  key: '',
+  expiresAt: 0,
+  payload: null,
+  inflight: null,
+}
+
+const snapshotCacheKey = (options = {}) => `${options.round1Id || ROUND1_ID}:${options.round2Id || ROUND2_ID}`
 
 const rankingUrl = (competitionId) => `https://pintia.cn/rankings/${competitionId}`
 const rankingApiUrl = (competitionId) => {
@@ -178,17 +189,44 @@ const boardMeta = (board) => ({
 })
 
 export const fetchNetworkRankingSnapshot = async (options = {}) => {
-  const boards = await Promise.all([
-    fetchPublicRanking(options.round1Id || ROUND1_ID),
-    fetchPublicRanking(options.round2Id || ROUND2_ID),
-  ])
-  const generatedAt = options.generatedAt || shanghaiStamp()
-  const schools = buildSchools(boards)
-  return {
-    generatedAt,
-    schools,
-    round1: boardMeta(boards[0]),
-    round2: boardMeta(boards[1]),
+  const key = snapshotCacheKey(options)
+  const now = Date.now()
+  if (!options.force) {
+    if (snapshotCache.key === key && snapshotCache.payload && snapshotCache.expiresAt > now) {
+      return snapshotCache.payload
+    }
+    if (snapshotCache.key === key && snapshotCache.inflight) {
+      return snapshotCache.inflight
+    }
+  }
+
+  const inflight = (async () => {
+    const boards = await Promise.all([
+      fetchPublicRanking(options.round1Id || ROUND1_ID),
+      fetchPublicRanking(options.round2Id || ROUND2_ID),
+    ])
+    const payload = {
+      generatedAt: options.generatedAt || shanghaiStamp(),
+      schools: buildSchools(boards),
+      round1: boardMeta(boards[0]),
+      round2: boardMeta(boards[1]),
+    }
+    snapshotCache = {
+      key,
+      expiresAt: Date.now() + NETWORK_RANKING_CACHE_TTL_MS,
+      payload,
+      inflight: null,
+    }
+    return payload
+  })()
+
+  snapshotCache = { ...snapshotCache, key, inflight }
+
+  try {
+    return await inflight
+  } catch (error) {
+    if (snapshotCache.inflight === inflight) snapshotCache.inflight = null
+    throw error
   }
 }
 

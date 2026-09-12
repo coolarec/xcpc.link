@@ -349,7 +349,7 @@ const onKeydown = (event: KeyboardEvent) => {
 }
 
 const refreshRankings = async () => {
-  const response = await fetch('/api/network-ranking', { cache: 'no-store' })
+  const response = await fetch('/api/network-ranking')
   if (!response.ok) throw new Error(`HTTP ${response.status}`)
   const payload = await response.json() as { generatedAt: string; schools: RawSchool[] }
   if (!Array.isArray(payload.schools) || payload.schools.length === 0) {

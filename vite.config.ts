@@ -11,10 +11,10 @@ const networkRankingDevPlugin = (): Plugin => ({
         return
       }
       try {
-        const { fetchNetworkRankingSnapshot } = await import('./scripts/update-network-ranking.mjs')
+        const { fetchNetworkRankingSnapshot, NETWORK_RANKING_CACHE_CONTROL } = await import('./scripts/update-network-ranking.mjs')
         const payload = await fetchNetworkRankingSnapshot()
         res.statusCode = 200
-        res.setHeader('Cache-Control', 'no-store')
+        res.setHeader('Cache-Control', NETWORK_RANKING_CACHE_CONTROL)
         res.setHeader('Content-Type', 'application/json; charset=utf-8')
         res.end(JSON.stringify(payload))
       } catch (error) {
