@@ -29,9 +29,21 @@ type Station = (typeof data.meta.stations)[number] & { key: StationKey }
 const themeStore = useThemeStore()
 const stations = data.meta.stations as Station[]
 const stationKeys: StationKey[] = ['xian', 'chengdu', 'wuhan', 'nanjing', 'shenyang', 'shanghai', 'nanchang']
+type SortKey = 'rank' | 'round1Rank' | 'round2Rank' | 'total'
+const REFRESH_MS = 30_000
 const search = ref('')
+const sortKey = ref<SortKey>('total')
 const selected = ref<{ school: CalculatedSchool; station: Station } | null>(null)
 const showScope = ref(false)
+const schools = ref<RawSchool[]>([])
+const generatedAt = ref('')
+let rankingTimer = 0
+const sortOptions: { key: SortKey; label: string }[] = [
+  { key: 'rank', label: '总校排' },
+  { key: 'round1Rank', label: '网络赛 1' },
+  { key: 'round2Rank', label: '网络赛 2' },
+  { key: 'total', label: '总名额' },
+]
 
 const worldFinalists = new Set(data.meta.specialSchools.worldFinalists)
 // 承办高校奖励按第 51 届 EC 全部区域赛承办高校计算；香港站不展示名额列，
@@ -105,9 +117,18 @@ const calculateSchool = (school: RawSchool): CalculatedSchool => {
   return { ...school, flags, rawAllocations, allocations, total, cap }
 }
 
-const calculatedSchools = computed(() => data.schools
-  .map(calculateSchool)
-  .sort((a, b) => b.total - a.total || a.rank - b.rank))
+const rankValue = (rank: number | null | undefined) => rank ?? Number.POSITIVE_INFINITY
+
+const calculatedSchools = computed(() => {
+  const rankedSchools = schools.value.map(calculateSchool)
+  const key = sortKey.value
+  return rankedSchools.sort((a, b) => {
+    if (key === 'total') return b.total - a.total || a.rank - b.rank
+    if (key === 'rank') return a.rank - b.rank
+    if (key === 'round1Rank') return rankValue(a.round1Rank) - rankValue(b.round1Rank) || a.rank - b.rank
+    return rankValue(a.round2Rank) - rankValue(b.round2Rank) || a.rank - b.rank
+  })
+})
 
 const filteredSchools = computed(() => {
   const keyword = search.value.trim().toLowerCase()
@@ -307,6 +328,9 @@ const openReason = (school: CalculatedSchool, station: Station) => {
   selected.value = { school, station }
 }
 
+const rankPart = (rank: number | null | undefined) => (rank ? String(rank) : '—')
+const rankLabel = (school: RawSchool) => `#${school.rank}/${rankPart(school.round1Rank)}/${rankPart(school.round2Rank)}`
+
 const closeReason = () => {
   selected.value = null
 }
@@ -322,8 +346,25 @@ const onKeydown = (event: KeyboardEvent) => {
   }
 }
 
-onMounted(() => document.addEventListener('keydown', onKeydown))
-onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
+const refreshRankings = async () => {
+  const response = await fetch('/api/network-ranking', { cache: 'no-store' })
+  if (!response.ok) throw new Error(`HTTP ${response.status}`)
+  const payload = await response.json() as { generatedAt: string; schools: RawSchool[] }
+  if (!Array.isArray(payload.schools) || payload.schools.length === 0) return
+  schools.value = payload.schools
+  generatedAt.value = payload.generatedAt
+}
+
+onMounted(() => {
+  document.addEventListener('keydown', onKeydown)
+  const tick = () => { void refreshRankings().catch(() => {}) }
+  tick()
+  rankingTimer = window.setInterval(tick, REFRESH_MS)
+})
+onBeforeUnmount(() => {
+  document.removeEventListener('keydown', onKeydown)
+  window.clearInterval(rankingTimer)
+})
 </script>
 
 <template>
@@ -335,14 +376,15 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
             <ArrowLeft :size="16" /> 返回导航
           </RouterLink>
           <div class="cal-source-links">
-            <a :href="data.meta.pintiaUrl" target="_blank" rel="noopener noreferrer">网络赛榜单 <ExternalLink :size="14" /></a>
+            <a :href="data.meta.pintiaRound1Url || data.meta.pintiaUrl" target="_blank" rel="noopener noreferrer">第一场榜单 <ExternalLink :size="14" /></a>
+            <a :href="data.meta.pintiaRound2Url" target="_blank" rel="noopener noreferrer">第二场榜单 <ExternalLink :size="14" /></a>
             <a :href="data.meta.algouxUrl" target="_blank" rel="noopener noreferrer">邀请赛榜单 <ExternalLink :size="14" /></a>
           </div>
         </div>
         <div class="cal-title-row">
           <div>
             <h1>ICPC 区域赛名额计算</h1>
-            <p class="cal-subtitle">按当前网络预选赛校排名，叠加七个赛站公开规则中的确定性名额。</p>
+            <p class="cal-subtitle">按两场网络预选赛合并校排名，叠加七个赛站公开规则中的确定性名额。</p>
             <button class="scope-trigger" type="button" @click="showScope = true">查看计算口径说明</button>
           </div>
           <div class="cal-summary">
@@ -361,7 +403,18 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
             <Search :size="17" aria-hidden="true" />
             <input v-model="search" type="search" placeholder="搜索学校名称" />
           </label>
-          <span class="cal-hint">点击任意赛站名额查看各条规则说明</span>
+          <div class="cal-sort" role="group" aria-label="排序">
+            <span class="sort-label">排序顺序</span>
+            <button
+              v-for="option in sortOptions"
+              :key="option.key"
+              type="button"
+              :class="['sort-button', { active: sortKey === option.key }]"
+              @click="sortKey = option.key"
+            >
+              {{ option.label }}
+            </button>
+          </div>
         </div>
       </header>
 
@@ -378,7 +431,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
           <table>
             <thead>
               <tr>
-                <th class="school-head">网络赛校排 / 学校</th>
+                <th class="school-head">#总校排/1/2 - 学校</th>
                 <th class="total-head">总名额</th>
                 <th v-for="station in stations" :key="station.key" class="station-head">
                   {{ station.name }}
@@ -388,7 +441,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
             <tbody>
               <tr v-for="school in filteredSchools" :key="school.school">
                 <td class="school-cell">
-                  <span class="school-index">#{{ school.rank }}</span>
+                  <span class="school-index">{{ rankLabel(school) }}</span>
                   <span class="school-name">{{ school.school }}</span>
                 </td>
                 <td class="total-cell">{{ school.total }}</td>
@@ -401,11 +454,11 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
             </tbody>
           </table>
         </div>
-        <p v-if="filteredSchools.length === 0" class="empty-state">没有找到匹配的学校。</p>
+        <p v-if="search.trim() && filteredSchools.length === 0" class="empty-state">没有找到匹配的学校。</p>
       </section>
 
       <footer class="cal-footer">
-        <p>数据快照：{{ data.meta.generatedAt }} · 学校排名来自 Pintia，邀请赛仅取规则正文明确引用的西安、武汉、南昌榜单。</p>
+        <p v-if="generatedAt">数据实时：{{ generatedAt }} · 校排名按两场网络赛归并，每 30 秒从 Pintia 刷新。</p>
         <p v-for="note in data.meta.notes.slice(2)" :key="note">{{ note }}</p>
       </footer>
     </div>
@@ -440,7 +493,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
         <p class="dialog-eyebrow">计算口径</p>
         <h2>名额计算说明</h2>
         <div class="scope-copy">
-          <p>计算范围为西安、成都、武汉、南京、沈阳、上海、南昌七个 EC 赛站，不含香港站。学校排名与前 500 队伍数来自 Pintia 当前榜单快照。</p>
+          <p>计算范围为西安、成都、武汉、南京、沈阳、上海、南昌七个 EC 赛站，不含香港站。网络赛校排名按两场 Pintia 公开榜单合并：每场只取每校最好队伍作为该校成绩并排名，再将两场校排名归并，同名次时第一场高校排在第二场之前，最后去掉重复高校。前 500 队伍数取两场中该校的较大值。第二场如仍在进行，排名会随榜单变化。</p>
           <p>邀请赛只采用规则正文明确引用的三个榜单：西安邀请赛正式队伍校排前 100、武汉邀请赛正式队伍校排前 60、南昌邀请赛银牌及以上。两场 ICPC 网络赛出题组分别为北京大学、杭州电子科技大学；近届 WF 高校、各站承办高校（含香港站承办高校香港大学）等 PDF 明确条款一并计入。七份赛站规则 PDF 只写“命题高校”类别，没有公开逐站完整名单，因此不按推测增加其他学校。</p>
           <h3>未计入的申请或审核名额</h3>
           <ul>
@@ -495,6 +548,11 @@ h1 { margin: 0; font-family: Sora, sans-serif; font-size: clamp(34px, 5vw, 62px)
 .cal-search { width: min(420px, 100%); display: flex; align-items: center; gap: 9px; padding: 11px 14px; border: 1px solid var(--cal-line); border-radius: 13px; background: var(--cal-surface-solid); color: var(--cal-muted); }
 .cal-search input { width: 100%; border: 0; outline: 0; color: var(--cal-text); background: transparent; font: inherit; }
 .cal-hint { color: var(--cal-muted); font-size: 13px; }
+.cal-sort { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; }
+.sort-label { color: var(--cal-muted); font-size: 12px; font-weight: 650; }
+.sort-button { padding: 8px 11px; border: 1px solid var(--cal-line); border-radius: 999px; color: var(--cal-muted); background: var(--cal-surface-solid); font: inherit; font-size: 12px; font-weight: 650; cursor: pointer; }
+.sort-button:hover { color: var(--focus); border-color: var(--focus); background: var(--surface-hover); }
+.sort-button.active { color: var(--cal-text); border-color: var(--cal-text); background: var(--surface-hover); }
 .rules-strip { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 10px; }
 .rule-chip { padding: 8px 11px; border: 1px solid var(--cal-line); border-radius: 999px; color: var(--cal-muted); background: var(--cal-surface); font-size: 12px; font-weight: 650; }
 .rule-chip:hover { color: var(--focus); border-color: var(--focus); background: var(--surface-hover); }
@@ -507,8 +565,8 @@ tbody tr:last-child td { border-bottom: 0; }
 tbody tr:hover { background: var(--surface-hover); }
 .school-head, .school-cell { position: sticky; left: 0; z-index: 2; text-align: left; }
 .school-head { background: var(--cal-surface-solid); }
-.school-cell { min-width: 230px; color: var(--cal-text); background: var(--cal-surface-solid); font-weight: 650; }
-.school-index { display: inline-block; width: 34px; color: var(--cal-muted); font-size: 11px; font-variant-numeric: tabular-nums; vertical-align: top; }
+.school-cell { min-width: 250px; color: var(--cal-text); background: var(--cal-surface-solid); font-weight: 650; }
+.school-index { display: inline-block; min-width: 72px; margin-right: 6px; color: var(--cal-muted); font-size: 11px; font-variant-numeric: tabular-nums; vertical-align: top; }
 .school-name { overflow-wrap: anywhere; }
 .total-head, .total-cell { border-left: 1px solid var(--cal-line); }
 .total-head { color: var(--cal-accent); }
@@ -607,16 +665,17 @@ tbody tr:hover { background: var(--surface-hover); }
   .cal-summary strong { font-size: 23px; }
   .cal-toolbar { align-items: stretch; flex-direction: column; gap: 10px; }
   .cal-search { width: 100%; box-sizing: border-box; }
-  .cal-hint { display: none; }
+  .cal-sort { width: 100%; }
+  .sort-button { flex: 1 1 0; min-width: 0; }
   .rules-strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin-bottom: 8px; }
   .rule-chip { justify-content: center; min-width: 0; padding: 7px 4px; font-size: 11px; }
   .table-card { border-radius: 14px; }
   .table-scroll { -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
   table { min-width: 580px; }
   th, td { padding: 7px 4px; }
-  .school-head { width: 124px; white-space: normal; line-height: 1.35; }
-  .school-cell { width: 124px; min-width: 124px; max-width: 140px; white-space: normal; line-height: 1.35; }
-  .school-index { display: block; width: auto; margin-bottom: 2px; }
+  .school-head { width: 136px; white-space: normal; line-height: 1.35; }
+  .school-cell { width: 136px; min-width: 136px; max-width: 156px; white-space: normal; line-height: 1.35; }
+  .school-index { display: block; min-width: 0; margin: 0 0 2px; }
   .total-head, .total-cell { width: 46px; }
   .station-head { min-width: 52px; }
   .quota-button { min-width: 28px; padding: 4px 4px; }
@@ -636,8 +695,8 @@ tbody tr:hover { background: var(--surface-hover); }
   .rules-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .rule-chip { justify-content: center; min-width: 0; }
   table { min-width: 550px; }
-  .school-head { width: 112px; }
-  .school-cell { width: 112px; min-width: 112px; max-width: 122px; }
+  .school-head { width: 124px; }
+  .school-cell { width: 124px; min-width: 124px; max-width: 138px; }
   .total-head, .total-cell { width: 42px; }
   .station-head { min-width: 48px; }
   .scope-copy { font-size: 12px; }
