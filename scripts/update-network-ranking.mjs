@@ -176,7 +176,7 @@ const updateCalData = (data, boards, generatedAt) => {
       schools: schoolOrder(round2.rankings).length,
     },
   }
-  data.meta.notes[0] = `校排名来自两场 ICPC 网络预选赛 Pintia 公开榜单快照，按归并规则合并去重；当前共 ${schools.length} 所学校。第二场如仍在进行，排名会随榜单变化。`
+  data.meta.notes[0] = `校排名来自两场 ICPC 网络预选赛 Pintia 公开榜单快照，按归并规则合并去重；当前共 ${schools.length} 所学校。数据更新截止到 ${generatedAt}。`
   return { data, schools }
 }
 

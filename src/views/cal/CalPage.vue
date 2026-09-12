@@ -30,16 +30,11 @@ const themeStore = useThemeStore()
 const stations = data.meta.stations as Station[]
 const stationKeys: StationKey[] = ['xian', 'chengdu', 'wuhan', 'nanjing', 'shenyang', 'shanghai', 'nanchang']
 type SortKey = 'rank' | 'round1Rank' | 'round2Rank' | 'total'
-const REFRESH_MS = 30_000
 const search = ref('')
 const sortKey = ref<SortKey>('total')
 const selected = ref<{ school: CalculatedSchool; station: Station } | null>(null)
 const showScope = ref(false)
-const schools = ref<RawSchool[]>([])
-const generatedAt = ref('')
-const isLoading = ref(true)
-const loadError = ref('')
-let rankingTimer = 0
+const schools = data.schools
 const sortOptions: { key: SortKey; label: string }[] = [
   { key: 'rank', label: '总校排' },
   { key: 'round1Rank', label: '网络赛 1' },
@@ -122,7 +117,7 @@ const calculateSchool = (school: RawSchool): CalculatedSchool => {
 const rankValue = (rank: number | null | undefined) => rank ?? Number.POSITIVE_INFINITY
 
 const calculatedSchools = computed(() => {
-  const rankedSchools = schools.value.map(calculateSchool)
+  const rankedSchools = schools.map(calculateSchool)
   const key = sortKey.value
   return rankedSchools.sort((a, b) => {
     if (key === 'total') return b.total - a.total || a.rank - b.rank
@@ -348,36 +343,11 @@ const onKeydown = (event: KeyboardEvent) => {
   }
 }
 
-const refreshRankings = async () => {
-  const response = await fetch('/api/network-ranking')
-  if (!response.ok) throw new Error(`HTTP ${response.status}`)
-  const payload = await response.json() as { generatedAt: string; schools: RawSchool[] }
-  if (!Array.isArray(payload.schools) || payload.schools.length === 0) {
-    if (schools.value.length === 0) loadError.value = '暂未获取到网络赛排名'
-    return
-  }
-  schools.value = payload.schools
-  generatedAt.value = payload.generatedAt
-  loadError.value = ''
-}
-
 onMounted(() => {
   document.addEventListener('keydown', onKeydown)
-  const tick = () => {
-    void refreshRankings()
-      .catch(() => {
-        if (schools.value.length === 0) loadError.value = '网络赛排名加载失败'
-      })
-      .finally(() => {
-        isLoading.value = false
-      })
-  }
-  tick()
-  rankingTimer = window.setInterval(tick, REFRESH_MS)
 })
 onBeforeUnmount(() => {
   document.removeEventListener('keydown', onKeydown)
-  window.clearInterval(rankingTimer)
 })
 </script>
 
@@ -398,6 +368,7 @@ onBeforeUnmount(() => {
         <div class="cal-title-row">
           <div>
             <h1>ICPC 区域赛名额计算</h1>
+            <p class="cal-cutoff">数据更新截止到 {{ data.meta.generatedAt }}</p>
             <p class="cal-subtitle">按两场网络预选赛合并校排名，叠加七个赛站公开规则中的确定性名额。</p>
             <button class="scope-trigger" type="button" @click="showScope = true">查看计算口径说明</button>
           </div>
@@ -441,12 +412,7 @@ onBeforeUnmount(() => {
       </section>
 
       <section class="table-card" aria-label="学校名额列表">
-        <div v-if="isLoading && schools.length === 0" class="table-state" role="status" aria-live="polite">
-          <span class="spinner" aria-hidden="true"></span>
-          <span>正在获取网络赛排名</span>
-        </div>
-        <p v-else-if="loadError && schools.length === 0" class="table-state" role="alert">{{ loadError }}</p>
-        <div v-else class="table-scroll">
+        <div class="table-scroll">
           <table>
             <thead>
               <tr>
@@ -473,11 +439,10 @@ onBeforeUnmount(() => {
             </tbody>
           </table>
         </div>
-        <p v-if="search.trim() && filteredSchools.length === 0 && schools.length > 0" class="empty-state">没有找到匹配的学校。</p>
+        <p v-if="search.trim() && filteredSchools.length === 0" class="empty-state">没有找到匹配的学校。</p>
       </section>
 
       <footer class="cal-footer">
-        <p v-if="generatedAt">数据实时：{{ generatedAt }} · 校排名按两场网络赛归并，每 30 秒从 Pintia 刷新。</p>
         <p v-for="note in data.meta.notes.slice(2)" :key="note">{{ note }}</p>
       </footer>
     </div>
@@ -512,7 +477,7 @@ onBeforeUnmount(() => {
         <p class="dialog-eyebrow">计算口径</p>
         <h2>名额计算说明</h2>
         <div class="scope-copy">
-          <p>计算范围为西安、成都、武汉、南京、沈阳、上海、南昌七个 EC 赛站，不含香港站。网络赛校排名按两场 Pintia 公开榜单合并：每场只取每校最好队伍作为该校成绩并排名，再将两场校排名归并，同名次时第一场高校排在第二场之前，最后去掉重复高校。前 500 队伍数取两场中该校的较大值。第二场如仍在进行，排名会随榜单变化。</p>
+          <p>计算范围为西安、成都、武汉、南京、沈阳、上海、南昌七个 EC 赛站，不含香港站。网络赛校排名按两场 Pintia 公开榜单合并：每场只取每校最好队伍作为该校成绩并排名，再将两场校排名归并，同名次时第一场高校排在第二场之前，最后去掉重复高校。前 500 队伍数取两场中该校的较大值。页面按 Pintia 公开榜单快照计算，数据更新截止到该时刻。</p>
           <p>邀请赛只采用规则正文明确引用的三个榜单：西安邀请赛正式队伍校排前 100、武汉邀请赛正式队伍校排前 60、南昌邀请赛银牌及以上。两场 ICPC 网络赛出题组分别为北京大学、杭州电子科技大学；近届 WF 高校、各站承办高校（含香港站承办高校香港大学）等 PDF 明确条款一并计入。七份赛站规则 PDF 只写“命题高校”类别，没有公开逐站完整名单，因此不按推测增加其他学校。</p>
           <h3>未计入的申请或审核名额</h3>
           <ul>
@@ -557,7 +522,8 @@ onBeforeUnmount(() => {
 .cal-source-links { display: flex; gap: 16px; }
 .cal-eyebrow, .dialog-eyebrow { margin: 0 0 8px; color: var(--cal-accent); font-size: 12px; font-weight: 750; letter-spacing: .12em; }
 h1 { margin: 0; font-family: Sora, sans-serif; font-size: clamp(34px, 5vw, 62px); line-height: 1; letter-spacing: -.05em; }
-.cal-subtitle { margin: 14px 0 0; color: var(--cal-muted); font-size: 15px; }
+.cal-cutoff { margin: 12px 0 0; color: var(--cal-text); font-size: 15px; font-weight: 750; }
+.cal-subtitle { margin: 8px 0 0; color: var(--cal-muted); font-size: 15px; }
 .scope-trigger { width: fit-content; margin-top: 9px; padding: 0; border: 0; color: var(--cal-muted); background: transparent; font: inherit; font-size: 13px; font-weight: 700; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; cursor: pointer; }
 .scope-trigger:hover { color: var(--cal-accent); }
 .cal-summary { display: flex; align-items: baseline; gap: 20px; min-width: 150px; padding: 16px 18px; border: 1px solid var(--cal-line); border-radius: 18px; background: var(--cal-surface); backdrop-filter: blur(14px); }
@@ -595,30 +561,6 @@ tbody tr:hover { background: var(--surface-hover); }
 .quota-button:hover, .quota-button:focus-visible { border-color: var(--focus); background: var(--surface-hover); }
 .quota-button.muted { color: var(--cal-muted); border-color: var(--cal-line); background: transparent; }
 .empty-state { margin: 0; padding: 48px; color: var(--cal-muted); text-align: center; }
-.table-state {
-  min-height: 280px;
-  display: grid;
-  place-items: center;
-  align-content: center;
-  gap: 12px;
-  margin: 0;
-  color: var(--cal-muted);
-  font-weight: 700;
-}
-.spinner {
-  width: 26px;
-  height: 26px;
-  border: 3px solid var(--cal-line);
-  border-top-color: var(--cal-accent);
-  border-radius: 999px;
-  animation: spin 0.8s linear infinite;
-}
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .spinner { animation: none; }
-}
 .cal-footer { display: grid; gap: 4px; padding: 14px 2px; color: var(--cal-muted); font-size: 12px; line-height: 1.6; }
 .cal-footer p { margin: 0; }
 .reason-backdrop { position: fixed; z-index: 20; inset: 0; display: grid; place-items: center; overflow: hidden; overscroll-behavior: none; padding: 20px; background: rgba(0,0,0,.48); backdrop-filter: blur(8px); }
@@ -702,7 +644,8 @@ tbody tr:hover { background: var(--surface-hover); }
   .cal-source-links { margin-left: auto; gap: 12px; }
   .cal-title-row { align-items: stretch; flex-direction: column; gap: 16px; }
   h1 { max-width: 100%; font-size: clamp(30px, 9vw, 42px); line-height: 1.08; letter-spacing: -.045em; }
-  .cal-subtitle { margin-top: 11px; font-size: 14px; line-height: 1.55; }
+  .cal-cutoff { margin-top: 10px; font-size: 14px; }
+  .cal-subtitle { margin-top: 8px; font-size: 14px; line-height: 1.55; }
   .scope-trigger { margin-top: 8px; font-size: 12px; }
   .cal-summary { width: 100%; justify-content: space-between; min-width: 0; padding: 13px 15px; }
   .cal-summary strong { font-size: 23px; }
