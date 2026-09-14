@@ -17,8 +17,12 @@ const parseDate = (isoDate: string) => {
 
 const getEventDate = (row: SeasonScheduleRow) => row.endDate ?? row.startDate
 const formatEventDate = (row: SeasonScheduleRow) => {
-  const date = parseDate(getEventDate(row))
-  return `${date.getMonth() + 1}月${date.getDate()}日`
+  const start = parseDate(row.startDate)
+  const startText = `${start.getMonth() + 1}月${start.getDate()}日`
+  if (!row.endDate || row.endDate === row.startDate) return startText
+  const end = parseDate(row.endDate)
+  const endText = `${end.getMonth() + 1}月${end.getDate()}日`
+  return `${startText}–${endText}`
 }
 
 const monthGroups = computed(() => {
