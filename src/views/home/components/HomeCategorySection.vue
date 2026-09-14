@@ -100,6 +100,9 @@ const forwardShowTooltip = (link: SiteLink, event: MouseEvent | FocusEvent): voi
 <style scoped>
 .category-section {
   overflow: hidden;
+  /* 目录很长时跳过视口外分类的布局和绘制，滚动接近时再渲染。 */
+  content-visibility: auto;
+  contain-intrinsic-size: 0 420px;
   scroll-margin-top: 18px;
   border: 1px solid var(--line);
   border-radius: 18px;

@@ -2,14 +2,22 @@
 <html lang="zh-CN">
 
 <head>
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VDDP0FSE20"></script>
   <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
-
-    gtag('config', 'G-VDDP0FSE20');
+    // 统计不参与首屏绘制，待页面空闲后再加载，避免争抢关键请求。
+    window.addEventListener('load', function () {
+      var loadAnalytics = function () {
+        var script = document.createElement('script');
+        script.async = true;
+        script.src = 'https://www.googletagmanager.com/gtag/js?id=G-VDDP0FSE20';
+        document.head.appendChild(script);
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = function () { window.dataLayer.push(arguments); };
+        window.gtag('js', new Date());
+        window.gtag('config', 'G-VDDP0FSE20');
+      };
+      if ('requestIdleCallback' in window) window.requestIdleCallback(loadAnalytics);
+      else setTimeout(loadAnalytics, 2000);
+    }, { once: true });
   </script>
   <meta charset="UTF-8" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />

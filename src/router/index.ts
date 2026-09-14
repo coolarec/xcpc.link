@@ -1,10 +1,12 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
+import HomePage from '../views/home/HomePage.vue'
 
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
     name: 'home',
-    component: () => import('../views/home/HomePage.vue'),
+    // 首页是默认入口。直接纳入主入口，避免首屏挂载后再等待一个懒加载 chunk。
+    component: HomePage,
   },
   {
     path: '/quota',
