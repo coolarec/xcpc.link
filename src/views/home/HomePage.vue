@@ -31,6 +31,7 @@ interface LiteTooltip {
 const linkColumnCount = ref(6)
 const expandedLinkUrl = ref<string | null>(null)
 const highlightedSearchTargetId = ref<string | null>(null)
+const migrationNoticeStorageKey = 'xcpc-link-migration-notice-dismissed'
 const showMigrationNotice = ref(true)
 const tooltip = ref<LiteTooltip>({
   visible: false,
@@ -122,6 +123,12 @@ const updateLinkColumnCount = () => {
 }
 
 onMounted(async () => {
+  // 不要在每次访问时用全屏弹窗阻断首页；仅首次看到公告，确认后持久化。
+  try {
+    showMigrationNotice.value = localStorage.getItem(migrationNoticeStorageKey) !== '1'
+  } catch {
+    showMigrationNotice.value = true
+  }
   updateLinkColumnCount()
   window.addEventListener('resize', updateLinkColumnCount)
   window.addEventListener('scroll', hideTooltip, { passive: true })
@@ -187,6 +194,15 @@ const handleSearchSelect = (item: HomeSearchItem) => {
 const handleFloatingAction = (id: string) => {
   if (id === 'top') window.scrollTo({ top: 0, behavior: 'smooth' })
 }
+
+const confirmMigrationNotice = () => {
+  showMigrationNotice.value = false
+  try {
+    localStorage.setItem(migrationNoticeStorageKey, '1')
+  } catch {
+    // 隐私模式或禁用存储时，仅本次访问关闭公告。
+  }
+}
 </script>
 
 <template>
@@ -244,7 +260,7 @@ const handleFloatingAction = (id: string) => {
       :y="tooltip.y"
     />
 
-    <SiteMigrationNotice v-if="showMigrationNotice" @confirm="showMigrationNotice = false" />
+    <SiteMigrationNotice v-if="showMigrationNotice" @confirm="confirmMigrationNotice" />
 
     <FloatingActionMenu :visible="true" @action="handleFloatingAction" />
   </div>
