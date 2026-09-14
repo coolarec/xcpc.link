@@ -36,6 +36,9 @@ const search = ref('')
 const sortKey = ref<SortKey>('total')
 const selected = ref<{ school: CalculatedSchool; station: Station } | null>(null)
 const showScope = ref(false)
+const rankingTable = ref<HTMLTableElement | null>(null)
+let headerFrame = 0
+let tableObserver: ResizeObserver | undefined
 const schools = data.schools
 const sortOptions: { key: SortKey; label: string }[] = [
   { key: 'rank', label: '总校排' },
@@ -407,11 +410,34 @@ const onKeydown = (event: KeyboardEvent) => {
   }
 }
 
+const updateFrozenHeader = () => {
+  headerFrame = 0
+  const table = rankingTable.value
+  if (!table?.tHead) return
+  const bounds = table.getBoundingClientRect()
+  const headerHeight = table.tHead.offsetHeight
+  const offset = Math.max(0, Math.min(-bounds.top, bounds.height - headerHeight))
+  table.style.setProperty('--header-offset', `${offset}px`)
+}
+
+const scheduleFrozenHeader = () => {
+  if (!headerFrame) headerFrame = requestAnimationFrame(updateFrozenHeader)
+}
+
 onMounted(() => {
   document.addEventListener('keydown', onKeydown)
+  window.addEventListener('scroll', scheduleFrozenHeader, { passive: true, capture: true })
+  window.addEventListener('resize', scheduleFrozenHeader)
+  tableObserver = new ResizeObserver(scheduleFrozenHeader)
+  if (rankingTable.value) tableObserver.observe(rankingTable.value)
+  updateFrozenHeader()
 })
 onBeforeUnmount(() => {
   document.removeEventListener('keydown', onKeydown)
+  window.removeEventListener('scroll', scheduleFrozenHeader, true)
+  window.removeEventListener('resize', scheduleFrozenHeader)
+  tableObserver?.disconnect()
+  cancelAnimationFrame(headerFrame)
 })
 </script>
 
@@ -476,7 +502,7 @@ onBeforeUnmount(() => {
 
       <section class="table-card" aria-label="学校名额列表">
         <div class="table-scroll">
-          <table>
+          <table ref="rankingTable">
             <thead>
               <tr>
                 <th class="school-head">#总校排/1/2 - 学校</th>
@@ -599,11 +625,12 @@ h1 { margin: 0; font-family: Sora, sans-serif; font-size: clamp(34px, 5vw, 62px)
 .table-scroll { overflow-x: auto; }
 table { width: 100%; min-width: 940px; border-collapse: collapse; font-size: 13px; }
 th { padding: 14px 10px; border-bottom: 1px solid var(--cal-line); color: var(--cal-muted); font-size: 11px; font-weight: 750; letter-spacing: .06em; white-space: nowrap; }
+thead th { position: relative; z-index: 3; transform: translateY(var(--header-offset, 0px)); background: var(--cal-surface-solid); box-shadow: inset 0 -1px var(--cal-line); }
 td { padding: 9px 10px; border-bottom: 1px solid var(--cal-line); text-align: center; }
 tbody tr:last-child td { border-bottom: 0; }
 tbody tr:hover { background: var(--surface-hover); }
 .school-head, .school-cell { position: sticky; left: 0; z-index: 2; text-align: left; }
-.school-head { background: var(--cal-surface-solid); }
+.school-head { z-index: 4; background: var(--cal-surface-solid); }
 .school-cell { min-width: 250px; color: var(--cal-text); background: var(--cal-surface-solid); font-weight: 650; }
 .school-index { display: inline-block; min-width: 72px; margin-right: 6px; color: var(--cal-muted); font-size: 11px; font-variant-numeric: tabular-nums; vertical-align: top; }
 .school-name { overflow-wrap: anywhere; }
