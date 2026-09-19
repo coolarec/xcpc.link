@@ -39,6 +39,10 @@ onMounted(() => {
   tableObserver = new ResizeObserver(scheduleFrozenHeader)
   if (rankingTable.value) tableObserver.observe(rankingTable.value)
   updateFrozenHeader()
+  if (!sessionStorage.getItem('ccpc-quota-disclaimer-seen')) {
+    openDisclaimer()
+    sessionStorage.setItem('ccpc-quota-disclaimer-seen', '1')
+  }
 })
 onBeforeUnmount(() => {
   window.removeEventListener('scroll', scheduleFrozenHeader, true)
@@ -50,6 +54,7 @@ const onlyAllocated = ref(false)
 const detail = ref<Detail | null>(null)
 const dialog = ref<HTMLDialogElement | null>(null)
 const showRules = ref(false)
+const showDisclaimer = ref(false)
 const preliminaryTotal = allocation.firstRound + allocation.secondRound
 const countedTotal = preliminaryTotal + allocation.finalReward + allocation.hostReward
 const hostSchoolCount = new Set(hostRewards.map((reward) => reward.school)).size
@@ -78,12 +83,21 @@ const detailTitle = computed(() => detail.value?.kind === 'preliminary' ? '预�
 async function openDetail(school: QuotaSchool, kind: Detail['kind']) {
   detail.value = { school, kind }
   showRules.value = false
+  showDisclaimer.value = false
   await nextTick()
   dialog.value?.showModal()
 }
 async function openRules() {
   detail.value = null
   showRules.value = true
+  showDisclaimer.value = false
+  await nextTick()
+  dialog.value?.showModal()
+}
+async function openDisclaimer() {
+  detail.value = null
+  showRules.value = false
+  showDisclaimer.value = true
   await nextTick()
   dialog.value?.showModal()
 }
@@ -176,8 +190,14 @@ function onBackdropClick(event: MouseEvent) {
       </footer>
     </div>
 
-    <dialog ref="dialog" class="detail-dialog" :class="{ 'scope-dialog': showRules }" :aria-label="showRules ? '名额计算口径说明' : `${detail?.school.school} · ${detailTitle}`" @click="onBackdropClick">
+    <dialog ref="dialog" class="detail-dialog" :class="{ 'scope-dialog': showRules }" :aria-label="showRules ? '名额计算口径说明' : showDisclaimer ? '名额测算提示' : `${detail?.school.school} · ${detailTitle}`" @click="onBackdropClick">
       <button type="button" class="close-button" aria-label="关闭说明" autofocus @click="dialog?.close()"><X :size="20" /></button>
+      <template v-if="showDisclaimer">
+        <p class="eyebrow">名额测算提示</p>
+        <h2>结果仅供参考</h2>
+        <p class="disclaimer-copy">由于缺少省赛、邀请赛，网络赛出题组，高职组承办方等相关数据，本页名额分配和官方预计会有较大出入，仅作参考。</p>
+        <button class="disclaimer-button" type="button" @click="dialog?.close()">我知道了</button>
+      </template>
       <template v-if="showRules">
         <p class="eyebrow">计算口径 · 规则 v1</p>
         <h2>名额如何分配</h2>
@@ -283,6 +303,9 @@ h3 { margin: 0 0 8px; font-size: 14px; font-weight: 750; }
 .team-name small { display: block; margin-top: 3px; color: var(--cal-muted); font-size: 10px; }
 .awarded { font-weight: 750; }
 .detail-footnote { padding-top: 12px; border-top: 1px solid var(--cal-line); font-size: 11px; }
+.disclaimer-copy { margin: 16px 0 0; color: var(--cal-muted); font-size: 14px; line-height: 1.7; }
+.disclaimer-button { margin-top: 22px; padding: 10px 18px; border: 0; border-radius: 999px; color: var(--cal-bg); background: var(--cal-accent); font-size: 13px; font-weight: 750; }
+.disclaimer-button:hover, .disclaimer-button:focus-visible { filter: brightness(.92); }
 .dialog-source { display: inline-flex; align-items: center; gap: 7px; margin-top: 18px; color: var(--cal-accent); font-size: 13px; font-weight: 700; text-decoration: none; }
 @media (max-width: 900px) {
   .ccpc-rules { display: flex; flex-wrap: wrap; }
