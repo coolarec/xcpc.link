@@ -13,6 +13,11 @@ const routes: RouteRecordRaw[] = [
     name: 'quota',
     component: () => import('../views/cal/CalPage.vue'),
   },
+  {
+    path: '/quota-cc',
+    name: 'quota-cc',
+    component: () => import('../views/cal/CcpcQuotaPage.vue'),
+  },
 ]
 
 const router = createRouter({

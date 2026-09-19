@@ -126,7 +126,8 @@ onBeforeUnmount(() => {
       </div>
 
       <div class="header-tools">
-        <RouterLink class="cal-nav-link" to="/quota">名额计算</RouterLink>
+        <RouterLink class="cal-nav-link" to="/quota">ICPC 名额</RouterLink>
+        <RouterLink class="cal-nav-link" to="/quota-cc">CCPC 名额</RouterLink>
         <HomeSearch
           ref="searchRef"
           :items="props.searchItems"
