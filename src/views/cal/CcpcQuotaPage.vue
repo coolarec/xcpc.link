@@ -191,12 +191,12 @@ function onBackdropClick(event: MouseEvent) {
     </div>
 
     <dialog ref="dialog" class="detail-dialog" :class="{ 'scope-dialog': showRules }" :aria-label="showRules ? '名额计算口径说明' : showDisclaimer ? '名额测算提示' : `${detail?.school.school} · ${detailTitle}`" @click="onBackdropClick">
-      <button type="button" class="close-button" aria-label="关闭说明" autofocus @click="dialog?.close()"><X :size="20" /></button>
+      <button v-if="!showDisclaimer" type="button" class="close-button" aria-label="关闭说明" autofocus @click="dialog?.close()"><X :size="20" /></button>
       <template v-if="showDisclaimer">
         <p class="eyebrow">名额测算提示</p>
         <h2>结果仅供参考</h2>
-        <p class="disclaimer-copy">由于缺少省赛、邀请赛，网络赛出题组，高职组承办方等相关数据，本页名额分配和官方预计会有较大出入，仅作参考。</p>
-        <button class="disclaimer-button" type="button" @click="dialog?.close()">我知道了</button>
+        <p class="disclaimer-copy">由于缺少省赛、邀请赛，网络赛出题组，高职组承办方等相关数据，本页名额分配和官方预计<strong>会有较大出入</strong>，仅作参考。</p>
+        <div class="disclaimer-actions"><button class="disclaimer-button" type="button" autofocus @click="dialog?.close()">我知道了</button></div>
       </template>
       <template v-if="showRules">
         <p class="eyebrow">计算口径 · 规则 v1</p>
@@ -253,7 +253,7 @@ function onBackdropClick(event: MouseEvent) {
         </template>
         <p class="detail-footnote">当前计入预选赛、总决赛奖励与已知承办奖励；承办奖励尚有待补充项，省赛、邀请赛奖励和外卡暂不计入。{{ allocation.firstRoundTied || allocation.secondRoundTied ? '当前截线有并列，暂按源榜顺序测算。' : '' }}</p>
       </template>
-      <a class="dialog-source" :href="data.meta.rulesPdf" target="_blank" rel="noopener noreferrer"><FileText :size="16" /> 查看完整分配规则 <ArrowUpRight :size="14" /></a>
+      <a v-if="!showDisclaimer" class="dialog-source" :href="data.meta.rulesPdf" target="_blank" rel="noopener noreferrer"><FileText :size="16" /> 查看完整分配规则 <ArrowUpRight :size="14" /></a>
     </dialog>
   </main>
 </template>
@@ -304,7 +304,9 @@ h3 { margin: 0 0 8px; font-size: 14px; font-weight: 750; }
 .awarded { font-weight: 750; }
 .detail-footnote { padding-top: 12px; border-top: 1px solid var(--cal-line); font-size: 11px; }
 .disclaimer-copy { margin: 16px 0 0; color: var(--cal-muted); font-size: 14px; line-height: 1.7; }
-.disclaimer-button { margin-top: 22px; padding: 10px 18px; border: 0; border-radius: 999px; color: var(--cal-bg); background: var(--cal-accent); font-size: 13px; font-weight: 750; }
+.disclaimer-copy strong { color: var(--cal-text); font-weight: 750; }
+.disclaimer-actions { display: flex; justify-content: flex-end; margin-top: 22px; }
+.disclaimer-button { padding: 10px 18px; border: 0; border-radius: 999px; color: var(--cal-bg); background: var(--cal-accent); font-size: 13px; font-weight: 750; }
 .disclaimer-button:hover, .disclaimer-button:focus-visible { filter: brightness(.92); }
 .dialog-source { display: inline-flex; align-items: center; gap: 7px; margin-top: 18px; color: var(--cal-accent); font-size: 13px; font-weight: 700; text-decoration: none; }
 @media (max-width: 900px) {
