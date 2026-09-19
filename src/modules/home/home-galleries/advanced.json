@@ -171,6 +171,12 @@
           "websiteUrl": "https://judge.yosupo.jp/",
           "websiteTitle": "Library Checker",
           "websiteDescription": "用于验证算法模板正确性的标准题库。"
+        },
+        {
+          "avatarUrl": "",
+          "websiteUrl": "https://github.com/ZF3373/icpc-workbench",
+          "websiteTitle": "算法竞赛备赛工作台",
+          "websiteDescription": "算法竞赛备赛工作台：多平台刷题同步+构建个人模板库+根据当前能力题目推荐+ AI 训练计划 +弱项分析 + 日历打卡"
         }
       ]
     },
