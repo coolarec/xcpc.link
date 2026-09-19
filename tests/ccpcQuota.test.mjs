@@ -12,9 +12,9 @@ test('总决赛奖励档位的边界', () => {
   assert.deepEqual([1, 10, 11, 30, 31, 60, 61, 107].map(finalRewardFor), [4, 4, 3, 3, 2, 2, 1, 1])
 })
 
-test('首页已知承办奖励合计 75，荆州站承办和出题总计 16', () => {
+test('已知承办奖励合计 79，荆州站承办和出题总计 16', () => {
   const rewards = buildCcpcHostRewards(seasonScheduleRows)
-  assert.equal(rewards.reduce((sum, reward) => sum + reward.amount, 0), 75)
+  assert.equal(rewards.reduce((sum, reward) => sum + reward.amount, 0), 79)
   const jingzhou = rewards.filter((reward) => reward.event === '荆州站')
   assert.deepEqual(jingzhou.map((reward) => [reward.school, reward.amount]), [
     ['长江大学', 8], ['南京大学', 8],
@@ -22,6 +22,9 @@ test('首页已知承办奖励合计 75，荆州站承办和出题总计 16', ()
   assert.equal(jingzhou.reduce((sum, reward) => sum + reward.amount, 0), 16)
   assert.ok(!jingzhou.some((reward) => reward.school === '武汉大学'))
   assert.ok(rewards.every((reward) => reward.school !== '线上'))
+  assert.deepEqual(rewards.find((reward) => reward.event === '2025 总决赛'), {
+    school: '南阳理工学院', event: '2025 总决赛', role: '承办', amount: 4,
+  })
 })
 
 test('每校最多六队，首轮获名额的队伍仍参与次轮，原始队伍排名不用于截取 326 队', () => {
@@ -131,7 +134,7 @@ test('实际榜单快照：207 个总决赛奖励、566 个预选赛名额，逐
 test('实际快照加入承办奖励：预算截取、封顶和三项合计一致', () => {
   const snapshot = JSON.parse(readFileSync(new URL('../src/modules/ccpc-data.json', import.meta.url), 'utf8'))
   const result = calculateCcpcQuota(snapshot.teams, snapshot.finalSchools, buildCcpcHostRewards(seasonScheduleRows))
-  assert.equal(result.hostReward, 75)
+  assert.equal(result.hostReward, 79)
   assert.equal(result.finalReward, 207)
   assert.equal(result.firstRound, 240)
   assert.equal(result.secondRound + result.cappedQuota, 326)

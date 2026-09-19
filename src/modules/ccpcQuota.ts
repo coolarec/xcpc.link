@@ -66,6 +66,7 @@ export function buildCcpcHostRewards(schedule: { category: string; venue: string
       add(row.organizer, '高职专场', '承办', 3)
     }
   }
+  add('南阳理工学院', '2025 总决赛', '承办', 4)
   return rewards
 }
 

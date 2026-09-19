@@ -168,7 +168,7 @@ function onBackdropClick(event: MouseEvent) {
       <footer class="cal-footer">
         <p>{{ status }} · {{ generatedAt }}（北京时间）<span v-if="snapshotInProgress"> · 非最终分配结果</span>。点击名额可查看分配明细。</p>
         <p>预选赛公布 566 个，实际计入 {{ preliminaryTotal }} 个（首轮 {{ allocation.firstRound }} + 次轮 {{ allocation.secondRound }}）；总决赛奖励计入 {{ allocation.finalReward }} 个；承办及出题奖励计入 {{ allocation.hostReward }} / 91 个。</p>
-        <p>承办及出题奖励按首页赛程计算。教练论坛 2 个、冬季会议 1 个暂不计；网络赛出题、高职赛承办、上赛季总决赛承办共 13 个待补充。省赛、邀请赛奖励及外卡暂不计。</p>
+        <p>承办及出题奖励按首页赛程及已知总决赛举办方计算。教练论坛 2 个、冬季会议 1 个暂不计；网络赛出题、高职赛承办共 9 个待补充。省赛、邀请赛奖励及外卡暂不计。</p>
         <p v-if="allocation.cappedQuota">次轮入围名额按每校 12 个上限截取，合计扣减 {{ allocation.cappedQuota }} 个；PDF 未说明这些名额的递补方式，本页未额外递补。</p>
         <p v-if="allocation.firstRoundTied || allocation.secondRoundTied">{{ [allocation.firstRoundTied ? '首轮第 240 校' : '', allocation.secondRoundTied ? '次轮第 326 队' : ''].filter(Boolean).join('、') }}处存在同分并列。规则未说明截线处理，本页暂按源榜顺序取满固定名额，待官方确认。</p>
         <p>网络赛 {{ data.teams.length }} 支正式队伍，已排除 {{ data.meta.network.excludedTeams }} 支打星队伍。学校按源榜名称匹配，未参加网络赛的总决赛学校仍保留奖励名额。</p>
@@ -191,7 +191,7 @@ function onBackdropClick(event: MouseEvent) {
           <h3>赛事承办及出题奖励 · 已计入 {{ allocation.hostReward }} / 91 个</h3>
           <p>名单取自首页赛程，共 {{ hostSchoolCount }} 所学校。四个分站每站承办 8 个、出题 8 个，共 64 个；女生赛承办 5 个，女生与高职专场合并出题 6 个。荆州站的 8 个承办奖励全部分配给长江大学，武汉大学不计该项奖励；出题方南京大学另获 8 个。</p>
           <ul class="host-list"><li v-for="reward in hostRewards" :key="`${reward.event}-${reward.role}-${reward.school}`">{{ reward.school }} · {{ reward.event }}{{ reward.role }} +{{ reward.amount }}</li></ul>
-          <p>教练论坛举办方 +2、冬季会议承办方 +1 暂不计入。首页尚缺网络赛出题方 +6、高职赛承办方 +3、上赛季总决赛举办方 +4，待补充后更新计算。</p>
+          <p>上届总决赛承办方南阳理工学院已计入 4 个。教练论坛举办方 +2、冬季会议承办方 +1 暂不计入；首页尚缺网络赛出题方 +6、高职赛承办方 +3，待补充后更新计算。</p>
           <h3>当前范围与并列处理</h3>
           <p>当前计入预选赛、总决赛奖励与已知承办、出题奖励，省赛、邀请赛奖励和外卡尚未计入。补齐奖励后，有效队伍和预选赛分配可能变化。五类公布容量合计 1,180 个；预选赛公布容量为 566 个，实际计入数还受每校 12 个上限影响。</p>
           <p>保留源榜校排的并列名次。PDF 未规定预选赛截线并列时的处理，本页暂按源榜返回顺序选取前 240 校、前 326 支有效队伍，不因并列扩容；若截线有并列，页面会提示。数据不足时仅分配实际可得名额。</p>
