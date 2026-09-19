@@ -51,6 +51,7 @@ onBeforeUnmount(() => {
   cancelAnimationFrame(headerFrame)
 })
 const onlyAllocated = ref(false)
+const activeView = ref<'schools' | 'teams'>('schools')
 const detail = ref<Detail | null>(null)
 const dialog = ref<HTMLDialogElement | null>(null)
 const showRules = ref(false)
@@ -79,6 +80,21 @@ const filteredSchools = computed(() => {
 const detailTitle = computed(() => detail.value?.kind === 'preliminary' ? '预选赛分配名额'
   : detail.value?.kind === 'finalReward' ? '2025 总决赛奖励'
   : detail.value?.kind === 'hostReward' ? '2026 年赛事承办奖励' : '已计入名额')
+const schoolMap = new Map(allocation.schools.map((school) => [school.school, school]))
+const quotaTeamRows = data.teams.map((team) => {
+  const school = schoolMap.get(team.school)
+  const effectiveTeam = school?.effectiveTeams.find((row) => row.id === team.id)
+  const effectiveRank = effectiveTeam?.effectiveOrder ?? null
+  const secondRound = Boolean(effectiveTeam?.allocated)
+  const reason = effectiveTeam
+    ? secondRound ? '获得次轮名额'
+      : effectiveTeam.withinCutoff ? '进入前 326，但学校达到 12 个名额上限'
+      : '未进入有效队伍前 326'
+    : school?.effectiveLimit === 0 ? `学校奖励已达 12 个，不参加次轮`
+      : school?.rewardTotal + (school?.firstRound ?? 0) >= 12 ? '奖励与首轮名额已达 12 个，不参加次轮'
+      : `超过学校有效队伍上限 ${school?.effectiveLimit ?? 0} 支`
+  return { ...team, effectiveRank, secondRound, reason }
+})
 
 async function openDetail(school: QuotaSchool, kind: Detail['kind']) {
   detail.value = { school, kind }
@@ -144,15 +160,19 @@ function onBackdropClick(event: MouseEvent) {
             <button v-for="option in sortOptions" :key="option.key" type="button" :class="['sort-button', { active: sort === option.key }]" :aria-pressed="sort === option.key" @click="sort = option.key">{{ option.label }}</button>
           </div>
         </div>
+        <div class="view-switch" role="group" aria-label="榜单视图">
+          <button type="button" :class="{ active: activeView === 'schools' }" :aria-pressed="activeView === 'schools'" @click="activeView = 'schools'">学校名额</button>
+          <button type="button" :class="{ active: activeView === 'teams' }" :aria-pressed="activeView === 'teams'" @click="activeView = 'teams'">队伍榜单</button>
+        </div>
       </header>
 
-      <section class="rules-strip ccpc-rules" aria-label="分配规则">
+      <section v-if="activeView === 'schools'" class="rules-strip ccpc-rules" aria-label="分配规则">
         <a :href="data.meta.rulesPdf" target="_blank" rel="noopener noreferrer" class="rule-chip"><FileText :size="15" /> 2026 名额分配规则 PDF</a>
         <label class="allocated-filter"><input v-model="onlyAllocated" type="checkbox" /> 仅看有名额学校</label>
         <span v-if="search.trim() || onlyAllocated" class="result-count" aria-live="polite">{{ filteredSchools.length }} 所学校</span>
       </section>
 
-      <section class="table-card" aria-label="学校名额列表">
+      <section v-if="activeView === 'schools'" class="table-card" aria-label="学校名额列表">
         <div class="table-scroll" tabindex="0" role="region" aria-label="学校名额表，可横向滚动">
           <table ref="rankingTable">
             <thead>
@@ -177,6 +197,33 @@ function onBackdropClick(event: MouseEvent) {
           </table>
         </div>
         <p v-if="!filteredSchools.length" class="empty-state">没有找到匹配的学校。试试其他关键词或取消筛选。</p>
+      </section>
+
+      <section v-else class="table-card" aria-label="队伍名额榜单">
+        <div class="table-scroll" tabindex="0" role="region" aria-label="队伍名额榜单，可横向滚动">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">原始排名</th>
+                <th scope="col">次轮排名</th>
+                <th scope="col">队伍</th>
+                <th scope="col">学校</th>
+                <th scope="col">过题 / 罚时</th>
+                <th scope="col">分配结果</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="team in quotaTeamRows" :key="team.id" :class="{ 'quota-team': team.secondRound }">
+                <td>{{ team.rank }}</td>
+                <td>{{ team.effectiveRank ?? '—' }}</td>
+                <td :class="{ 'quota-team-name': team.secondRound }">{{ team.name }}</td>
+                <td>{{ team.school }}</td>
+                <td>{{ team.solved }} / {{ team.penalty }}</td>
+                <td class="reason-cell">{{ team.reason }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </section>
 
       <footer class="cal-footer">
@@ -269,6 +316,13 @@ button:focus-visible, a:focus-visible, input:focus-visible, .table-scroll:focus-
 .allocated-filter { display: inline-flex; align-items: center; gap: 5px; margin-left: auto; color: var(--cal-muted); font-size: 12px; cursor: pointer; }
 .allocated-filter input { accent-color: var(--cal-text); }
 .result-count { margin-left: 8px; color: var(--cal-muted); font-size: 12px; }
+.view-switch { display: flex; gap: 8px; margin-top: 14px; }
+.view-switch button { padding: 6px 12px; border: 1px solid var(--cal-line); border-radius: 999px; color: var(--cal-muted); background: transparent; font-size: 12px; font-weight: 700; }
+.view-switch button.active { color: var(--cal-bg); border-color: var(--cal-accent); background: var(--cal-accent); }
+.team-table tbody tr { height: 42px; }
+.quota-team { color: var(--cal-text); font-weight: 750; background: color-mix(in srgb, var(--cal-accent) 7%, transparent); }
+.quota-team-name { color: inherit; font-weight: 800; }
+.reason-cell { min-width: 190px; white-space: normal; line-height: 1.5; }
 .category-head { min-width: 110px; white-space: normal; line-height: 1.5; letter-spacing: 0; }
 .category-head span { display: block; }
 .category-head small { display: block; margin-top: 3px; color: var(--cal-muted); font-size: 10px; font-weight: 400; }
