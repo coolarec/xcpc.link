@@ -395,10 +395,10 @@
           "websiteDescription": "查询选手 OI 经历与档案。"
         },
         {
-          "avatarUrl": "/assets/icons/awdec-github-io-oi-in-xcpc-logo-ico-0249d80d.ico",
-          "websiteUrl": "https://awdec.github.io/OI-in-XCPC/#/",
-          "websiteTitle": "OI-in-XCPC",
-          "websiteDescription": "由 awdec 开发的查找 ACMer 的 OI 经历的网站，选手名右侧有☀️标识的为 OIer。"
+          "avatarUrl": "/assets/icons/awdec-github-io-xcpcatlas-favicon.svg",
+          "websiteUrl": "https://awdec.github.io/XCPCAtlas/",
+          "websiteTitle": "XCPCAtlas",
+          "websiteDescription": "ICPC/CCPC 比赛结果与数据分析，补全收录 2020–2025 年赛事数据。"
         },
         {
           "avatarUrl": "/assets/icons/unavatar-io-cpcfinder-com-75d0b59a.png",
