@@ -51,7 +51,7 @@ export const seasonScheduleRows: SeasonScheduleRow[] = [
     officialWebsite: 'https://icpc.pku.edu.cn/tzgg/276a166ac0c34db0af139941fbf2323c.htm',
     allocationPlan: '容量：约320（预选赛160+多队76+WF30+承办/命题24+境外10+江苏贡献20）\n规则：预选赛前160校各1个；同校≥3队进前500再1个。',
   },
-  { startDate: '2026-11-07', endDate: '2026-11-08', category: 'CCPC', venue: '荆州', organizer: '武汉大学、长江大学', problemSetter: '南京大学' },
+  { startDate: '2026-11-14', endDate: '2026-11-15', category: 'CCPC', venue: '荆州', organizer: '武汉大学、长江大学', problemSetter: '南京大学' },
   {
     startDate: '2026-11-14',
     endDate: '2026-11-15',
@@ -61,7 +61,7 @@ export const seasonScheduleRows: SeasonScheduleRow[] = [
     officialWebsite: 'https://icpc.pku.edu.cn/tzgg/2b4f6bc1a27d4b4c91b6b5a4c78f97f3.htm',
     allocationPlan: '容量：400（网络赛320+贡献50+女队10+省内贡献20）\n规则：网络赛前100校各2个、101–220校各1个。',
   },
-  { startDate: '2026-11-14', endDate: '2026-11-15', category: 'CCPC', venue: '乐山', organizer: '乐山师范学院', problemSetter: '电子科技大学' },
+  { startDate: '2026-11-07', endDate: '2026-11-08', category: 'CCPC', venue: '乐山', organizer: '乐山师范学院', problemSetter: '电子科技大学' },
   { startDate: '2026-11-21', endDate: '2026-11-22', category: 'CCPC', venue: '厦门', organizer: '厦门大学', problemSetter: '上海交通大学' },
   {
     startDate: '2026-12-05',
