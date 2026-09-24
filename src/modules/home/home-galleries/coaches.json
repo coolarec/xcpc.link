@@ -176,6 +176,12 @@
           "websiteUrl": "https://github.com/Farewe1ll/quarto-revealjs-beamer",
           "websiteTitle": "quarto-revealjs-beamer",
           "websiteDescription": "为 Quarto Reveal.js 提供高仿 LaTeX Beamer 风格的演示文稿扩展，适合校赛等小型 XCPC 比赛题解。"
+        },
+        {
+          "avatarUrl": "/assets/icons/raw-githubusercontent-com-6de4b369be.webp",
+          "websiteUrl": "https://zeyu10.github.io/xcpc-contest-timer",
+          "websiteTitle": "Contest Timer",
+          "websiteDescription": "一个专为程序竞赛设计的实时计时和进度显示工具，支持多种定制化功能和友好的用户界面。"
         }
       ]
     }
