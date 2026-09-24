@@ -4,9 +4,12 @@ import { mkdir, realpath, stat, writeFile } from 'node:fs/promises'
 import { isIP } from 'node:net'
 import path from 'node:path'
 import { DOMParser } from '@xmldom/xmldom'
+import sharp from 'sharp'
 import { Agent, fetch as undiciFetch } from 'undici'
 
 const MAX_BYTES = 1024 * 1024
+// Icons render at 14-28px; 96px keeps them sharp on 3x displays.
+const MAX_ICON_SIZE = 96
 const TIMEOUT_MS = 10_000
 const MAX_REDIRECTS = 3
 const REDIRECT_STATUSES = new Set([301, 302, 303, 307, 308])
@@ -359,6 +362,25 @@ const detectImageExtension = (content) => {
   throw new Error('仅支持 PNG、JPEG、WebP、ICO 或安全 SVG 图片')
 }
 
+// sharp can't decode ICO, and SVG is already validated as-is; both are kept unchanged.
+const optimizeRasterIcon = async (content, extension) => {
+  if (!['png', 'jpg', 'webp'].includes(extension)) return content
+
+  let pipeline = sharp(content, { animated: false, limitInputPixels: 4096 * 4096 })
+    .rotate()
+    .resize(MAX_ICON_SIZE, MAX_ICON_SIZE, { fit: 'inside', withoutEnlargement: true })
+  if (extension === 'png') pipeline = pipeline.png({ compressionLevel: 9, palette: true, quality: 90 })
+  else if (extension === 'jpg') pipeline = pipeline.jpeg({ quality: 85, mozjpeg: true })
+  else pipeline = pipeline.webp({ quality: 85 })
+
+  try {
+    const optimized = await pipeline.toBuffer()
+    return optimized.length < content.length ? optimized : content
+  } catch {
+    throw new Error('图标图片无法解码')
+  }
+}
+
 const normalizedHostname = (hostname) => {
   const normalized = hostname
     .toLowerCase()
@@ -432,13 +454,14 @@ const downloadRemoteIcon = async ({ avatarUrl, rootDir, fetchImpl, lookupImpl, d
         if (!response.ok) throw new Error(`图标下载失败：HTTP ${response.status}`)
         const content = await waitForAbortable(readLimitedBody(response), controller.signal)
         const extension = detectImageExtension(content)
+        const icon = await waitForAbortable(optimizeRasterIcon(content, extension), controller.signal)
         const digest = createHash('sha256').update(content).digest('hex').slice(0, 10)
         const fileName = `${normalizedHostname(sourceHostname)}-${digest}.${extension}`
         const iconsDir = path.resolve(rootDir, 'public/assets/icons')
         const filePath = path.resolve(iconsDir, fileName)
         if (!isWithin(iconsDir, filePath)) throw new Error('生成的图标路径不安全')
         await mkdir(iconsDir, { recursive: true })
-        await writeFile(filePath, content)
+        await writeFile(filePath, icon)
         return `/assets/icons/${fileName}`
       } finally {
         await dispatcher.close()
