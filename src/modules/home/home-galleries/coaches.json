@@ -160,6 +160,12 @@
           "websiteDescription": "追求更好的竞赛体验。专业命题团队，保障赛题质量，追求体验与区分度兼备的高质量竞赛。亦可进行技术支持与其它辅助工作，协助竞赛顺利进行。"
         },
         {
+          "avatarUrl": "/assets/icons/eps-ac-favicon.png",
+          "websiteUrl": "https://eps.ac/",
+          "websiteTitle": "eps.ac",
+          "websiteDescription": "程序设计竞赛命题团队，收录团队参与命题的比赛与题目归档。"
+        },
+        {
           "avatarUrl": "/assets/icons/foxops-top-favicon-ico-bb79ac60.ico",
           "websiteUrl": "https://foxops.top/",
           "websiteTitle": "FoxOps",
