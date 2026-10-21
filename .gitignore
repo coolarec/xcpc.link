@@ -11,3 +11,4 @@ pnpm-debug.log*
 output/
 docs/
 .claude/
+/tests/

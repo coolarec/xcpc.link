@@ -9,9 +9,8 @@ const routes: RouteRecordRaw[] = [
     component: HomePage,
   },
   {
-    path: '/quota',
-    name: 'quota',
-    component: () => import('../views/cal/CalPage.vue'),
+    path: '/:pathMatch(.*)*',
+    redirect: '/',
   },
 ]
 

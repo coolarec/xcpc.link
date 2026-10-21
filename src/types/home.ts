@@ -48,6 +48,5 @@ export interface HomeGallerySection {
   direction?: 'left' | 'right'
   reverse?: boolean
   cards: SiteLink[]
-  watch?: WatchLinksBlock
-  watches?: WatchLinksBlock[]
+  watches: WatchLinksBlock[]
 }

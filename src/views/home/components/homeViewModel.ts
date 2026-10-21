@@ -1,4 +1,4 @@
-import type { HomeGallerySection, NewsData, NewsItem, SiteLink, WatchLinksBlock } from '../../../types/home'
+import type { HomeGallerySection, NewsData, NewsItem, SiteLink } from '../../../types/home'
 
 export interface HomeLinkGroup {
   id: string
@@ -37,11 +37,6 @@ export const getGallerySectionId = (galleryIndex: number): string => `home-categ
 export const getGroupSectionId = (galleryIndex: number, groupIndex: number): string =>
   `home-group-${galleryIndex}-${groupIndex}`
 
-export const getGalleryWatches = (gallery: HomeGallerySection): WatchLinksBlock[] => {
-  if (gallery.watches?.length) return gallery.watches
-  return gallery.watch ? [gallery.watch] : []
-}
-
 export const getGalleryGroups = (gallery: HomeGallerySection): HomeLinkGroup[] => [
   {
     id: `${gallery.title}-featured`,
@@ -49,7 +44,7 @@ export const getGalleryGroups = (gallery: HomeGallerySection): HomeLinkGroup[] =
     description: '',
     links: gallery.cards,
   },
-  ...getGalleryWatches(gallery).map((watch, index) => ({
+  ...gallery.watches.map((watch, index) => ({
     id: `${gallery.title}-${watch.title}-${index}`,
     title: watch.title || '相关推荐',
     description: watch.description,

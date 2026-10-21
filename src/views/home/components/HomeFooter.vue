@@ -1,3 +1,7 @@
+<script setup lang="ts">
+import { siteRecords } from '../../../config/site'
+</script>
+
 <template>
   <footer class="home-footer">
     <div class="sponsor-line" aria-label="Sponsored by CoolArec and bLue">
@@ -30,6 +34,21 @@
         rel="noreferrer"
         title="加入 QQ 群 876103138"
       >联系我们</a>
+    </p>
+    <p v-if="siteRecords.icp.number || siteRecords.publicSecurity.number" class="site-records">
+      <a
+        v-if="siteRecords.icp.number"
+        :href="siteRecords.icp.url || undefined"
+        target="_blank"
+        rel="noreferrer"
+      >{{ siteRecords.icp.number }}</a>
+      <span v-if="siteRecords.icp.number && siteRecords.publicSecurity.number" aria-hidden="true">&nbsp;·&nbsp;</span>
+      <a
+        v-if="siteRecords.publicSecurity.number"
+        :href="siteRecords.publicSecurity.url || undefined"
+        target="_blank"
+        rel="noreferrer"
+      >{{ siteRecords.publicSecurity.number }}</a>
     </p>
   </footer>
 </template>
@@ -131,6 +150,24 @@
 
 .qq-group a {
   color: var(--text);
+  text-underline-offset: 3px;
+}
+
+.site-records {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.site-records a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.site-records a:hover {
+  color: var(--text);
+  text-decoration: underline;
   text-underline-offset: 3px;
 }
 </style>

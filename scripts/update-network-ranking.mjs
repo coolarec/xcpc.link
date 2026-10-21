@@ -3,6 +3,7 @@
 import { readFile, writeFile } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
+import { buildSchoolFacts, schoolIdFor } from '../src/modules/quota/schools.ts'
 
 const ROUND1_ID = '2094677389171486720'
 const ROUND2_ID = '2097206296647036928'
@@ -33,8 +34,9 @@ const shanghaiStamp = (date = new Date()) => {
   return `${value('year')}-${value('month')}-${value('day')} ${value('hour')}:${value('minute')}`
 }
 
-const fetchPublicRanking = async (competitionId) => {
-  const response = await fetch(rankingApiUrl(competitionId), {
+const fetchPublicRanking = async (competitionId, fetchImpl) => {
+  const response = await fetchImpl(rankingApiUrl(competitionId), {
+    signal: AbortSignal.timeout(15000),
     headers: {
       Accept: 'application/json;charset=UTF-8',
       'Accept-Language': 'zh-CN',
@@ -65,7 +67,7 @@ const schoolOrder = (rankings) => {
   const seen = new Set()
   const order = []
   for (const row of rankings) {
-    const school = row.teamInfo?.schoolName?.trim()
+    const school = schoolIdFor(row.teamInfo?.schoolName || '')
     if (!school || seen.has(school)) continue
     seen.add(school)
     order.push(school)
@@ -91,12 +93,13 @@ const mergeSchoolRanks = (round1, round2) => {
 const schoolCounts = (rankings) => {
   const counts = new Map()
   for (const row of rankings) {
-    const school = row.teamInfo?.schoolName?.trim()
+    const school = schoolIdFor(row.teamInfo?.schoolName || '')
     if (!school) continue
     if (!counts.has(school)) counts.set(school, { teams: 0, top500Teams: 0 })
     const entry = counts.get(school)
     entry.teams += 1
-    if (Number(row.rank) <= TOP_TEAM_LIMIT) entry.top500Teams += 1
+    const rank = Number(row.rank)
+    if (Number.isInteger(rank) && rank > 0 && rank <= TOP_TEAM_LIMIT) entry.top500Teams += 1
   }
   return counts
 }
@@ -127,10 +130,22 @@ const buildSchools = (boards) => {
   const stats = collectSchoolStats(boards)
   const round1Ranks = rankIndex(round1Order)
   const round2Ranks = rankIndex(round2Order)
+  const sourceNames = new Map()
+  for (const board of boards) {
+    for (const row of board.rankings) {
+      const name = row.teamInfo?.schoolName?.trim()
+      if (!name) continue
+      const id = schoolIdFor(name)
+      if (!sourceNames.has(id)) sourceNames.set(id, new Set())
+      sourceNames.get(id).add(name)
+    }
+  }
   return merged.map((school, index) => {
     const entry = stats.get(school) || { teams: 0, top500Teams: 0 }
     return {
       school,
+      schoolId: schoolIdFor(school),
+      sourceNames: [...sourceNames.get(school)],
       rank: index + 1,
       round1Rank: round1Ranks.get(school) ?? null,
       round2Rank: round2Ranks.get(school) ?? null,
@@ -154,7 +169,7 @@ const rankingNote = (schoolCount, generatedAt) =>
 const updateCalData = (data, boards, generatedAt) => {
   const schools = buildSchools(boards)
   const [round1, round2] = boards
-  data.schools = schools
+  data.schools = buildSchoolFacts({ schools, meta: data.meta })
   data.meta.generatedAt = generatedAt
   data.meta.pintiaUrl = rankingUrl(round1.competitionId)
   data.meta.pintiaRound1Url = rankingUrl(round1.competitionId)
@@ -188,8 +203,8 @@ export const updateNetworkRanking = async (options = {}) => {
     throw new Error('cal-data.json 缺少 meta.specialSchools，拒绝覆盖')
   }
   const boards = await Promise.all([
-    fetchPublicRanking(options.round1Id || ROUND1_ID),
-    fetchPublicRanking(options.round2Id || ROUND2_ID),
+    fetchPublicRanking(options.round1Id || ROUND1_ID, options.fetchImpl || fetch),
+    fetchPublicRanking(options.round2Id || ROUND2_ID, options.fetchImpl || fetch),
   ])
   const generatedAt = options.generatedAt || shanghaiStamp()
   const { data, schools } = updateCalData(current, boards, generatedAt)
@@ -204,6 +219,7 @@ export const updateNetworkRanking = async (options = {}) => {
     dataPath,
     generatedAt,
     schoolCount: schools.length,
+    quotaSchoolCount: data.schools.length,
     round1: data.meta.networkRankings.round1,
     round2: data.meta.networkRankings.round2,
   }

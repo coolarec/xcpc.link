@@ -67,7 +67,7 @@ const totalLinks = computed(() =>
 )
 const searchItems = computed(() => buildHomeSearchIndex(homeContentStore.galleries))
 const isSearchDisabled = computed(() =>
-  homeContentStore.isLoading || Boolean(homeContentStore.loadError) || searchItems.value.length === 0,
+  searchItems.value.length === 0,
 )
 
 const hideBrokenIcon = (event: Event) => {
@@ -122,7 +122,7 @@ const updateLinkColumnCount = () => {
   }
 }
 
-onMounted(async () => {
+onMounted(() => {
   // 不要在每次访问时用全屏弹窗阻断首页；仅首次看到公告，确认后持久化。
   try {
     showMigrationNotice.value = localStorage.getItem(migrationNoticeStorageKey) !== '1'
@@ -133,15 +133,15 @@ onMounted(async () => {
   window.addEventListener('resize', updateLinkColumnCount)
   window.addEventListener('scroll', hideTooltip, { passive: true })
 
-  await homeContentStore.load().catch(() => undefined)
+  void homeContentStore.refreshGalleries()
 })
 
-watch(
-  () => homeContentStore.loadError,
-  (message) => {
-    if (message) window.showAppLoadError?.(message)
-  },
-)
+watch(() => homeContentStore.galleries, () => {
+  hideTooltip()
+  expandedLinkUrl.value = null
+  highlightedSearchTargetId.value = null
+  if (highlightTimer) window.clearTimeout(highlightTimer)
+})
 
 onBeforeUnmount(() => {
   window.removeEventListener('resize', updateLinkColumnCount)
@@ -232,9 +232,7 @@ const confirmMigrationNotice = () => {
           :expanded-link-url="expandedLinkUrl"
           :galleries="homeContentStore.galleries"
           :highlighted-target-id="highlightedSearchTargetId"
-          :is-loading="homeContentStore.isLoading"
           :link-column-count="linkColumnCount"
-          :load-error="homeContentStore.loadError"
           :view-mode="litePreferencesStore.viewMode"
           @icon-error="hideBrokenIcon"
           @resource-click="handleResourceClick"
@@ -243,7 +241,6 @@ const confirmMigrationNotice = () => {
         />
 
         <HomeNewsSection
-          v-if="!homeContentStore.isLoading && !homeContentStore.loadError && homeContentStore.newsData"
           :news-data="homeContentStore.newsData"
           @icon-error="hideBrokenIcon"
         />

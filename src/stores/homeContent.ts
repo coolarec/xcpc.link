@@ -1,56 +1,33 @@
-import { computed, ref } from 'vue'
+import { ref, shallowRef } from 'vue'
 import { defineStore } from 'pinia'
-import { fetchHomeGalleries, fetchNewsData } from '../modules/home/api'
-import type { HomeGallerySection, NewsData } from '../types/home'
-
-const getErrorMessage = (error: unknown): string => {
-  if (error instanceof Error && error.message) return error.message
-  return String(error || '资源加载失败')
-}
+import { fetchRemoteGalleries, getLocalHomeGalleries, getLocalNewsData, type GalleryRequestOptions } from '../modules/home/api.ts'
 
 export const useHomeContentStore = defineStore('home-content', () => {
-  const galleries = ref<HomeGallerySection[]>([])
-  const newsData = ref<NewsData | null>(null)
-  const isLoading = ref(false)
-  const loadError = ref('')
-  let loadPromise: Promise<void> | undefined
+  // Content is replaced as a snapshot; nested data does not need Vue proxies.
+  const galleries = shallowRef(getLocalHomeGalleries())
+  const newsData = shallowRef(getLocalNewsData())
+  const isRefreshing = ref(false)
+  const refreshError = ref('')
+  let refreshPromise: Promise<void> | undefined
 
-  const totalLinks = computed(() =>
-    galleries.value.reduce((total, gallery) => {
-      const watchLinks = (gallery.watches || []).reduce((watchTotal, watch) => watchTotal + watch.links.length, 0)
-      return total + gallery.cards.length + (gallery.watch?.links.length || 0) + watchLinks
-    }, 0),
-  )
-
-  const load = async () => {
-    if (loadPromise) return loadPromise
-
-    isLoading.value = true
-    loadError.value = ''
-
-    loadPromise = Promise.all([fetchHomeGalleries(), fetchNewsData()])
-      .then(([galleryData, news]) => {
-        galleries.value = galleryData
-        newsData.value = news
+  const refreshGalleries = (options?: GalleryRequestOptions): Promise<void> => {
+    if (refreshPromise) return refreshPromise
+    isRefreshing.value = true
+    refreshError.value = ''
+    refreshPromise = fetchRemoteGalleries(options)
+      .then((updated) => {
+        if (updated !== null) galleries.value = updated
       })
-      .catch((error) => {
-        loadError.value = getErrorMessage(error)
-        loadPromise = undefined
-        throw error
+      .catch((error: unknown) => {
+        // A failed refresh never replaces usable content or blocks the page.
+        refreshError.value = error instanceof Error ? error.message : String(error)
       })
       .finally(() => {
-        isLoading.value = false
+        isRefreshing.value = false
+        refreshPromise = undefined
       })
-
-    return loadPromise
+    return refreshPromise
   }
 
-  return {
-    galleries,
-    newsData,
-    isLoading,
-    loadError,
-    totalLinks,
-    load,
-  }
+  return { galleries, newsData, isRefreshing, refreshError, refreshGalleries }
 })

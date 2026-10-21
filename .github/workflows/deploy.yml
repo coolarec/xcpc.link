@@ -35,6 +35,11 @@ jobs:
       - name: Build project
         run: npm run build
 
+      - name: Check types and rules
+        run: |
+          npm run typecheck
+          npm test
+
       - name: Verify static output
         run: |
           if [ ! -s dist/index.html ]; then
