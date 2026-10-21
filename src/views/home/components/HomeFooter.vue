@@ -18,15 +18,6 @@ import { siteRecords } from '../../../config/site'
       </a>
 
     </div>
-    <p class="cdn-credit">
-      <span>
-        CDN & Opt by algoUX
-        <a class="cdn-provider" href="https://algoux.org/" target="_blank" rel="noreferrer">
-          <img src="/assets/icons/algoux-mark.svg" alt="" width="28" height="18" loading="lazy" />
-          <span>algoUX</span>
-        </a>
-      </span>
-    </p>
     <p class="qq-group">
       如果你有意见或新想法，欢迎<a
         href="https://qm.qq.com/q/2CsO3c3ZlS"
@@ -104,41 +95,6 @@ import { siteRecords } from '../../../config/site'
   color: #ff3b30;
   font-size: 15px;
   line-height: 1;
-}
-
-.cdn-credit {
-  margin: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 650;
-}
-
-.cdn-credit img {
-  width: 28px;
-  height: 18px;
-  display: inline-block;
-  object-fit: contain;
-  vertical-align: middle;
-}
-
-.cdn-credit a {
-  color: var(--text);
-  text-decoration: none;
-}
-
-.cdn-credit a:hover {
-  text-decoration: underline;
-}
-
-.cdn-provider {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  vertical-align: middle;
 }
 
 .qq-group {
