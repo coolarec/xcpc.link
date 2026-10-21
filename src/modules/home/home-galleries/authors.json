@@ -3,14 +3,7 @@
   "title": "退役选手",
   "accent": "#ff9f0a",
   "reverse": true,
-  "cards": [
-    {
-      "avatarUrl": "/assets/icons/docs-qq-local.svg",
-      "websiteUrl": "https://docs.qq.com/sheet/DT3NRQ3dwekx5d3Jo?tab=BB08J2",
-      "websiteTitle": "2025春招ACM内推文档",
-      "websiteDescription": "腾讯文档整理的春招 ACM 内推信息表。"
-    }
-  ],
+  "cards": [],
   "watches": [
     {
       "title": "教培相关",
