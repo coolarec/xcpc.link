@@ -61,8 +61,9 @@ const clearSearch = () => {
 }
 
 const selectItem = (item: HomeSearchItem) => {
-  emit('select', item)
+  inputRef.value?.blur()
   clearSearch()
+  emit('select', item)
 }
 
 const moveActiveResult = async (offset: number) => {
@@ -141,11 +142,11 @@ const hideBrokenIcon = (event: Event) => {
       <template v-if="displayedResults.length">
         <section v-if="locationResults.length" class="result-group" aria-labelledby="location-results-title">
           <p id="location-results-title" class="result-group-title">页面位置</p>
-          <button
+          <a
             v-for="item in locationResults"
             :id="`${searchListId}-${item.id}`"
             :key="item.id"
-            type="button"
+            :href="`#${item.id}`"
             class="search-result"
             role="option"
             :aria-selected="displayedResults[activeIndex]?.id === item.id"
@@ -160,7 +161,7 @@ const hideBrokenIcon = (event: Event) => {
               <strong>{{ item.label }}</strong>
               <span>{{ item.context }}</span>
             </span>
-          </button>
+          </a>
         </section>
 
         <section v-if="websiteResults.length" class="result-group" aria-labelledby="website-results-title">

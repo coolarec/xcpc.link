@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import FloatingActionMenu from '../../components/FloatingActionMenu.vue'
 import { seasonScheduleRows } from '../../modules/home/seasonSchedule'
+import { scrollToSearchTarget } from '../../modules/home/searchNavigation'
 import { useHomeContentStore } from '../../stores/homeContent'
 import { useLitePreferencesStore } from '../../stores/litePreferences'
 import { useThemeStore, type ThemeMode } from '../../stores/theme'
@@ -58,6 +59,7 @@ const tickerBanners: TickerBanner[] = [
   },
 ]
 let highlightTimer: number | undefined
+let cancelSearchScroll: (() => void) | undefined
 
 const totalLinks = computed(() =>
   homeContentStore.galleries.reduce((total, gallery) => total + getGalleryLinkCount(gallery), 0),
@@ -128,6 +130,7 @@ onMounted(() => {
 })
 
 watch(() => homeContentStore.galleries, () => {
+  cancelSearchScroll?.()
   hideTooltip()
   expandedLinkUrl.value = null
   highlightedSearchTargetId.value = null
@@ -135,6 +138,7 @@ watch(() => homeContentStore.galleries, () => {
 })
 
 onBeforeUnmount(() => {
+  cancelSearchScroll?.()
   window.removeEventListener('resize', updateLinkColumnCount)
   window.removeEventListener('scroll', hideTooltip)
   if (highlightTimer) window.clearTimeout(highlightTimer)
@@ -159,20 +163,18 @@ const handleResourceClick = (link: SiteLink, event: MouseEvent) => {
   }
 }
 
-const handleSearchSelect = (item: HomeSearchItem) => {
+const handleSearchSelect = async (item: HomeSearchItem) => {
+  cancelSearchScroll?.()
   if (item.kind === 'website') {
     window.open(item.url, '_blank', 'noopener,noreferrer')
     return
   }
 
+  await nextTick()
   const target = document.getElementById(item.id)
   if (!target) return
 
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  target.scrollIntoView({
-    behavior: reduceMotion ? 'auto' : 'smooth',
-    block: 'start',
-  })
+  cancelSearchScroll = scrollToSearchTarget(target, isMobileViewport())
 
   if (highlightTimer) window.clearTimeout(highlightTimer)
   highlightedSearchTargetId.value = item.id
