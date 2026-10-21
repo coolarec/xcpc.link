@@ -347,10 +347,10 @@
           "websiteDescription": "PTA 公开比赛与榜单入口。"
         },
         {
-          "avatarUrl": "/assets/icons/cpc-csgrandeur-cn-static-image-global-favicon-ico-5cd288cf.ico",
-          "websiteUrl": "https://cpc.csgrandeur.cn/outrank/",
-          "websiteTitle": "CCPCOJ 外榜",
-          "websiteDescription": "CCPCOJ 专属的外榜与统计入口。"
+          "avatarUrl": "/assets/icons/rank-iccpc-cn-favicon.svg",
+          "websiteUrl": "https://rank.iccpc.cn/",
+          "websiteTitle": "CCPC 外榜",
+          "websiteDescription": "CCPC 赛事外榜与比赛成绩查询入口。"
         },
         {
           "avatarUrl": "",
@@ -363,12 +363,6 @@
           "websiteUrl": "https://scoreboard.ucup.ac/",
           "websiteTitle": "Universal Cup Scoreboard Archive",
           "websiteDescription": "Universal Cup 历史榜单与成绩归档入口。"
-        },
-        {
-          "avatarUrl": "/assets/icons/rank-thusaac-com-favicon-png.png",
-          "websiteUrl": "https://rank.thusaac.com/",
-          "websiteTitle": "CSP 榜单",
-          "websiteDescription": "CSP 相关榜单与成绩查询入口。"
         },
         {
           "avatarUrl": "/assets/icons/acm-hdu-edu-cn-cc63dd0528.ico",
