@@ -7,11 +7,13 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "node --test tests/*.test.ts",
+    "test": "node --test tests/*.test.ts server/*.test.*",
+    "test:activity": "node --test server/*.test.*",
     "typecheck": "vue-tsc --noEmit",
     "update:network-ranking": "node scripts/update-network-ranking.mjs"
   },
   "dependencies": {
+    "@edgeone/pages-blob": "^0.0.18",
     "@fontsource/dm-sans": "^5.2.8",
     "@fontsource/sora": "^5.2.8",
     "@lucide/vue": "^1.17.0",

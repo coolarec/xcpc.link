@@ -1,18 +1,19 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import FloatingActionMenu from '../../components/FloatingActionMenu.vue'
+import { useLinkActivity } from '../../composables/useLinkActivity'
 import { seasonScheduleRows } from '../../modules/home/seasonSchedule'
 import { scrollToSearchTarget } from '../../modules/home/searchNavigation'
 import { useHomeContentStore } from '../../stores/homeContent'
 import { useLitePreferencesStore } from '../../stores/litePreferences'
 import { useThemeStore, type ThemeMode } from '../../stores/theme'
-import type { SiteLink, TickerBanner } from '../../types/home'
+import type { SiteLink } from '../../types/home'
 import HomeDirectory from './components/HomeDirectory.vue'
 import HomeFooter from './components/HomeFooter.vue'
 import HomeHeader from './components/HomeHeader.vue'
 import HomeNewsSection from './components/HomeNewsSection.vue'
 import HomeScheduleAnnouncement from './components/HomeScheduleAnnouncement.vue'
-import HomeTickerBanner from './components/HomeTickerBanner.vue'
+import HomeLinkActivity from './components/HomeLinkActivity.vue'
 import HomeTooltip from './components/HomeTooltip.vue'
 import {
   buildHomeSearchIndex,
@@ -46,18 +47,6 @@ const themeOptions: Array<{ label: string; value: ThemeMode }> = [
   { label: '日间', value: 'day' },
   { label: '夜间', value: 'night' },
 ]
-const tickerBanners: TickerBanner[] = [
-  {
-    label: '赛站博弈',
-    text: '从夯到拉锐评2025赛季ICPC/CCPC各赛站队伍强度 - 俊杰Charles',
-    href: 'https://www.bilibili.com/video/BV1fkPuzJE6t',
-  },
-  {
-    label: '赛站博弈',
-    text: '从夯到拉锐评2025赛季ICPC/CCPC各赛站体验 - 俊杰Charles',
-    href: 'https://www.bilibili.com/video/BV12XfiBfEhG',
-  },
-]
 let highlightTimer: number | undefined
 let cancelSearchScroll: (() => void) | undefined
 
@@ -65,6 +54,32 @@ const totalLinks = computed(() =>
   homeContentStore.galleries.reduce((total, gallery) => total + getGalleryLinkCount(gallery), 0),
 )
 const searchItems = computed(() => buildHomeSearchIndex(homeContentStore.galleries))
+const directoryLinks = computed(() => homeContentStore.galleries.flatMap((gallery) => [
+  ...gallery.cards,
+  ...gallery.watches.flatMap((group) => group.links),
+]))
+const linkCatalog = computed(() => {
+  const links = [...directoryLinks.value]
+  const news = homeContentStore.newsData
+  for (const item of [...news.redList, ...news.blackList, ...news.gossip]) {
+    if (item.sourceUrl) links.push({
+      websiteUrl: item.sourceUrl,
+      websiteTitle: item.text,
+      websiteDescription: item.sourceName,
+      avatarUrl: item.sourceIcon,
+    })
+  }
+  return new Map(links.map((link) => [link.websiteUrl, link]))
+})
+const { record: recordLinkVisit, lists: activityLists, refresh: refreshActivity, error: activityError, loading: activityLoading, ready: activityReady } = useLinkActivity(linkCatalog)
+
+// 在冒泡阶段统一记录原生链接打开；展开介绍时被 preventDefault 的点击不计数。
+const handleLinkOpen = (event: MouseEvent) => {
+  if (event.defaultPrevented || (event.type === 'click' ? event.button !== 0 : event.button !== 1)) return
+  const anchor = event.target instanceof Element ? event.target.closest('a') : null
+  const url = anchor?.getAttribute('href')
+  if (url) recordLinkVisit(url)
+}
 const isSearchDisabled = computed(() =>
   searchItems.value.length === 0,
 )
@@ -155,7 +170,8 @@ watch(
 )
 
 const handleResourceClick = (link: SiteLink, event: MouseEvent) => {
-  if (litePreferencesStore.viewMode === 'detail' || !isMobileViewport()) return
+  if (litePreferencesStore.viewMode === 'detail' || !isMobileViewport()
+    || event.detail === 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return
 
   if (expandedLinkUrl.value !== link.websiteUrl) {
     event.preventDefault()
@@ -167,6 +183,7 @@ const handleSearchSelect = async (item: HomeSearchItem) => {
   cancelSearchScroll?.()
   if (item.kind === 'website') {
     window.open(item.url, '_blank', 'noopener,noreferrer')
+    recordLinkVisit(item.url)
     return
   }
 
@@ -191,7 +208,7 @@ const handleFloatingAction = (id: string) => {
 </script>
 
 <template>
-  <div class="lite-page" :class="{ 'is-night': themeStore.isDarkMode }" :data-mode="litePreferencesStore.viewMode">
+  <div class="lite-page" :class="{ 'is-night': themeStore.isDarkMode }" :data-mode="litePreferencesStore.viewMode" @click="handleLinkOpen" @auxclick="handleLinkOpen">
     <div class="page-shell">
       <HomeHeader
         :category-count="homeContentStore.galleries.length"
@@ -208,9 +225,15 @@ const handleFloatingAction = (id: string) => {
 
       <HomeScheduleAnnouncement :rows="seasonScheduleRows" />
 
-      <div class="ticker-banner-list" aria-label="站内公告">
-        <HomeTickerBanner v-for="item in tickerBanners" :key="item.href" :item="item" />
-      </div>
+      <HomeLinkActivity
+        :popular="activityLists.popular"
+        :recent="activityLists.recent"
+        :links="directoryLinks"
+        :ready="activityReady"
+        :loading="activityLoading"
+        :error="activityError"
+        @retry="refreshActivity(true)"
+      />
 
       <main class="directory">
         <HomeDirectory
@@ -241,6 +264,7 @@ const handleFloatingAction = (id: string) => {
       :x="tooltip.x"
       :y="tooltip.y"
     />
+
 
     <FloatingActionMenu :visible="true" @action="handleFloatingAction" />
   </div>
@@ -302,11 +326,6 @@ const handleFloatingAction = (id: string) => {
 .directory {
   display: grid;
   gap: 10px;
-}
-
-.ticker-banner-list {
-  display: grid;
-  gap: 6px;
 }
 
 @media (max-width: 760px) {
