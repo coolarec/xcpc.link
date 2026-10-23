@@ -31,17 +31,18 @@ async function readBody(request) {
     while (true) {
       const { done, value } = await reader.read()
       if (done) break
-      size += value.byteLength
+      const chunk = typeof value === 'string' ? new TextEncoder().encode(value) : new Uint8Array(value)
+      size += chunk.byteLength
       if (size > MAX_BODY_BYTES) {
         await reader.cancel()
         throw json({ error: 'BODY_TOO_LARGE' }, 413)
       }
-      chunks.push(value)
+      chunks.push(chunk)
     }
     const bytes = new Uint8Array(size)
     let offset = 0
     for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.byteLength }
-    return JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(bytes))
+    return await new Response(bytes).json()
   } catch (error) {
     if (error instanceof Response) throw error
     throw json({ error: 'INVALID_BODY' }, 400)
