@@ -1,4 +1,4 @@
-import { ACTIVITY_LIMIT, ACTIVITY_TIME_ZONE, type ActivityEntry, type ActivitySnapshot } from './linkActivity.ts'
+import { ACTIVITY_MAX_ENTRIES, ACTIVITY_TIME_ZONE, type ActivityEntry, type ActivitySnapshot } from './linkActivity.ts'
 
 const isObject = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value)
@@ -6,7 +6,7 @@ const isCount = (value: unknown): value is number =>
   typeof value === 'number' && Number.isSafeInteger(value) && value >= 0
 
 const parseEntries = (value: unknown): ActivityEntry[] => {
-  if (!Array.isArray(value) || value.length > ACTIVITY_LIMIT) throw new Error('访问统计列表格式错误')
+  if (!Array.isArray(value) || value.length > ACTIVITY_MAX_ENTRIES) throw new Error('访问统计列表格式错误')
   const seen = new Set<string>()
   return value.map((item: unknown) => {
     if (!isObject(item) || typeof item.url !== 'string' || !isCount(item.weekCount)

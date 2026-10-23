@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ChevronRight } from '@lucide/vue'
 import { computed, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue'
-import { ACTIVITY_LIMIT } from '../../../modules/home/linkActivity'
+import { ACTIVITY_MAX_ENTRIES } from '../../../modules/home/linkActivity'
 import type { ActivityEntry } from '../../../modules/home/linkActivity'
 import type { SiteLink } from '../../../types/home'
 
@@ -54,14 +54,14 @@ watch(() => props.links, (links) => {
     ;[shuffled[index], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[index]]
   }
   // 仅用于无记录时展示，不写入访问历史或生成虚假的点击次数。
-  sampleLinks.value = shuffled.slice(0, ACTIVITY_LIMIT * 2).map((link) => ({
+  sampleLinks.value = shuffled.slice(0, ACTIVITY_MAX_ENTRIES).map((link) => ({
     url: link.websiteUrl, link, lastOpened: 0, weekCount: 0,
   }))
 }, { immediate: true })
 
 const rows = computed(() => [
-  { id: 'popular', title: '七日常用', items: props.popular.length ? props.popular : props.ready && !props.error ? sampleLinks.value.slice(0, ACTIVITY_LIMIT) : [] },
-  { id: 'recent', title: '最近打开', items: props.recent.length ? props.recent : props.ready && !props.error ? sampleLinks.value.slice(-ACTIVITY_LIMIT) : [] },
+  { id: 'popular', title: '七日常用', items: props.popular.length ? props.popular : props.ready && !props.error ? sampleLinks.value : [] },
+  { id: 'recent', title: '最近打开', items: props.recent.length ? props.recent : props.ready && !props.error ? [...sampleLinks.value].reverse() : [] },
 ])
 
 watch(rows, updateScrollHints, { flush: 'post' })
@@ -75,7 +75,7 @@ watch(rows, updateScrollHints, { flush: 'post' })
       class="activity-row"
       :aria-labelledby="`activity-${row.id}`"
     >
-      <div class="row-label" :title="row.id === 'popular' ? '全站用户近 7 天最常打开的网站' : '全站用户最近打开的 8 个网站，重复打开会置顶'">
+      <div class="row-label" :title="row.id === 'popular' ? '全站用户近 7 天最常打开的 20 个网站' : '全站用户最近打开的 20 个网站，重复打开会置顶'">
         <h2 :id="`activity-${row.id}`">{{ row.title }}</h2>
       </div>
       <div v-if="row.items.length" class="activity-window">
@@ -172,7 +172,9 @@ watch(rows, updateScrollHints, { flush: 'post' })
 
 .activity-links {
   min-width: 0;
-  display: flex;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(68px, 1fr);
   align-items: center;
   gap: 4px;
   overflow-x: auto;
@@ -198,8 +200,7 @@ watch(rows, updateScrollHints, { flush: 'post' })
 .scroll-hint:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
 
 .activity-link {
-  flex: 0 0 68px;
-  width: 68px;
+  min-width: 0;
   min-height: 42px;
   display: inline-flex;
   flex-direction: column;
@@ -232,6 +233,7 @@ watch(rows, updateScrollHints, { flush: 'post' })
 
 .activity-title {
   width: 100%;
+  max-width: 68px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

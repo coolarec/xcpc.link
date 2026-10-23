@@ -1,4 +1,4 @@
-import { ACTIVITY_LIMIT, ACTIVITY_TIME_ZONE, activityDays, rankActivity } from '../src/modules/home/linkActivity.ts'
+import { ACTIVITY_MAX_ENTRIES, ACTIVITY_TIME_ZONE, activityDays, rankActivity } from '../src/modules/home/linkActivity.ts'
 
 const CACHE_MS = 30_000
 const MAX_BODY_BYTES = 1024
@@ -112,7 +112,7 @@ export function createActivityService({ urls, now = Date.now, cacheMs = CACHE_MS
       })
     }
     await Promise.all(days.map(readDay))
-    if (visits.size < Math.min(ACTIVITY_LIMIT, allowed.size)) {
+    if (visits.size < Math.min(ACTIVITY_MAX_ENTRIES, allowed.size)) {
       const olderDays = new Set()
       await list({ prefix: EVENT_PREFIX, directories: true }, (page) => {
         for (const directory of page.directories) {
@@ -124,7 +124,7 @@ export function createActivityService({ urls, now = Date.now, cacheMs = CACHE_MS
       })
       for (const day of [...olderDays].sort().reverse()) {
         await readDay(day)
-        if (visits.size >= Math.min(ACTIVITY_LIMIT, allowed.size)) break
+        if (visits.size >= Math.min(ACTIVITY_MAX_ENTRIES, allowed.size)) break
       }
     }
     const ranked = rankActivity([...visits.values()], timestamp)

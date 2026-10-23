@@ -5,7 +5,7 @@ export interface LinkVisit {
   days: Record<string, number>
 }
 
-export const ACTIVITY_LIMIT = 8
+export const ACTIVITY_MAX_ENTRIES = 20
 export const ACTIVITY_TIME_ZONE = 'Asia/Shanghai'
 
 export interface ActivityEntry {
@@ -41,7 +41,7 @@ export const recordVisit = (visits: LinkVisit[], url: string, now: number): Link
   ]
 }
 
-export const rankActivity = (visits: LinkVisit[], now: number, limit = ACTIVITY_LIMIT) => {
+export const rankActivity = (visits: LinkVisit[], now: number, limit = ACTIVITY_MAX_ENTRIES) => {
   const validDays = activityDays(now)
   const ranked = visits.map((visit) => ({
     ...visit,
