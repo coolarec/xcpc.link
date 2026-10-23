@@ -71,7 +71,7 @@ const linkCatalog = computed(() => {
   }
   return new Map(links.map((link) => [link.websiteUrl, link]))
 })
-const { record: recordLinkVisit, lists: activityLists } = useLinkActivity(linkCatalog)
+const { record: recordLinkVisit, lists: activityLists, refresh: refreshActivity, error: activityError, loading: activityLoading, ready: activityReady } = useLinkActivity(linkCatalog)
 
 // 在冒泡阶段统一记录原生链接打开；展开介绍时被 preventDefault 的点击不计数。
 const handleLinkOpen = (event: MouseEvent) => {
@@ -229,6 +229,10 @@ const handleFloatingAction = (id: string) => {
         :popular="activityLists.popular"
         :recent="activityLists.recent"
         :links="directoryLinks"
+        :ready="activityReady"
+        :loading="activityLoading"
+        :error="activityError"
+        @retry="refreshActivity(true)"
       />
 
       <main class="directory">

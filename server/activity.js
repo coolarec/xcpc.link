@@ -111,7 +111,7 @@ export function createActivityService({ urls, now = Date.now, cacheMs = CACHE_MS
         }
       })
     }
-    for (const day of days) await readDay(day)
+    await Promise.all(days.map(readDay))
     if (visits.size < Math.min(ACTIVITY_LIMIT, allowed.size)) {
       const olderDays = new Set()
       await list({ prefix: EVENT_PREFIX, directories: true }, (page) => {

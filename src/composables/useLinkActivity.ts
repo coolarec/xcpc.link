@@ -6,8 +6,12 @@ import type { SiteLink } from '../types/home'
 export const useLinkActivity = (catalog: Ref<Map<string, SiteLink>>) => {
   const snapshot = shallowRef<ActivitySnapshot | null>(null)
   const error = ref('')
+  const loading = ref(true)
+  const ready = computed(() => snapshot.value !== null)
   const client = createActivityClient()
   let timer: number | undefined
+  let retryTimer: number | undefined
+  let retries = 0
   let active = false
   let pending: Promise<void> | undefined
   let controller: AbortController | undefined
@@ -18,15 +22,26 @@ export const useLinkActivity = (catalog: Ref<Map<string, SiteLink>>) => {
     if (pending) return pending
     if (!force && Date.now() - lastRefresh < 5000) return Promise.resolve()
     lastRefresh = Date.now()
+    window.clearTimeout(retryTimer)
+    loading.value = true
+    error.value = ''
     controller = new AbortController()
     pending = client.getSnapshot(controller.signal).then((result) => {
       if (!active) return
       if (!snapshot.value || result.generatedAt >= snapshot.value.generatedAt) snapshot.value = result
       error.value = ''
+      retries = 0
+      window.clearTimeout(retryTimer)
     }).catch((reason: unknown) => {
-      if (active) error.value = reason instanceof Error ? reason.message : '访问统计暂不可用'
+      if (!active) return
+      error.value = reason instanceof Error ? reason.message : '访问统计暂不可用'
+      if (!snapshot.value && retries < 2) {
+        retries++
+        window.clearTimeout(retryTimer)
+        retryTimer = window.setTimeout(() => { void refresh(true) }, retries * 3000)
+      }
       // 仅保留已取得的全站列表，不在客户端生成个人排行或写入本地存储。
-    }).finally(() => { pending = undefined })
+    }).finally(() => { loading.value = false; pending = undefined })
     return pending
   }
 
@@ -49,6 +64,7 @@ export const useLinkActivity = (catalog: Ref<Map<string, SiteLink>>) => {
     active = false
     controller?.abort()
     window.clearInterval(timer)
+    window.clearTimeout(retryTimer)
     window.removeEventListener('focus', onVisible)
     document.removeEventListener('visibilitychange', onVisible)
   })
@@ -63,5 +79,5 @@ export const useLinkActivity = (catalog: Ref<Map<string, SiteLink>>) => {
     }
   })
 
-  return { record, lists, refresh, error }
+  return { record, lists, refresh, error, loading, ready }
 }

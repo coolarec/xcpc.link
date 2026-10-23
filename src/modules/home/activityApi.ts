@@ -21,9 +21,8 @@ const parseEntries = (value: unknown): ActivityEntry[] => {
 export const createActivityClient = ({
   endpoint = import.meta.env?.VITE_ACTIVITY_API_BASE_URL?.trim() || '/api/activity',
   fetchImpl = fetch,
-  timeoutMs = 5000,
+  timeoutMs = 15000,
 }: { endpoint?: string; fetchImpl?: typeof fetch; timeoutMs?: number } = {}) => {
-  // 点击记录仅发送到同源接口，密钥和 KV 绑定均留在边缘函数中。
   if (!endpoint.startsWith('/') || endpoint.startsWith('//') || /[?#\\]/.test(endpoint)) {
     throw new Error('访问统计接口必须为同源路径')
   }

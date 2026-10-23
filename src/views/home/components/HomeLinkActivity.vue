@@ -13,7 +13,11 @@ const props = defineProps<{
   popular: ActivityItem[]
   recent: ActivityItem[]
   links: SiteLink[]
+  ready: boolean
+  loading: boolean
+  error: string
 }>()
+const emit = defineEmits<{ retry: [] }>()
 
 const brokenIcons = ref(new Set<string>())
 const sampleLinks = shallowRef<ActivityItem[]>([])
@@ -56,15 +60,15 @@ watch(() => props.links, (links) => {
 }, { immediate: true })
 
 const rows = computed(() => [
-  { id: 'popular', title: '七日常用', items: props.popular.length ? props.popular : sampleLinks.value.slice(0, ACTIVITY_LIMIT) },
-  { id: 'recent', title: '最近打开', items: props.recent.length ? props.recent : sampleLinks.value.slice(-ACTIVITY_LIMIT) },
+  { id: 'popular', title: '七日常用', items: props.popular.length ? props.popular : props.ready && !props.error ? sampleLinks.value.slice(0, ACTIVITY_LIMIT) : [] },
+  { id: 'recent', title: '最近打开', items: props.recent.length ? props.recent : props.ready && !props.error ? sampleLinks.value.slice(-ACTIVITY_LIMIT) : [] },
 ])
 
 watch(rows, updateScrollHints, { flush: 'post' })
 </script>
 
 <template>
-  <section ref="activityRoot" class="link-activity" aria-label="全站访问记录">
+  <section ref="activityRoot" class="link-activity" aria-label="全站访问记录" :aria-busy="loading && !ready">
     <div
       v-for="row in rows"
       :key="row.id"
@@ -110,6 +114,11 @@ watch(rows, updateScrollHints, { flush: 'post' })
         >
           <ChevronRight :size="16" aria-hidden="true" />
         </button>
+      </div>
+      <p v-else-if="loading" class="empty-activity" role="status">正在加载…</p>
+      <div v-else-if="error" class="activity-error" role="status">
+        <span>暂时无法加载</span>
+        <button type="button" @click="emit('retry')">重试</button>
       </div>
       <p v-else class="empty-activity">暂无访问记录</p>
     </div>
@@ -232,7 +241,10 @@ watch(rows, updateScrollHints, { flush: 'post' })
   text-align: center;
 }
 
-.empty-activity { margin: 0; color: var(--secondary); font-size: 8px; line-height: 12px; }
+.empty-activity { margin: 0; color: var(--secondary); font-size: 10px; line-height: 14px; }
+.activity-error { display: flex; align-items: center; gap: 8px; color: var(--secondary); font-size: 10px; }
+.activity-error button { padding: 2px 4px; color: var(--focus); font-size: inherit; cursor: pointer; }
+.activity-error button:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 
 @media (max-width: 760px) {
   .activity-row {
