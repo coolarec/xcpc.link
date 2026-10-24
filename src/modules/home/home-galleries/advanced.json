@@ -179,6 +179,12 @@
       "description": "算法竞赛里常用的工具入口。",
       "links": [
         {
+          "avatarUrl": "/assets/icons/vp-xcpc-link-favicon.ico",
+          "websiteUrl": "https://vp.xcpc.link/",
+          "websiteTitle": "RankLand VP",
+          "websiteDescription": "基于历史比赛榜单进行虚拟参赛，支持比赛回放与倍速播放。"
+        },
+        {
           "avatarUrl": "/assets/icons/unavatar-io-ojhunt-com-f2363e47.ico",
           "websiteUrl": "https://ojhunt.com/",
           "websiteTitle": "ojhunt",
