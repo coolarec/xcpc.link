@@ -311,6 +311,12 @@
           "websiteDescription": "测测你的算竞人格(仅供娱乐,请勿当真)"
         },
         {
+          "avatarUrl": "/assets/icons/vcpc-snakes-moe-favicon.svg",
+          "websiteUrl": "https://vcpc.snakes.moe/",
+          "websiteTitle": "VCPC · 虚拟程序设计竞赛",
+          "websiteDescription": "虚拟 ICPC / CCPC 比赛模拟器，从网络赛一路打到世界总决赛。"
+        },
+        {
           "avatarUrl": "/assets/icons/github-com-patchouli-7-png-490856e2.jpg",
           "websiteUrl": "https://patchouli-7.github.io/",
           "websiteTitle": "Codeforces 练习可视化面板",
