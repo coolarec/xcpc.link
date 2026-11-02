@@ -60,6 +60,7 @@ export const seasonScheduleRows: SeasonScheduleRow[] = [
     allocationPlan: '容量：400（网络赛320+贡献50+女队10+省内贡献20）\n规则：网络赛前100校各2个、101–220校各1个。',
   },
   { startDate: '2026-11-21', endDate: '2026-11-22', category: 'CCPC', venue: '厦门', organizer: '厦门大学', problemSetter: '上海交通大学' },
+  { startDate: '2026-11-28', endDate: '2026-11-28', category: 'CCPC', venue: '高职专场', organizer: '绍兴职业技术学院', problemSetter: '杭州电子科技大学' },
   {
     startDate: '2026-12-05',
     endDate: '2026-12-06',
