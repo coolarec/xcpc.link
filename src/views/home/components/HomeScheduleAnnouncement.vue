@@ -61,12 +61,12 @@ const getDetailColspan = (rows: SeasonScheduleRow[], index: number) => {
 }
 const getEventName = (row: SeasonScheduleRow) => {
   if (!row.venue) return row.category
-  if (row.venue === '网络赛' || row.venue.includes('赛')) return `${row.category} ${row.venue}`
+  if (row.venue === '网络赛' || row.venue.includes('赛') || row.venue.includes('专场')) return `${row.category} ${row.venue}`
   return `${row.category} ${row.venue}站`
 }
 const getEventSuffix = (row: SeasonScheduleRow) => {
   if (!row.venue) return ''
-  if (row.venue === '网络赛' || row.venue.includes('赛')) return row.venue
+  if (row.venue === '网络赛' || row.venue.includes('赛') || row.venue.includes('专场')) return row.venue
   return `${row.venue}站`
 }
 const getCategoryIcon = (category: string) => {
