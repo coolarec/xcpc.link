@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" fill="none" color="#007b98" role="img" aria-labelledby="title desc">
+  <title id="title">织途AI · 舒展飘带 Z 标志</title>
+  <desc id="desc">舒展并收尖的弧形外轮廓呼应中央飘带 Z，两块形体严格中心对称。</desc>
+  <defs>
+    <!-- One swept contour, repeated by an exact half-turn. -->
+    <path id="interlock-half" d="M330 330C388 342 444 341 490 337C566 332 632 336 655 371C694 430 546 516 493 571C470 600 490 618 536 617C628 615 720 602 800 597C900 490 898 302 850 175C780 215 700 200 650 202C520 194 405 260 330 330Z"/>
+  </defs>
+  <g id="mark" fill="currentColor">
+    <use href="#interlock-half"/>
+    <use href="#interlock-half" transform="rotate(180 512 512)"/>
+  </g>
+</svg>
