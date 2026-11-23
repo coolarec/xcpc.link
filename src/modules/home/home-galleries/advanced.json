@@ -297,6 +297,12 @@
           "websiteUrl": "https://algo.zhiyuansofts.cn/",
           "websiteTitle": "GoAlgo",
           "websiteDescription": "聚合各大 OJ 提交数据，统计做题总量，生成算法竞赛个人做题画像，辅助选手复盘训练情况。"
+        },
+        {
+          "avatarUrl": "/assets/icons/www-998244353-best-124df790f7.svg",
+          "websiteUrl": "https://www.998244353.best/",
+          "websiteTitle": "unnamed",
+          "websiteDescription": "在线编写 C++、Python 代码，添加测试样例进行本地运行与输出比对。"
         }
       ]
     },
@@ -327,6 +333,18 @@
           "websiteUrl": "https://github.com/Lhanyu/cf-rating-diary",
           "websiteTitle": "cf-rating-diary",
           "websiteDescription": "Codeforces rating 日记，以锐评口吻复盘任意 Codeforces 选手，挖掘有节目效果的名场面。"
+        },
+        {
+          "avatarUrl": "/assets/icons/scoreboard-icpc-site-69bdd67462.svg",
+          "websiteUrl": "https://scoreboard.icpc.site/reactions/",
+          "websiteTitle": "Team Reactions",
+          "websiteDescription": "由 CSL 开发的 ICPC 过题反应合集（界面进行优化），支持按场次、队伍、题目和状态筛选，分页观看或下载视频。"
+        },
+        {
+          "avatarUrl": "/assets/icons/news-icpc-global-3d8367b3b7.ico",
+          "websiteUrl": "https://news.icpc.global/reactions/2025/",
+          "websiteTitle": "ICPC Team Reactions",
+          "websiteDescription": "ICPC 官方过题反应合集，可按赛事、队伍、题目和评测结果筛选并观看或下载视频。"
         }
       ]
     },
@@ -453,6 +471,12 @@
           "websiteUrl": "https://www.raicom.com.cn/certificate.html",
           "websiteTitle": "睿抗(Raicom)",
           "websiteDescription": "睿抗相关证书与成绩查询入口。"
+        },
+        {
+          "avatarUrl": "/assets/icons/oier-kdtree-xyz-9760bf83ca.png",
+          "websiteUrl": "https://oier.kdtree.xyz/",
+          "websiteTitle": "OIer Coach",
+          "websiteDescription": "Oierdb 教练版，可按姓名和省份搜索教练与学生，查看教练榜和学生榜。"
         }
       ]
     }
