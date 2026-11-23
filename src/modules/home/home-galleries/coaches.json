@@ -64,10 +64,10 @@
           "websiteDescription": "协作式在线 LaTeX 编辑器。"
         },
         {
-          "avatarUrl": "/assets/icons/unavatar-io-chumeng-xyz-4400f3c7.jpg",
-          "websiteUrl": "https://xcpc-statement-generator.netlify.app/",
-          "websiteTitle": "XCPC PDF 题面管理工具",
-          "websiteDescription": "由 chumeng 开发的用于生成和管理 XCPC PDF 题面的工具。"
+          "avatarUrl": "/assets/icons/raw-githubusercontent-com-f6441df1f8.png",
+          "websiteUrl": "https://github.com/lihaoze123/xcpc-workstation",
+          "websiteTitle": "XCPC Workstation",
+          "websiteDescription": "由 chumeng 开发的用于生成和管理 XCPC PDF 题面的工具。可用 Typst 编辑 XCPC 和 CNOI 题面，支持本地组卷和 PDF 导出。"
         },
         {
           "avatarUrl": "/assets/icons/unavatar-io-yuantiji-ac-eb585804.ico",
