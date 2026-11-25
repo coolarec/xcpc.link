@@ -3,6 +3,8 @@ import { createActivityClient } from '../modules/home/activityApi'
 import type { ActivityEntry, ActivitySnapshot } from '../modules/home/linkActivity'
 import type { SiteLink } from '../types/home'
 
+const REFRESH_INTERVAL_MS = 5 * 60_000
+
 export const useLinkActivity = (catalog: Ref<Map<string, SiteLink>>) => {
   const snapshot = shallowRef<ActivitySnapshot | null>(null)
   const error = ref('')
@@ -20,8 +22,9 @@ export const useLinkActivity = (catalog: Ref<Map<string, SiteLink>>) => {
   const refresh = (force = false): Promise<void> => {
     if (!active || document.visibilityState === 'hidden') return Promise.resolve()
     if (pending) return pending
-    if (!force && Date.now() - lastRefresh < 5000) return Promise.resolve()
+    if (!force && Date.now() - lastRefresh < REFRESH_INTERVAL_MS) return Promise.resolve()
     lastRefresh = Date.now()
+    window.clearTimeout(timer)
     window.clearTimeout(retryTimer)
     loading.value = true
     error.value = ''
@@ -41,13 +44,20 @@ export const useLinkActivity = (catalog: Ref<Map<string, SiteLink>>) => {
         retryTimer = window.setTimeout(() => { void refresh(true) }, retries * 3000)
       }
       // 仅保留已取得的全站列表，不在客户端生成个人排行或写入本地存储。
-    }).finally(() => { loading.value = false; pending = undefined })
+    }).finally(() => {
+      loading.value = false
+      pending = undefined
+      if (active) {
+        const delay = Math.max(0, REFRESH_INTERVAL_MS - (Date.now() - lastRefresh))
+        timer = window.setTimeout(() => { void refresh(true) }, delay)
+      }
+    })
     return pending
   }
 
   const record = (url: string) => {
     if (!catalog.value.has(url)) return
-    void client.record(url).then(() => refresh(true)).catch(() => {
+    void client.record(url).catch(() => {
       // 上报失败不重试，避免超时重试导致重复计数，也不阻断网站打开。
     })
   }
@@ -56,14 +66,13 @@ export const useLinkActivity = (catalog: Ref<Map<string, SiteLink>>) => {
   onMounted(() => {
     active = true
     void refresh()
-    timer = window.setInterval(onVisible, 60_000)
     window.addEventListener('focus', onVisible)
     document.addEventListener('visibilitychange', onVisible)
   })
   onBeforeUnmount(() => {
     active = false
     controller?.abort()
-    window.clearInterval(timer)
+    window.clearTimeout(timer)
     window.clearTimeout(retryTimer)
     window.removeEventListener('focus', onVisible)
     document.removeEventListener('visibilitychange', onVisible)
