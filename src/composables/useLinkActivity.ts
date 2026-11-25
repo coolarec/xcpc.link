@@ -3,54 +3,31 @@ import { createActivityClient } from '../modules/home/activityApi'
 import type { ActivityEntry, ActivitySnapshot } from '../modules/home/linkActivity'
 import type { SiteLink } from '../types/home'
 
-const REFRESH_INTERVAL_MS = 5 * 60_000
-
 export const useLinkActivity = (catalog: Ref<Map<string, SiteLink>>) => {
   const snapshot = shallowRef<ActivitySnapshot | null>(null)
   const error = ref('')
   const loading = ref(true)
   const ready = computed(() => snapshot.value !== null)
   const client = createActivityClient()
-  let timer: number | undefined
-  let retryTimer: number | undefined
-  let retries = 0
   let active = false
   let pending: Promise<void> | undefined
   let controller: AbortController | undefined
-  let lastRefresh = 0
 
-  const refresh = (force = false): Promise<void> => {
-    if (!active || document.visibilityState === 'hidden') return Promise.resolve()
+  const refresh = (): Promise<void> => {
+    if (!active) return Promise.resolve()
     if (pending) return pending
-    if (!force && Date.now() - lastRefresh < REFRESH_INTERVAL_MS) return Promise.resolve()
-    lastRefresh = Date.now()
-    window.clearTimeout(timer)
-    window.clearTimeout(retryTimer)
     loading.value = true
     error.value = ''
     controller = new AbortController()
     pending = client.getSnapshot(controller.signal).then((result) => {
       if (!active) return
       if (!snapshot.value || result.generatedAt >= snapshot.value.generatedAt) snapshot.value = result
-      error.value = ''
-      retries = 0
-      window.clearTimeout(retryTimer)
     }).catch((reason: unknown) => {
       if (!active) return
       error.value = reason instanceof Error ? reason.message : '访问统计暂不可用'
-      if (!snapshot.value && retries < 2) {
-        retries++
-        window.clearTimeout(retryTimer)
-        retryTimer = window.setTimeout(() => { void refresh(true) }, retries * 3000)
-      }
-      // 仅保留已取得的全站列表，不在客户端生成个人排行或写入本地存储。
     }).finally(() => {
       loading.value = false
       pending = undefined
-      if (active) {
-        const delay = Math.max(0, REFRESH_INTERVAL_MS - (Date.now() - lastRefresh))
-        timer = window.setTimeout(() => { void refresh(true) }, delay)
-      }
     })
     return pending
   }
@@ -62,20 +39,13 @@ export const useLinkActivity = (catalog: Ref<Map<string, SiteLink>>) => {
     })
   }
 
-  const onVisible = () => { void refresh() }
   onMounted(() => {
     active = true
     void refresh()
-    window.addEventListener('focus', onVisible)
-    document.addEventListener('visibilitychange', onVisible)
   })
   onBeforeUnmount(() => {
     active = false
     controller?.abort()
-    window.clearTimeout(timer)
-    window.clearTimeout(retryTimer)
-    window.removeEventListener('focus', onVisible)
-    document.removeEventListener('visibilitychange', onVisible)
   })
 
   const lists = computed(() => {

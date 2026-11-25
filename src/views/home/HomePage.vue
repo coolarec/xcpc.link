@@ -232,7 +232,7 @@ const handleFloatingAction = (id: string) => {
         :ready="activityReady"
         :loading="activityLoading"
         :error="activityError"
-        @retry="refreshActivity(true)"
+        @retry="refreshActivity()"
       />
 
       <main class="directory">
